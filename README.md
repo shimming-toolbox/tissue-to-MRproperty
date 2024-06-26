@@ -11,8 +11,9 @@ A parcellation color map for ITK-snap is provided [here](parcellation_itk.txt). 
 
 ![image](https://github.com/sriosq/brainhack_project/assets/154398382/36e16ab6-0683-4455-bec4-4337bb7bb975)
 
-# Input Nifti advanced option
-One of the current limitations of the output from Total Segmentator is the label definition for the Spinal Cord. This encouraged us to add new labels to the phantom. 
+# Adding Labels - Modified Nifti
+One of the current limitations of the output from Total Segmentator is the label definition for the Spinal Cord. This encouraged us to add new labels to the phantom. </br>
+In the following jupyter notebook you will find the instructions to create new labels as well as manually adding the labels to the dictionary that holds all the MR property values.
 
 # Look-up tables
 Here we document the respective look-up tables used for assigning MR property values to labels. This are acquired from literature publications, reference to the literature used for creating the look-up table are inside the code for the [label](functions/label.py) class.
