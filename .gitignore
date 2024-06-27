@@ -163,3 +163,5 @@ cython_debug/
 # So we want git to ignore this 
 output/
 simulation/
+data/
+example/
