@@ -1,0 +1,10 @@
+pandas
+nibabel
+nilearn
+numpy
+matplotlib
+ipykernel
+ipython
+treelib
+pytest
+jupyterlab
