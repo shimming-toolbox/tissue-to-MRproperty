@@ -33,6 +33,8 @@ class Volume:
             os.makedirs('output')
         if not os.path.exists('simulation'):
             os.makedirs('simulation')
+        if not os.path.exists("data"):
+            os.makedirs("data")
 
         self.magnitude = None
         self.phase = None
@@ -242,11 +244,18 @@ class Volume:
                         # If the label has PD value it will put this value on the volume
                         self.pd_dist[i,j,k] = pd
 
-
+        return self.pd_dist
+    def save_pd_dist(self):
+        # Method to save the proton density distribution created to nifti
+        temp_img = nib.Nifti1Image(self.pd_dist, affine=self.nifti.affine)
+        # Save the new NIfTI image to a file
+        path = os.path.join('output', 'pd_dist.nii.gz')
+        nib.save(temp_img,path)
+        del temp_img
+        del path
     def create_t2_star_vol(self):
         # This method will use the lookup table of T2 star values to create a new volume
         # This new volume will use the labels to quickly create a volume with relaxation time
-
         for i in range(self.dimensions[0]):
             for j in range(self.dimensions[1]):
                 for k in range(self.dimensions[2]):
@@ -256,21 +265,20 @@ class Volume:
                     t2star = label.T2star_val
                     if t2star == None:
                         # THis means the label does not have T2 star value defined
-                        self.pd_dist[i,j,k] = 0.001
+                        self.t2star_vol[i,j,k] = 0.001
                     else:
                         # If the label has value it will put this value on the volume
                         self.t2star_vol[i,j,k] = t2star
 
-
-    def save_pd_dist(self):
+        return self.t2star_vol
+    def save_t2star_dist(self):
         # Method to save the proton density distribution created to nifti
-        temp_img = nib.Nifti1Image(self.pd_dist, affine=self.nifti.affine)
+        temp_img = nib.Nifti1Image(self.t2star_vol, affine=self.nifti.affine)
         # Save the new NIfTI image to a file
-        path = os.path.join('output', 'pd_dist.nii.gz')
+        path = os.path.join('output', 't2_star.nii.gz')
         nib.save(temp_img,path)
         del temp_img
         del path
-
     def save_sus_csv(self):
         data = []
         for i in self.segmentation_labels.keys():
@@ -290,6 +298,5 @@ class Volume:
         # Think about a more efficient way because the user should be able to change the values
         # It might be usefull to get this inputs from different researchers and testing
         pass
-
     def __repr__(self):
         return f"SegmentationLabelManager == Volume"
