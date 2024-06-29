@@ -7,7 +7,7 @@ from functions.utils.get_dic_values import to_csv_sus, to_csv_relax
 import os
 
 # Parent class for the creation of a non-finite biomechanical model of the body
-class Volume:
+class volume:
     
     def __init__(self, volume):
         # In this version we correct that the output should be the nifti image
