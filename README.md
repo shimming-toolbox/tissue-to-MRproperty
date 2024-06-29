@@ -18,36 +18,54 @@ In the following jupyter notebook you will find the instructions to create new l
 # Look-up tables
 Here we document the respective look-up tables used for assigning MR property values to labels. This are acquired from literature publications, reference to the literature used for creating the look-up table are inside the code for the [label](functions/label.py) class.
 
-| Label        | M0   | T1   | T2   | T2*   | PD   |
-|---------------|------|------|------|-------|------|
-| air           | 0    | 0    | 0    | 0.01  | 0.01 |
-| bone          | None | 1204 | 53   | 33.03 | 117  |
-| lungs         | None | 1270 | None | 0.1   | 0.1  |
-| water         | None | 2500 | 2500 | 1     | 100  |
-| CSF           | None | 3200 | 2000 | 1     | 100  |
-| spinal_cord   | None | None | None | 76    | 59.5 |
-| sc_csf        | None | 3200 | 2000 | 1     | 100  |
-| fat           | None | 380  | 108  | 35    | 140  |
-| liver         | None | 809  | 34   | 17    | 70   |
-| spleen        | None | 1328 | 61   | 32.5  | 80   |
-| brain         | None | None | None | 60.8  | 90   |
-| white_matter  | None | None | None | 26.75 | 0    |
-| gray_matter   | None | None | None | 66    | 0    |
-| sc_wm         | None | None | None | 0     | 0    |
-| sc_gm         | None | None | None | 0     | 0    |
-| heart         | 1000 | 1300 | 55   | 9.25  | 85   |
-| kidney        | None | 1190 | 56   | 32.7  | 70   |
-| pancreas      | None | 725  | 43   | 37    | 75   |
-| cartilage     | None | 1240 | 32   | 20    | 50   |
-| bone_marrow   | None | 365  | 23   | None  | 60   |
-| SpinalCanal   | None | 993  | 78   | 60    | 100  |
-| esophagus     | None | None | None | 17    | 35   |
-| trachea       | None | None | None | 25    | 15   |
-| organ         | None | 800  | 34   | 17    | 50   |
-| gland         | None | None | None | 50    | 100  |
-| extra         | None | 750  | 50   | 35    | 120  |
+| Label         | T1 [ms]  | T2  [ms] | T2*  [ms] | PD   |
+|---------------|------|------|-------|------|
+| air           | 0    | 0    | 0.01  | 0.01 |
+| bone          | 1204 | 53   | 33.03 | 117  |
+| lungs         | 1270 | None | 0.1   | 0.1  |
+| water         | 2500 | 2500 | 1     | 100  |
+| CSF           | 3200 | 2000 | 1     | 100  |
+| spinal_cord   | None | None | 76    | 59.5 |
+| sc_csf        | 3200 | 2000 | 1     | 100  |
+| fat           | 380  | 108  | 35    | 140  |
+| liver         | 809  | 34   | 17    | 70   |
+| spleen        | 1328 | 61   | 32.5  | 80   |
+| brain         | None | None | 60.8  | 90   |
+| white_matter  | None | None | 26.75 | 0    |
+| gray_matter   | None | None | 66    | 0    |
+| sc_wm         | None | None | 0     | 0    |
+| sc_gm         | None | None | 0     | 0    |
+| heart         | 1300 | 55   | 9.25  | 85   |
+| kidney        | 1190 | 56   | 32.7  | 70   |
+| pancreas      | 725  | 43   | 37    | 75   |
+| cartilage     | 1240 | 32   | 20    | 50   |
+| bone_marrow   | 365  | 23   | None  | 60   |
+| SpinalCanal   | 993  | 78   | 60    | 100  |
+| esophagus     | None | None | 17    | 35   |
+| trachea       | None | None | 25    | 15   |
+| organ         | 800  | 34   | 17    | 50   |
+| gland         | None | None | 50    | 100  |
+| extra         | 750  | 50   | 35    | 120  |
 
-M0, T1 and T2 values are still not complete.
+T1 and T2 values are still not completely implemented. </br>
+
+| Label         | Susceptibility [ppm]|
+|--------------|----------------|
+| air          | 0.35           |
+| spleen       | -9.05          |
+| kidney       | -9.05          |
+| organ        | -9.05          |
+| liver        | -9.05          |
+| gland        | -9.05          |
+| lungs        | 0.4            |
+| esophagus    | -9.05          |
+| trachea      | 0.4            |
+| bone         | -9             |
+| extra        | -9.04          |
+| SpinalCanal  | -9.055         |
+| spinal_cord  | -9.055         |
+| fat          | -8.92          |
+| sc_csf       | -9.05          |
 
 # Output
 
