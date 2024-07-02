@@ -179,9 +179,6 @@ class volume:
             self.segmentation_labels[label_id].set_t2star_val(t2star)
         else:
             print(f"Label ID {label_id} not found.")
- 
-    def display(self):
-        show_slices(self.volume)
 
 
     def manual_label(self,id,name,sus):
@@ -194,6 +191,25 @@ class volume:
         for i in self.segmentation_labels:
             label = self.segmentation_labels[i]
             print(label) # Calling __str__ from label
+
+    def create_type_vol(self,type):
+        # This function is for the CLI app
+        # Depending on the type we automatically call the specific function
+        #
+        if type =='sus':
+            self.create_sus_dist()
+            self.save_sus_dist_nii()
+        if type =='t2s':
+            self.create_t2_star_vol()
+            self.save_t2star_dist()
+        if type =='pd':
+            self.create_pd_vol()
+            self.save_pd_dist()
+        if type =='t1':
+            print("T1 value volume comming soon!")
+        if type =='t2':
+            print("T2 volume comming soon!")
+
 
 
     def create_sus_dist(self):
