@@ -19,6 +19,7 @@ In the following jupyter [notebook](https://github.com/shimming-toolbox/tissue-t
 In this preliminary version of the repository, the code must be ran under the [cli](https://github.com/shimming-toolbox/tissue-to-MRproperty/tree/main/cli) folder.
 ```
 git clone https://github.com/shimming-toolbox/tissue-to-MRproperty.git
+cd tissue-to-MRproperty
 cd cli
 ```
 Once in the folder you can open a terminal and use the script to create a new MR-property volume. </br>
