@@ -13,10 +13,34 @@ A parcellation color map for ITK-snap is provided [here](parcellation_itk.txt). 
 
 # Adding Labels - Modified Nifti
 One of the current limitations of the output from Total Segmentator is the label definition for the Spinal Cord. This encouraged us to add new labels to the phantom. </br>
-In the following jupyter notebook you will find the instructions to create new labels as well as manually adding the labels to the dictionary that holds all the MR property values.
+In the following jupyter [notebook](https://github.com/shimming-toolbox/tissue-to-MRproperty/blob/main/interactive.ipynb) you will find the instructions to create new labels as well as manually adding the labels to the dictionary that holds all the MR property values.
 
-# Look-up tables
+# Usage
+In this preliminary version of the repository, the code must be ran under the [cli](https://github.com/shimming-toolbox/tissue-to-MRproperty/tree/main/cli) folder.
+```
+git clone https://github.com/shimming-toolbox/tissue-to-MRproperty.git
+cd cli
+```
+Once in the folder you can open a terminal and use the script to create a new MR-property volume. </br>
+
+**Arguments** 
+- -t, type : 'Choose a MR property to convert to'
+- -s, segmentattion tool : 'Specify the segmentation tool used'
+
+Example:
+```
+python tissue_to_mr.py converter "final_total_seg.nii.gz" -s TotalSeg -t sus
+```
+
+**Output** The new volume will be saved as Nifti inside the *output* folder.
+
+*Note*: for this version of the code the Nifti file must be in the cli directory. Only **t2s**, **pd** and **sus** are supported MR properties. Segmentation tool is not used yet, depending on the tool used for segmentation the code will use different lookup tables.
+
+*T1, T2 and more segmentation tools coming soon!*
+
+# Look-up table
 Here we document the respective look-up tables used for assigning MR property values to labels. This are acquired from literature publications, reference to the literature used for creating the look-up table are inside the code for the [label](functions/label.py) class.
+
 
 | Label         | T1 [ms]  | T2  [ms] | T2*  [ms] | PD   | Susceptibility [ppm] |
 |---------------|------|------|-------|------| ----------------------------|
@@ -48,10 +72,6 @@ Here we document the respective look-up tables used for assigning MR property va
 | extra         | 750  | 50   | 35    | 120  | -9.04 |
 
 T1 and T2 values are still not completely implemented. </br>
-
-# Output
-
-The output volumes will be nifti files in which every pixel will have a MR property value. For now only T2star, PD and susceptibility volumes can be created. T1 and Net Magnetization (M0) are currently being implemented.
 
 # References 
 
