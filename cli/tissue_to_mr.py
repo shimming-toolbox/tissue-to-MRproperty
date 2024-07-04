@@ -11,7 +11,7 @@ from functions.utils.utils import is_nifti
 
 # tissue_to_mr --input [labeled_nifti] --type [choose_MR_property] --output [name=default]
 
-@click.group
+@click.group()
 def my_commands():
     pass
 
