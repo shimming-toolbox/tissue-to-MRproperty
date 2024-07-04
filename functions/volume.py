@@ -192,24 +192,23 @@ class volume:
             label = self.segmentation_labels[i]
             print(label) # Calling __str__ from label
 
-    def create_type_vol(self,type):
+    def create_type_vol(self,type,output_name="default"):
         # This function is for the CLI app
         # Depending on the type we automatically call the specific function
         #
         if type =='sus':
             self.create_sus_dist()
-            self.save_sus_dist_nii()
+            self.save_sus_dist_nii(output_name)
         if type =='t2s':
             self.create_t2_star_vol()
-            self.save_t2star_dist()
+            self.save_t2star_dist(output_name)
         if type =='pd':
             self.create_pd_vol()
-            self.save_pd_dist()
+            self.save_pd_dist(output_name)
         if type =='t1':
             print("T1 value volume comming soon!")
         if type =='t2':
             print("T2 volume comming soon!")
-
 
 
     def create_sus_dist(self):
@@ -233,12 +232,20 @@ class volume:
 
         return self.sus_dist
 
-    def save_sus_dist_nii(self):
+    def save_sus_dist_nii(self, fn):
         # Method to save the susceptibility distribution created to nifti
-        temp_img = nib.Nifti1Image(self.sus_dist, affine=self.nifti.affine)
-        path = os.path.join('output','sus_dist.nii.gz')
-        # Save the new NIfTI image to a file
-        nib.save(temp_img,path)
+        if fn == "default":
+            fn = 'sus_dist.nii.gz'
+            temp_img = nib.Nifti1Image(self.sus_dist, affine=self.nifti.affine)
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img,path)
+        else:
+            temp_img = nib.Nifti1Image(self.sus_dist, affine=self.nifti.affine)
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img,path)
+
         del temp_img
         del path
 
@@ -261,12 +268,19 @@ class volume:
                         self.pd_dist[i,j,k] = pd
 
         return self.pd_dist
-    def save_pd_dist(self):
+    def save_pd_dist(self, fn = 'default'):
         # Method to save the proton density distribution created to nifti
-        temp_img = nib.Nifti1Image(self.pd_dist, affine=self.nifti.affine)
-        # Save the new NIfTI image to a file
-        path = os.path.join('output', 'pd_dist.nii.gz')
-        nib.save(temp_img,path)
+        if fn == "default":
+            fn = 'pd_dist.nii.gz'
+            temp_img = nib.Nifti1Image(self.pd_dist, affine=self.nifti.affine)
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img,path)
+        else:
+            temp_img = nib.Nifti1Image(self.pd_dist, affine=self.nifti.affine)
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img,path)
         del temp_img
         del path
     def create_t2_star_vol(self):
@@ -287,12 +301,19 @@ class volume:
                         self.t2star_vol[i,j,k] = t2star
 
         return self.t2star_vol
-    def save_t2star_dist(self):
+    def save_t2star_dist(self, fn = "default"):
         # Method to save the proton density distribution created to nifti
-        temp_img = nib.Nifti1Image(self.t2star_vol, affine=self.nifti.affine)
-        # Save the new NIfTI image to a file
-        path = os.path.join('output', 't2_star.nii.gz')
-        nib.save(temp_img,path)
+        if fn == "default":
+            fn = 't2_star.nii.gz'
+            temp_img = nib.Nifti1Image(self.t2star_vol, affine=self.nifti.affine)
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img,path)
+        else:
+            temp_img = nib.Nifti1Image(self.t2star_vol, affine=self.nifti.affine)
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img,path)
         del temp_img
         del path
     def save_sus_csv(self):

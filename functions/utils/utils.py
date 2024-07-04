@@ -12,7 +12,7 @@ def is_nifti(filepath):
     Returns:
         bool: True if the file is a NIfTI file, False otherwise.
     """
-    if filepath[-4:] == '.nii':
+    if filepath[-4:] == '.nii' or filepath[-7:] == '.nii.gz':
         return True
     else:
         return False
