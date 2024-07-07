@@ -5,6 +5,7 @@ import nibabel as nib
 import scipy.ndimage
 from functions.utils.get_dic_values import to_csv_sus, to_csv_relax
 import os
+from functions.utils.select_tool import return_dict_labels
 
 # Parent class for the creation of a non-finite biomechanical model of the body
 class volume:
@@ -47,7 +48,20 @@ class volume:
        for label_id in self.uniq_labels:
            self.segmentation_labels[label_id] = SegmentationLabel(label_id)
 
-    def create_segmentation_labels(self):
+    def group_seg_labels(self,tool,version):
+        dicc = return_dict_labels(tool,version)
+        for key,value in dicc.items():
+            # Key is the number of ID and value is (name, sus)
+            name = value[0]
+            sus = value[1]
+            self.set_label_name(key, name)
+            self.set_label_susceptibility(key, sus)
+
+    def create_segmentation_labels_old(self):
+
+        #Now this code checks the tool and the version for label-name relationship
+        # Still keeping this method just in case
+        # New method is group_seg_labels
 
         # The most important labels are:
         # lungs Bone Soft Tissue SpinalCord CSF
@@ -114,8 +128,8 @@ class volume:
         for i in sus_water_list:
             self.set_label_susceptibility(i, -9.05)
 
-        # For trachea, it should have a susceptibilty value closer to air
-        self.set_label_susceptibility(15, 0.4)
+        # For trachea, it should have a susceptibilty value closer to air but withsome muscle so a bit diamag.
+        self.set_label_susceptibility(15, 0.2)
 
         # Soft tissue == water
         # Inside of body == fat
