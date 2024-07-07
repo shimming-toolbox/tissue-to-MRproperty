@@ -10,6 +10,8 @@ import os
 class volume:
     
     def __init__(self, volume):
+        # Tool and version as input arguments
+
         # In this version we correct that the output should be the nifti image
         # This way we can attribute the information from nifti files to the class
 
