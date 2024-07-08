@@ -2,8 +2,7 @@
 import numpy as np
 from functions.label import SegmentationLabel
 import nibabel as nib
-import scipy.ndimage
-from functions.utils.get_dic_values import to_csv_sus, to_csv_relax
+from functions.utils.get_dic_values import to_csv_sus
 import os
 from functions.utils.select_tool import return_dict_labels
 

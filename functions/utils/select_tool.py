@@ -4,7 +4,7 @@
 # I encourage to read her repo: https://github.com/evaalonsoortiz/Fourier-based-field-estimation
 def return_dict_labels(tool,version):
     dicc = {}
-    if tool == "TotalSegmentator_CT":
+    if tool == "TotalSeg_CT":
         # Using total segmentator we use follow their list for 117 labels
         # and group them up based on their effect to the B0 map impact
         # link: https://github.com/wasserth/TotalSegmentator/blob/master/totalsegmentator/map_to_binary.py
@@ -133,8 +133,13 @@ def return_dict_labels(tool,version):
         }
         if version == "v2":
             return dicc
+        if version =="mod0":
+            # This means it has labes + fat = Whole body
+            dicc[264]=("fat",-8.92)
+            return dicc
         if version =="mod1":
-            # This means it has CSF + Spinal Cord instead of Spinal Canal
+            # This means its Whole body + Spinal Cord CSF to differentiate Spinal Canal
+            # from spinal cord
             dicc[264]=("fat",-8.92)
             dicc[256]=("spinal_cord",-9.055)
             dicc[289]=("sc_csf",-9.05)
@@ -142,7 +147,15 @@ def return_dict_labels(tool,version):
         if version=="mod2":
             # This means it has CSF + Spinal Cord + WM/GM segmentation instead of Spina Canal
             dicc[264]=("fat",-8.92)
+            # Future implementation
+            # Currently manually segmentating resampled registered CT image
+            # to get WM/GM segmentation masks
             return dicc
+
+    if tool == 'TotalSeg_MRI':
+        pass
+    if tool == 'ProCord_MRI':
+        pass
 
     else:
         print("This tool hasn't been implemented yet.")
