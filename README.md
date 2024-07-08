@@ -11,9 +11,6 @@ A parcellation color map for ITK-snap is provided [here](parcellation_itk.txt). 
 
 ![image](https://github.com/sriosq/brainhack_project/assets/154398382/36e16ab6-0683-4455-bec4-4337bb7bb975)
 
-# Adding Labels - Modified Nifti
-One of the current limitations of the output from Total Segmentator is the label definition for the Spinal Cord. This encouraged us to add new labels to the phantom. </br>
-In the following jupyter [notebook](https://github.com/shimming-toolbox/tissue-to-MRproperty/blob/main/interactive.ipynb) you will find the instructions to create new labels as well as manually adding the labels to the dictionary that holds all the MR property values.
 # Installation
 
 First, clone the repository
@@ -94,6 +91,11 @@ Here we document the respective look-up tables used for assigning MR property va
 | extra         | 750  | 50   | 35    | 120  | -9.04 |
 
 T1 and T2 values are still not completely implemented. </br>
+
+# Adding Labels - Modified Nifti
+
+One of the current limitations of the output from Total Segmentator is the label definition for the Spinal Cord. This encouraged us to add new labels to the phantom. </br>
+In the following [repository](https://github.com/sriosq/Image-processing-strategies) you will find usefull strategies and code to create new labels as well as adding them to a segmented image.
 
 # References 
 
