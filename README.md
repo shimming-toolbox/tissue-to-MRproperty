@@ -14,27 +14,49 @@ A parcellation color map for ITK-snap is provided [here](parcellation_itk.txt). 
 # Adding Labels - Modified Nifti
 One of the current limitations of the output from Total Segmentator is the label definition for the Spinal Cord. This encouraged us to add new labels to the phantom. </br>
 In the following jupyter [notebook](https://github.com/shimming-toolbox/tissue-to-MRproperty/blob/main/interactive.ipynb) you will find the instructions to create new labels as well as manually adding the labels to the dictionary that holds all the MR property values.
+# Installation
+
+First, clone the repository
+
+```
+git clone https://github.com/shimming-toolbox/tissue-to-MRproperty
+```
+
+Navigate to the project directory
+
+```
+cd tissue-to-MRproperty
+```
+
+(temporary) Go to the develop branch
+
+```
+git checkout dev/v1
+```
+
+Install the package
+
+```
+pip install .
+```
 
 # Usage
-In this preliminary version of the repository, the code must be ran under the [cli](https://github.com/shimming-toolbox/tissue-to-MRproperty/tree/main/cli) folder.
-```
-git clone https://github.com/shimming-toolbox/tissue-to-MRproperty.git
-cd cli
-```
-Once in the folder you can open a terminal and use the script to create a new MR-property volume. </br>
+
+Once in the package is installed, you can process your images directly from the terminal. A description follows. </br>
 
 **Arguments** 
-- -t, type : 'Choose a MR property to convert to'
-- -s, segmentattion tool : 'Specify the segmentation tool used'
+- -s, segmentation_tool : ['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI']
+- -v, version : ['v2','mod0','mod1','mod2']
+- -t, type : ["t2s", "sus", "pd", "t1", "t2"]
 
 Example:
 ```
-python tissue_to_mr.py converter "final_total_seg.nii.gz" -s TotalSeg -t sus
+tissue_to_mr cli/final_total_seg.nii.gz -t sus -s TotalSeg_CT -v mod0
 ```
 
 **Output** The new volume will be saved as Nifti inside the *output* folder.
 
-*Note*: for this version of the code the Nifti file must be in the cli directory. Only **t2s**, **pd** and **sus** are supported MR properties. Segmentation tool is not used yet, depending on the tool used for segmentation the code will use different lookup tables.
+*Note*: Only **t2s**, **pd** and **sus** are supported MR properties for conversion. Depending on the tool used for segmentation the code will use different lookup tables for label id-name relationship.
 
 *T1, T2 and more segmentation tools coming soon!*
 
