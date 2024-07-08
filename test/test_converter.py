@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from click.testing import CliRunner
 from cli.tissue_to_mr import hello
-from functions.utils.utils import is_nifti
+from functions import is_nifti
 
 
 def test_converter():
