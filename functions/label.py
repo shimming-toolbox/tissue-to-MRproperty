@@ -19,9 +19,9 @@ class SegmentationLabel:
         self.relax_values = {
             "air": [0, 0, 0, 0.01, 0.01],
             "bone": [None, 1204, 53, 33.03, 117],  # M0 is often not specified for bone
-            "lungs": [None, 1270, None, 0.1, 0.1],  # Air in lungs doesn't have M0, T2 values?
-            "water": [None, 2500, 2500, 1, 100],  # High M0 value
-            "CSF": [None, 3200, 2000, 1, 100],  # High M0
+            "lungs": [None, 1270, None, 1, 0.1],  # Air in lungs doesn't have M0, T2 values?
+            "water": [None, 2500, 2500, 1000, 100],  # High M0 value
+            "CSF": [None, 3200, 2000, 1000, 100],  # High M0
 
             "spinal_cord":[None, None, None, 76, 59.5], # From the new label 256
             # PD & T2* GM + WM / 2 =>  82 + 70 /2 =    , T2star = 66 + 53 / 2 =
@@ -58,9 +58,11 @@ class SegmentationLabel:
     # Arnold, J., Fidler, F., Wang, T. et al. Imaging lung function using rapid dynamic acquisition of T 1-maps during oxygen enhancement. Magn Reson Mater Phy 16, 246–253 (2004). https://doi.org/10.1007/s10334-004-0034-z
     # Meloni, A., De Marchi, D., Positano, V. et al. Accurate estimate of pancreatic T2* values: how to deal with fat infiltration. Abdom Imaging 40, 3129–3136 (2015). https://doi.org/10.1007/s00261-015-0522-9
     # Hesper, T., Hosalkar, H.S., Bittersohl, D. et al. T2* mapping for articular cartilage assessment: principles, current applications, and future prospects. Skeletal Radiol 43, 1429–1445 (2014). https://doi.org/10.1007/s00256-014-1852-3
+    # Wu, X., Song, H., Stenger, V.A., Gach, H.M. (2023). Quantification of B0 Inhomogeneities in the Abdomen at 3 T. In: Selvaraj, H., Chmaj, G., Zydek, D. (eds) Advances in Systems Engineering. ICSEng 2023. Lecture Notes in Networks and Systems, vol 761. Springer, Cham. https://doi.org/10.1007/978-3-031-40579-2_11
     #
+
     # MRI from Picture to Proton
-    # Questions and answers in MRI website
+    # Questions and answers in MRI website : Courtesy of Allen D. Elster, MRIquestions.com
     ########### For some T2star values #############
     # Some T2 star values from the literature are at 1.5T: liver, spleen, kidney, WM and GM, cartilage
     # T2 star values should decrease with higher field strength

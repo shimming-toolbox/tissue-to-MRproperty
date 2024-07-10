@@ -27,7 +27,8 @@ class volume:
         # The dictionary has keys for every id number and each value 
         # is the corresponding SegmentationLabel daughter class
 
-        self.create_labels()
+        # to check ids depending on the tool selected
+        self.look_up = {}
         # This is the Convention Dictionary for labels_id - names - sus_values
 
         # Creating folders for the code
@@ -43,13 +44,12 @@ class volume:
         self.real = None
         self.imaginary = None
 
-    def create_labels(self):
-       for label_id in self.uniq_labels:
-           self.segmentation_labels[label_id] = SegmentationLabel(label_id)
-
     def group_seg_labels(self,tool,version):
-        dicc = return_dict_labels(tool,version)
-        for key,value in dicc.items():
+        self.look_up = return_dict_labels(tool,version)
+        for i in self.look_up.keys():
+            self.segmentation_labels[i] = SegmentationLabel(i)
+
+        for key,value in self.look_up.items():
             # Key is the number of ID and value is (name, sus)
             name = value[0]
             sus = value[1]
@@ -174,22 +174,26 @@ class volume:
                 print("Label: ",self.segmentation_labels[i]["name"]," doesn't have name assigned")
 
     def set_label_name(self, label_id, name):
-        if label_id in self.uniq_labels:
+        ids = self.look_up.keys()
+        if label_id in ids:
             self.segmentation_labels[label_id].set_name(name)
-        else: print(f"Label ID {label_id} not found.")
+        else: print(f"Label ID {label_id} not found, check version selected")
 
     def set_label_susceptibility(self, label_id, susceptibility):
-        if label_id in self.uniq_labels:
+        ids = self.look_up.keys()
+        if label_id in ids:
             # SImilar to set_label_name
             self.segmentation_labels[label_id].set_susceptibility(susceptibility)
         else: print(f"Label ID {label_id} not found.")
     def set_label_pd(self,label_id,pd):
-        if label_id in self.uniq_labels:
+        ids = self.look_up.keys()
+        if label_id in ids:
             self.segmentation_labels[label_id].set_pd_val(pd)
         else: print(f"Label ID {label_id} not found.")
 
     def set_T2star(self, label_id, t2star):
-        if label_id in self.uniq_labels:
+        ids = self.look_up.keys()
+        if label_id in ids:
         # SImilar to set_label_name
             self.segmentation_labels[label_id].set_t2star_val(t2star)
         else:
@@ -225,6 +229,21 @@ class volume:
         if type =='t2':
             print("T2 volume comming soon!")
 
+    def check_pixels(self):
+        # Important to before going to conversion
+        # If there is a pixel that is outside of range conversion won't work
+        # because it won't be treated as a label but as a float
+        for i in range(self.dimensions[0]):
+            for j in range(self.dimensions[1]):
+                for k in range(self.dimensions[2]):
+
+                    pixel = self.volume[i, j, k]
+                    
+                    if pixel not in self.look_up.keys():
+                        print(f"Pixel with wrong value:{pixel} located at {i,j,k}")
+                        return 1
+        else:
+            return 0
 
     def create_sus_dist(self):
         # Code for create a susceptibility distribution volume
@@ -234,6 +253,7 @@ class volume:
                 for k in range(self.dimensions[2]):
 
                     pixel = self.volume[i,j,k]
+
                     label = self.segmentation_labels[pixel]
                     suscep = label.susceptibility
 

@@ -3,7 +3,6 @@
 # Huge thanks to prof. Eva Alonso Ortiz for guidence and providing reference to susceptibility values
 # I encourage to read her repo: https://github.com/evaalonsoortiz/Fourier-based-field-estimation
 def return_dict_labels(tool,version):
-    dicc = {}
     if tool == "TotalSeg_CT":
         # Using total segmentator we use follow their list for 117 labels
         # and group them up based on their effect to the B0 map impact
@@ -11,7 +10,7 @@ def return_dict_labels(tool,version):
 
         # Baseline dictionary for Total Segmentator CT
         # id : name, susceptibility_value
-        dicc: {
+        dicc= {
             0: ("air", 0.35),
             1: ("spleen",-9.05),
             2: ("kidney",-9.05), # kidney_right
@@ -153,7 +152,71 @@ def return_dict_labels(tool,version):
             return dicc
 
     if tool == 'TotalSeg_MRI':
-        pass
+        dicc = {
+            1: ("spleen", -9.05),
+            2: ("kidney", -9.05),  # kidney_right
+            3: ("kidney", -9.05),  # kidney_left
+            4: ("organ", -9.05),  # gallbladder
+            5: ("liver", -9.05),  # liver
+            6: ("organ", -9.05),  # stomach
+            7: ("organ", -9.05),  # pancreas
+            8: ("gland", -9.05),  # adrenal_gland_right
+            9: ("gland", -9.05),  # adrenal_gland_left
+            10: ("lung", 0.2),  # lung_left
+            11: ("lung", 0.2),  # lung_right
+            12: ("esophagus", -9.05),  # esophagus
+            13: ("organ", -9.05),  # small_bowel
+            14: ("organ", -9.05),  # duodenum
+            15: ("organ", -9.05),  # colon
+            16: ("organ", -9.05),  # urinary_bladder
+            17: ("organ", -9.05),  # prostate
+            18: ("bone", -9),  # sacrum
+            19: ("bone", -9),  # vertebrae
+            20: ("bone", -9),  # intervertebral_discs
+            21: ("spinal_cord", 0),  # spinal_cord
+            22: ("heart", -9.04),  # heart
+            23: ("extra", -9.04),  # aorta
+            24: ("extra", -9.04),  # inferior_vena_cava
+            25: ("extra", -9.04),  # portal_vein_and_splenic_vein
+            26: ("extra", -9.04),  # iliac_artery_left
+            27: ("extra", -9.04),  # iliac_artery_right
+            28: ("extra", -9.04),  # iliac_vena_left
+            29: ("extra", -9.04),  # iliac_vena_right
+            30: ("bone", -9),  # humerus_left
+            31: ("bone", -9),  # humerus_right
+            32: ("bone", -9),  # fibula
+            33: ("bone", -9),  # tibia
+            34: ("bone", -9),  # femur_left
+            35: ("bone", -9),  # femur_right
+            36: ("bone", -9),  # hip_left
+            37: ("bone", -9),  # hip_right
+            38: ("extra", -9.04),  # gluteus_maximus_left
+            39: ("extra", -9.04),  # gluteus_maximus_right
+            40: ("extra", -9.04),  # gluteus_medius_left
+            41: ("extra", -9.04),  # gluteus_medius_right
+            42: ("extra", -9.04),  # gluteus_minimus_left
+            43: ("extra", -9.04),  # gluteus_minimus_right
+            44: ("extra", -9.04),  # autochthon_left
+            45: ("extra", -9.04),  # autochthon_right
+            46: ("extra", -9.04),  # iliopsoas_left
+            47: ("extra", -9.04),  # iliopsoas_right
+            48: ("extra", -9.04),  # quadriceps_femoris_left
+            49: ("extra", -9.04),  # quadriceps_femoris_right
+            50: ("extra", -9.04),  # thigh_medial_compartment_left
+            51: ("extra", -9.04),  # thigh_medial_compartment_right
+            52: ("extra", -9.04),  # thigh_posterior_compartment_left
+            53: ("extra", -9.04),  # thigh_posterior_compartment_right
+            54: ("extra", -9.04),  # sartorius_left
+            55: ("extra", -9.04),  # sartorius_right
+            56: ("brain", -9.04)  # brain
+        }
+        if version == 'v1':
+            return dicc
+        if version == 'mod0':
+            # Adding similar to CT case
+            # Adds labels with "fat" label
+            pass
+
     if tool == 'ProCord_MRI':
         pass
 

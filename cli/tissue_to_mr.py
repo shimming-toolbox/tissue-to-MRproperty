@@ -1,3 +1,5 @@
+import time
+
 import click
 import logging
 import nibabel as nib
@@ -9,6 +11,7 @@ from functions.volume import volume
 from functions.utils.utils import is_nifti
 # tissue_to_mr --input [labeled_nifti] --type [choose_MR_property] --output [name=default]
 
+import time
 @click.group()
 def my_commands():
     pass
@@ -29,22 +32,33 @@ PROPERTIES = {
 def converter(input_file,segtool,version,output_file, type):
     # We need to check if the input is a  nifti file
     if is_nifti(input_file):
+        start = time.time()
         print("start")
-        logging.info(f"Creating a new volume with {type} values")
+        #logging.info(f"Creating a new volume with {type} values")
+        print(f"Creating a new volume with {type} values")
         file = nib.load(input_file)
         print("file loaded")
         new_vol = volume(file)
-        print("a")
+        print("Grouping labels")
         # Using the type:
         new_vol.group_seg_labels(segtool,version) # Automatically adding the names to known labels
-        print("b")
-        if output_file == None:
+        print("Checking pixel integrity")
+        ans = new_vol.check_pixels()
+        if ans == 0:
+            print("Converting ...")
+            if output_file == None:
 
-            new_vol.create_type_vol(type) # This creates and saves a Nifti file
+                new_vol.create_type_vol(type) # This creates and saves a Nifti file
+            else:
+                new_vol.create_type_vol(type,output_file)
+
+            print(f"Input segmented by: {segtool}, version: {version}")
+            end = time.time()
+            elapsed = end-start
+            print("Time elapsed: ",elapsed)
         else:
-            new_vol.create_type_vol(type,output_file)
+            print("Pixel integrity error")
 
-        print(f"Input segmented by: {segtool}, version: {version}")
     else:
         print("Input must be a Nifti file (.nii or .nii.gz extensions)")
 
