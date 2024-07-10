@@ -238,10 +238,16 @@ class volume:
                 for k in range(self.dimensions[2]):
 
                     pixel = self.volume[i, j, k]
-                    
+
                     if pixel not in self.look_up.keys():
                         print(f"Pixel with wrong value:{pixel} located at {i,j,k}")
-                        return 1
+                        print("(starts on 0,0,0)")
+                        rem = str(input("Do you want to delete th pixel? [y] [n]"))
+                        if rem == "y":
+                            self.volume[i,j,k] = 0
+                            return 0
+                        else:
+                            return 1
         else:
             return 0
 
