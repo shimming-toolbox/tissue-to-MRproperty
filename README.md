@@ -25,12 +25,6 @@ Navigate to the project directory
 cd tissue-to-MRproperty
 ```
 
-(temporary) Go to the develop branch
-
-```
-git checkout dev/v1
-```
-
 Install the package
 
 ```
