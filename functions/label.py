@@ -26,6 +26,8 @@ class SegmentationLabel:
             "spinal_cord":[None, None, None, 76, 59.5], # From the new label 256
             # PD & T2* GM + WM / 2 =>  82 + 70 /2 =    , T2star = 66 + 53 / 2 =
             "sc_csf": [None, 3200, 2000, 1, 100], # From the new label 289
+            "sc_wm": [None, None, None, 0, 0],
+            "sc_gm": [None, None, None, 0, 0],
 
             "fat": [None, 380, 108, 35, 140], # T2star value : 0.5*70e-3 # Daniel PD=90
             "liver": [None, 809, 34, 34/2, 70],
@@ -35,8 +37,7 @@ class SegmentationLabel:
             "brain":[None,None,None, 60.8, 90],
             "white_matter": [None, None, None, 53.5/2,0],
             "gray_matter": [None, None, None, 66, 0],
-            "sc_wm":[None, None, None, 0, 0],
-            "sc_gm":[None, None, None, 0, 0],
+
             "heart":[1000 ,1300, 55, 18.5/2, 85],
             "kidney":[None, 1190, 56, 65.4/2, 70],
             "pancreas":[None, 725,43, 37, 75],
