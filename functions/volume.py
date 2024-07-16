@@ -242,10 +242,14 @@ class volume:
                     if pixel not in self.look_up.keys():
                         print(f"Pixel with wrong value:{pixel} located at {i,j,k}")
                         print("(starts on 0,0,0)")
-                        rem = str(input("Do you want to delete th pixel? [y] [n]"))
+                        rem = str(input("Do you want to delete the pixel? [y] [n]"))
                         if rem == "y":
                             self.volume[i,j,k] = 0
                             return 0
+                        if rem == "n":
+                            print("Maybe you want to change the value?")
+                            rem2 = int(input("If so, choose the value: "))
+                            self.volume[i, j, k] = rem2
                         else:
                             return 1
         else:
