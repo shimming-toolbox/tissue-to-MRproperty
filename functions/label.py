@@ -25,9 +25,10 @@ class SegmentationLabel:
 
             "spinal_cord":[None, None, None, 76, 59.5], # From the new label 256
             # PD & T2* GM + WM / 2 =>  82 + 70 /2 =    , T2star = 66 + 53 / 2 =
-            "sc_csf": [None, 3200, 2000, 1, 100], # From the new label 289
-            "sc_wm": [None, None, None, 0, 0],
-            "sc_gm": [None, None, None, 0, 0],
+            
+            "sc_csf": [None, 3200, 2000, 1000, 100], # From the new label 289
+            "sc_wm": [None, None, None, 53, 70], # From NumericalModel - Eva
+            "sc_gm": [None, None, None, 66, 82], # From Numerical Model - Eva
 
             "fat": [None, 380, 108, 35, 140], # T2star value : 0.5*70e-3 # Daniel PD=90
             "liver": [None, 809, 34, 34/2, 70],
@@ -35,8 +36,8 @@ class SegmentationLabel:
             # In this initial segmentation the whole brain will be considered 60% GM and 40% WM
             # Given the values a ponderated estimation is 60.8 ms
             "brain":[None,None,None, 60.8, 90],
-            "white_matter": [None, None, None, 53.5/2,0],
-            "gray_matter": [None, None, None, 66, 0],
+            "white_matter": [None, None, None, 53 ,70], # This is the brain WM
+            "gray_matter": [None, None, None, 66, 82], # This is the brain GM
 
             "heart":[1000 ,1300, 55, 18.5/2, 85],
             "kidney":[None, 1190, 56, 65.4/2, 70],
@@ -66,15 +67,17 @@ class SegmentationLabel:
     # Questions and answers in MRI website : Courtesy of Allen D. Elster, MRIquestions.com
     ########### For some T2star values #############
     # Some T2 star values from the literature are at 1.5T: liver, spleen, kidney, WM and GM, cartilage
-    # T2 star values should decrease with higher field strength
+    # T2 star values should decrease with higher field strength due to faster spin dephase
     # For the purpose of this code, the values at 1.5T are assumed to half at 3T
+    # T2 star value of lungs from : Wu, X., Song, H., Stenger, V.A., Gach, H.M. (2023). Quantification of B0 Inhomogeneities in the Abdomen at 3 T. In: Selvaraj, H., Chmaj, G., Zydek, D. (eds) Advances in Systems Engineering. ICSEng 2023. Lecture Notes in Networks and Systems, vol 761. Springer, Cham. https://doi.org/10.1007/978-3-031-40579-2_11
+
 
     # Cristina Rossi, Andreas Boss, Michael Haap, Petros Martirosian, Claus D. Claussen, Fritz Schick, Whole-body T2⁎ mapping at 1.5 T, Magnetic Resonance Imaging, Volume 27, Issue 4, 2009, Pages 489-496, ISSN 0730-725X, https://doi.org/10.1016/j.mri.2008.08.004.
     # For brain T2star values: Andrew M. Peters, Matthew J. Brookes, Frank G. Hoogenraad, Penny A. Gowland, Susan T. Francis, Peter G. Morris, Richard Bowtell, T2* measurements in human brain at 1.5, 3 and 7 T,
     # Magnetic Resonance Imaging, Volume 25, Issue 6, 2007, Pages 748-753, ISSN 0730-725X, https://doi.org/10.1016/j.mri.2007.02.014.
 
     # For Proton density:
-    # Proton density should be independent of field strenght, we are using a value relative to water being 100
+    # Proton density should be independent of field strength, we are using a value relative to water being 100
     #
 
 
