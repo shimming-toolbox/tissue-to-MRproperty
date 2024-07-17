@@ -233,6 +233,7 @@ class volume:
         # Important to before going to conversion
         # If there is a pixel that is outside of range conversion won't work
         # because it won't be treated as a label but as a float
+        flag = 0 # Flag to save in case there where changes
         for i in range(self.dimensions[0]):
             for j in range(self.dimensions[1]):
                 for k in range(self.dimensions[2]):
@@ -240,11 +241,10 @@ class volume:
                     pixel = self.volume[i, j, k]
 
                     if pixel not in self.look_up.keys():
+                        flag = 1
                         print(f"Pixel with wrong value: {pixel} located at {i,j,k}")
                         print("(indexed from [0,0,0])")
-                        rem = str(input("Do you want to delete the pixel? [y] [n]: "))
-                        if rem == "y":
-                            pixel = 0
+                        rem = str(input("Do you want to delete the pixel? [Y] [n]: "))
                         if rem == "n":
                             print("Maybe you want to change the value?")
                             rem2 = int(input("If so, choose the value: "))
@@ -253,12 +253,21 @@ class volume:
                             else:
                                 print("Number not in look up table")
                                 return 1
-                        else:
-                            print("Please select [y] or [n]")
-                            print("If you want to change the value use [n] first")
-                            return 1
+                        if rem == "Y" or rem == "y":
+                            self.volume[i,j,k] = 0
+
         else:
-            return 0
+            if flag == 1:
+                print("Saving corrected volume for later usage!")
+                tmp_img = nib.Nifti1Image(self.volume, affine = self.nifti.affine)
+                path = os.path.join('output',"corrected_pixels.nii.gz")
+                nib.save(tmp_img,path)
+                del tmp_img
+                del path
+                return 0
+            else:
+                print("Input has correct pixel integrity!")
+                return 0
 
     def create_sus_dist(self):
         # Code for create a susceptibility distribution volume
