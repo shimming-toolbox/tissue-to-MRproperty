@@ -244,7 +244,7 @@ class volume:
                         print("(indexed from [0,0,0])")
                         rem = str(input("Do you want to delete the pixel? [y] [n]: "))
                         if rem == "y":
-                            self.volume[i,j,k] = 0
+                            pixel = 0
                         if rem == "n":
                             print("Maybe you want to change the value?")
                             rem2 = int(input("If so, choose the value: "))

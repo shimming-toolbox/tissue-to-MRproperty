@@ -25,7 +25,7 @@ class SegmentationLabel:
 
             "spinal_cord":[None, None, None, 76, 59.5], # From the new label 256
             # PD & T2* GM + WM / 2 =>  82 + 70 /2 =    , T2star = 66 + 53 / 2 =
-            
+
             "sc_csf": [None, 3200, 2000, 1000, 100], # From the new label 289
             "sc_wm": [None, None, None, 53, 70], # From NumericalModel - Eva
             "sc_gm": [None, None, None, 66, 82], # From Numerical Model - Eva
