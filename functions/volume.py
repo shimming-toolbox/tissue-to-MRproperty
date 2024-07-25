@@ -233,7 +233,7 @@ class volume:
         # Important to before going to conversion
         # If there is a pixel that is outside of range conversion won't work
         # because it won't be treated as a label but as a float
-        flag = 0 # Flag to save in case there where changes
+        flag = 0 # Flag to save in case there were changes
         for i in range(self.dimensions[0]):
             for j in range(self.dimensions[1]):
                 for k in range(self.dimensions[2]):

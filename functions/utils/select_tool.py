@@ -2,6 +2,8 @@
 
 # Huge thanks to prof. Eva Alonso Ortiz for guidence and providing reference to susceptibility values
 # I encourage to read her repo: https://github.com/evaalonsoortiz/Fourier-based-field-estimation
+
+# Important: When editing this lookup tables don't forget to edit the color map for itk and fsl
 def return_dict_labels(tool,version):
     if tool == "TotalSeg_CT":
         # Using total segmentator we use follow their list for 117 labels
