@@ -25,8 +25,8 @@ PROPERTIES = {
 }
 @click.command()
 @click.argument("input_file", required=True) #, help="Input must be segmented label nifti",type=click.Path(exists=True))
-@click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI']), help="State what segmentator was used")
-@click.option('-v',"--version",required=True,type=click.Choice(['v2','mod0','mod1','mod2']), help="Select the version of your segmentation file")
+@click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles']), help="State what segmentator was used")
+@click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2']), help="Select the version of your segmentation file")
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
 @click.argument('output_file', required=False, type=click.Path())
 def converter(input_file,segtool,version,output_file, type):
