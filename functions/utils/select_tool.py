@@ -231,6 +231,7 @@ def return_dict_labels(tool,version):
         pass
     if tool == "charles":
         dicc = {
+            0: ("air", 0.35),  # background
             1: ("water", -9.05),  # body
             2: ("air", 0.35),  # sinus
             3: ("air", 0.35),  # ear_canal
