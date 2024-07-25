@@ -51,7 +51,9 @@ class SegmentationLabel:
             "gland":[None, None, None, 50, 100],
             # There are some organs that don't have enough documentation on the literature to complete
             # the required values so an estimation is used for these:
-            "extra" : [None, 750, 50, 35,120]
+            "extra" : [None, 750, 50, 35,120],
+
+            "sinus" :[None, None, None, None, None]
         }
     # Literature values from:
     # Jorge Zavala Bojorquez, Stéphanie Bricq, Clement Acquitter, François Brunotte, Paul M. Walker, Alain Lalande, What are normal relaxation times of tissues at 3 T?, Magnetic Resonance Imaging, Volume 35, 2017, Pages 69-80, ISSN 0730-725X, https://doi.org/10.1016/j.mri.2016.08.021.

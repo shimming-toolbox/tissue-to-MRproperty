@@ -227,6 +227,22 @@ def return_dict_labels(tool,version):
 
     if tool == 'ProCord_MRI':
         pass
+    if tool == "charles":
+        dicc = {
+            1: ("water", -9.05),  # body
+            2: ("air", 0.35),  # sinus
+            3: ("air", 0.35),  # ear_canal
+            4: ("trachea", 0.2),  # trachea
+            5: ("lung", 0.2),  # lung_left
+            6: ("lung", 0.2),  # lung_right
+            7: ("bone", -11.5),  # skull
+            8: ("water", -9.05),  # eyes
+            9: ("bone", -11.5),  # vertebrates
+            10: ("cartilage", -9.055),  # discs
+        }
+        if version == 'v1':
+            return dicc
+
 
     else:
         print("This tool hasn't been implemented yet.")
