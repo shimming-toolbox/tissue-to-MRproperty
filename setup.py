@@ -31,6 +31,8 @@ setup(
         "treelib",
         "pytest",
         "jupyterlab",
-        "scipy"
+        "scipy",
+
+        "scikit-image"
     ]
 )
