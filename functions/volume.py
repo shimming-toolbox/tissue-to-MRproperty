@@ -433,8 +433,10 @@ class volume:
             centroid = region.centroid
             label_id = region.label
             print(label_id)
+            print(type(label_id))
             # Now according to the label id, get the susceptibility value
-            value = self.segmentation_labels[label_id]
+            lab = self.segmentation_labels[label_id]
+            value = lab.sus
             sigma = 10
             gaussian = self.create_gaussian(self.dimensions, centroid, sigma)
             self.gaussian_phantom += gaussian * value
