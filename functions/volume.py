@@ -5,7 +5,6 @@ import nibabel as nib
 from functions.utils.get_dic_values import to_csv_sus
 import os
 from functions.utils.select_tool import return_dict_labels
-from functions.utils.utils import create_gaussian
 from skimage.measure import label, regionprops
 
 # Parent class for the creation of a non-finite biomechanical model of the body
@@ -398,6 +397,26 @@ class volume:
         # It might be usefull to get this inputs from different researchers and testing
         pass
 
+    def create_gaussian(self, size, center, sigma):
+
+        """
+        Create a gaussian distribution
+
+        Parameters:
+            size: tuple of the dimensions of the output array (height, weight)
+            center: tuple
+            sigma: float for the standard deviation of the Gaussian distribution
+
+        Returns:
+
+        """
+        x = np.linspace(0, size[1] - 1, size[1])
+        y = np.linspace(0, size[0] - 1, size[0])
+
+        x, y = np.meshgrid(x, y)
+        gaussian = np.exp(-((x - center[1]) ** 2 + (y - center[0]) ** 2) / (2 * sigma ** 2))
+
+        return gaussian
     def calc_centroid(self,type):
         '''
         Calculation of centroid for every label (test)
@@ -417,7 +436,7 @@ class volume:
             # Now according to the label id, get the susceptibility value
             value = self.look_up[label_id].key()
             sigma = 10
-            gaussian = create_gaussian(self.dimensions, centroid, sigma)
+            gaussian = self.create_gaussian(self.dimensions, centroid, sigma)
             self.gaussian_phantom += gaussian * value
 
     def __repr__(self):
