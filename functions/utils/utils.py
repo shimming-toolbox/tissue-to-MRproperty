@@ -2,7 +2,7 @@ import numpy as np
 import nibabel as nib
 import argparse
 import scipy
-from skimage.measure import label, regionprops
+
 def is_nifti(filepath):
     """
     Check if the given filepath represents a NIfTI file.

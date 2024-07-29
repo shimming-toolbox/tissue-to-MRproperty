@@ -5,6 +5,8 @@ import nibabel as nib
 from functions.utils.get_dic_values import to_csv_sus
 import os
 from functions.utils.select_tool import return_dict_labels
+from functions.utils.utils import create_gaussian
+from skimage.measure import label, regionprops
 
 # Parent class for the creation of a non-finite biomechanical model of the body
 class volume:
@@ -24,6 +26,7 @@ class volume:
         self.t2star_vol = np.zeros(self.dimensions)
         self.pd_dist = np.zeros(self.dimensions)
         self.deltaB0 = np.zeros(self.dimensions)
+        self.gaussian_phantom = np.zeros(self.dimensions)
         # The dictionary has keys for every id number and each value 
         # is the corresponding SegmentationLabel daughter class
 
@@ -395,21 +398,27 @@ class volume:
         # It might be usefull to get this inputs from different researchers and testing
         pass
 
-    def calc_centroid(self):
+    def calc_centroid(self,type):
         '''
         Calculation of centroid for every label (test)
         Args:
             labels_img: Inputs a fdata from a nifti of labeled Nifti file
-
+            type: Choose what to create a gaussian distributed phantom. Can be: t2s, t2, t1, sus or pd
         Returns:
             centroid of all the labels inside labels_img
         '''
-        dimensions = self.dimensions
-        space = np.zeros(dimensions)
+        labeled_regions = label(self.volume)
 
-        for label in self.look_up.keys():
+        for region in regionprops(labeled_regions):
             # iterating over each key ID
-            centroid = label.centroid
-            
+            centroid = region.centroid
+            label_id = region.label
+            print(label_id)
+            # Now according to the label id, get the susceptibility value
+            value = self.look_up[label_id].key()
+            sigma = 10
+            gaussian = create_gaussian(self.dimensions, centroid, sigma)
+            self.gaussian_phantom += gaussian * value
+
     def __repr__(self):
         return f"SegmentationLabelManager == Volume"
