@@ -394,5 +394,22 @@ class volume:
         # Think about a more efficient way because the user should be able to change the values
         # It might be usefull to get this inputs from different researchers and testing
         pass
+
+    def calc_centroid(self):
+        '''
+        Calculation of centroid for every label (test)
+        Args:
+            labels_img: Inputs a fdata from a nifti of labeled Nifti file
+
+        Returns:
+            centroid of all the labels inside labels_img
+        '''
+        dimensions = self.dimensions
+        space = np.zeros(dimensions)
+
+        for label in self.look_up.keys():
+            # iterating over each key ID
+            centroid = label.centroid
+            
     def __repr__(self):
         return f"SegmentationLabelManager == Volume"
