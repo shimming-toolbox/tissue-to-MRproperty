@@ -431,14 +431,14 @@ class volume:
         for region in regionprops(labeled_regions):
             # iterating over each key ID
             centroid = region.centroid
-            centroid_pixel = (int(centroid[0],int(centroid[1])))
+            centroid_pixel = (int(centroid[0]), int(centroid[1]))
             # Now according to the label id, get the susceptibility value
             lab = self.segmentation_labels[centroid_pixel]
             if type == 'sus':
                 value = lab.susceptibility
 
 
-            
+
             sigma = 10
             gaussian = self.create_gaussian(self.dimensions, centroid, sigma)
             self.gaussian_phantom += gaussian * value
