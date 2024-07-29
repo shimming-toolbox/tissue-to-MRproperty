@@ -432,8 +432,9 @@ class volume:
             # iterating over each key ID
             centroid = region.centroid
             centroid_pixel = (int(centroid[0]), int(centroid[1]), int(centroid[2]))
+            pixel = self.volume[centroid_pixel]
             # Now according to the label id, get the susceptibility value
-            lab = self.segmentation_labels[centroid_pixel]
+            lab = self.segmentation_labels[pixel]
             if type == 'sus':
                 value = lab.susceptibility
 
