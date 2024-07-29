@@ -431,9 +431,8 @@ class volume:
         for region in regionprops(labeled_regions):
             # iterating over each key ID
             centroid = region.centroid
-            label_id = region.label
+            label_id = int(region.label)
             print(label_id)
-            print(type(label_id))
             # Now according to the label id, get the susceptibility value
             lab = self.segmentation_labels[label_id]
             value = lab.sus
