@@ -410,13 +410,11 @@ class volume:
         Returns:
 
         """
-        x = np.linspace(0, size[1] - 1, size[1])
-        y = np.linspace(0, size[0] - 1, size[0])
-
-        x, y = np.meshgrid(x, y)
-        gaussian = np.exp(-((x - center[1]) ** 2 + (y - center[0]) ** 2) / (2 * sigma ** 2))
+        z, y, x = np.indices(size)
+        gaussian = np.exp(-((x - center[2]) ** 2 + (y - center[1]) ** 2 + (z - center[0]) ** 2) / (2 * sigma ** 2))
 
         return gaussian
+
     def calc_centroid(self,type):
         '''
         Calculation of centroid for every label (test)
