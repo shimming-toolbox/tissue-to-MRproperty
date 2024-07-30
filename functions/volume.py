@@ -252,10 +252,8 @@ class volume:
                         if rem == "n":
                             print("Maybe you want to change the value?")
                             rem2 = int(input("If so, choose the value: "))
-                            print("Changed value to: ", rem2)
-                            self.volume[i, j, k] = rem2
-                            
-                            if rem2 in self.look_up.keys():
+
+                            if rem2 in self.segmentation_labels:
                                 print("Changed value to: ", rem2)
                                 self.volume[i, j, k] = rem2
 
