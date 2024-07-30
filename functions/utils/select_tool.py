@@ -6,13 +6,16 @@
 # Important: When editing this lookup tables don't forget to edit the color map for itk and fsl
 def return_dict_labels(tool,version):
     if tool == "TotalSeg_CT":
+
         # Using total segmentator we use follow their list for 117 labels
         # and group them up based on their effect to the B0 map impact
         # link: https://github.com/wasserth/TotalSegmentator/blob/master/totalsegmentator/map_to_binary.py
 
         # Baseline dictionary for Total Segmentator CT
         # id : name, susceptibility_value
+
         dicc= {
+
             0: ("air", 0.35),
             1: ("spleen",-9.05),
             2: ("kidney",-9.05), # kidney_right
@@ -132,12 +135,15 @@ def return_dict_labels(tool,version):
             116: ("bone",-9), # sternum
             117: ("bone",-9) # costal_cartilages
         }
+
         if version == "v2":
             return dicc
+
         if version =="mod0":
             # This means it has labes + fat = Whole body
             dicc[264]=("fat",-8.92)
             return dicc
+
         if version =="mod1":
             # This means its Whole body + Spinal Cord CSF to differentiate Spinal Canal
             # from spinal cord
@@ -145,6 +151,7 @@ def return_dict_labels(tool,version):
             dicc[256]=("spinal_cord",-9.055)
             dicc[289]=("sc_csf",-9.05)
             return dicc
+
         if version=="mod2":
             # This means it has CSF + Spinal Cord + WM/GM segmentation instead of Spina Canal
             dicc[264]=("fat",-8.92)
@@ -162,7 +169,9 @@ def return_dict_labels(tool,version):
             return dicc
 
     if tool == 'TotalSeg_MRI':
+
         dicc = {
+
             1: ("spleen", -9.05),
             2: ("kidney", -9.05),  # kidney_right
             3: ("kidney", -9.05),  # kidney_left
@@ -220,8 +229,10 @@ def return_dict_labels(tool,version):
             55: ("extra", -9.04),  # sartorius_right
             56: ("brain", -9.04)  # brain
         }
+
         if version == 'v1':
             return dicc
+
         if version == 'mod0':
             # Adding similar to CT case
             # Adds labels with "fat" label
@@ -229,8 +240,11 @@ def return_dict_labels(tool,version):
 
     if tool == 'ProCord_MRI':
         pass
+
     if tool == "charles":
+
         dicc = {
+
             0: ("air", 0.35),  # background
             1: ("water", -9.05),  # body
             2: ("air", 0.35),  # sinus

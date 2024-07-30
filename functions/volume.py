@@ -253,7 +253,7 @@ class volume:
                             print("Maybe you want to change the value?")
                             rem2 = int(input("If so, choose the value: "))
 
-                            if rem2 in self.look_up:
+                            if rem2 in self.look_up.keys():
                                 print("Changed value to: ", rem2)
                                 self.volume[i, j, k] = rem2
 
@@ -265,7 +265,9 @@ class volume:
                             self.volume[i,j,k] = 0
 
         else:
+
             if flag == 1:
+
                 print("Saving corrected volume for later usage!")
                 tmp_img = nib.Nifti1Image(self.volume, affine = self.nifti.affine)
                 path = os.path.join('output',"corrected_pixels.nii.gz")
@@ -273,6 +275,7 @@ class volume:
                 del tmp_img
                 del path
                 return 0
+
             else:
                 print("Input has correct pixel integrity!")
                 return 0
