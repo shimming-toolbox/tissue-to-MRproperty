@@ -440,7 +440,7 @@ class volume:
         label_counts = dict(zip(unique_labels,counts))
         if self.look_up is {}:
             print("Please define a tool for a lookup table")
-            
+
         else:
             for lab,count in label_counts.items():
                 #print(f"Label {label} : {count} pixels")
@@ -451,10 +451,12 @@ class volume:
                 else:
                     self.label_counts[label_name] = count
 
-        # Now depending on the tool used we can group them up
+        # Now depending on the tool used we grouped them up
+        # And for visualizing, sorting might be good
+        sorted_label_counts = sorted(self.label_counts.items(), key = lambda item: item[1], reverse=True)
 
 
-        for name, count in self.label_counts.items():
+        for name, count in sorted_label_counts.items():
             print(f"Label name: {name}: {count} pixels")
 
     def __repr__(self):
