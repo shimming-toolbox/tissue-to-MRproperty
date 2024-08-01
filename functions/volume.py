@@ -456,7 +456,7 @@ class volume:
         sorted_label_counts = sorted(self.label_counts.items(), key = lambda item: item[1], reverse=True)
 
 
-        for name, count in sorted_label_counts.items():
+        for name, count in sorted_label_counts:
             print(f"Label name: {name}: {count} pixels")
 
     def __repr__(self):
