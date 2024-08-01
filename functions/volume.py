@@ -248,13 +248,14 @@ class volume:
                         print(f"Pixel with wrong value: {pixel} located at {i,j,k}")
                         print("(indexed from [0,0,0])")
                         rem = str(input("Do you want to delete the pixel? [Y] [n]: "))
+                        print("[Y] continues checking pixels, [n] lets you edit it")
 
                         if rem == "n":
                             print("Maybe you want to change the value?")
-                            rem2 = int(input("If so, choose the value: "))
+                            rem2 = int(input("Choose the value: "))
 
                             if rem2 in self.segmentation_labels:
-                                print("Changed value to: ", rem2)
+                                print("Changed value to: ",rem2)
                                 self.volume[i, j, k] = rem2
 
                             else:
@@ -424,31 +425,22 @@ class volume:
 
         return gaussian
 
-    def calc_centroid(self,type):
+    def calc_regions(self):
         '''
-        Calculation of centroid for every label (test)
-        Args:
-            labels_img: Inputs a fdata from a nifti of labeled Nifti file
-            type: Choose what to create a gaussian distributed phantom. Can be: t2s, t2, t1, sus or pd
+        For  creating a gaussian distribution we need to group and count every label
+
         Returns:
-            centroid of all the labels inside labels_img
+
         '''
-        labeled_regions = label(self.volume)
+        unique_labels, counts = np.unique(self.volume, return_counts=True)
+        label_counts = dict(zip(unique_labels,counts))
+        
+        for label,count in label_counts.items():
+            print(f"Label{label} : {count} pixels")
 
-        for region in regionprops(labeled_regions):
-            # iterating over each key ID
-            centroid = region.centroid
-            centroid_pixel = (int(centroid[0]), int(centroid[1]), int(centroid[2]))
-            pixel = self.volume[centroid_pixel]
-            # Now according to the label id, get the susceptibility value
-            lab = self.segmentation_labels[pixel]
-            if type == 'sus':
-                value = lab.susceptibility
 
-            sigma = 10
-            gaussian = self.create_gaussian(self.dimensions, centroid, sigma)
-            self.gaussian_phantom += gaussian * value
-            print(f"Centroid Pixel: {centroid_pixel}")
+
+
 
     def __repr__(self):
         return f"SegmentationLabelManager == Volume"
