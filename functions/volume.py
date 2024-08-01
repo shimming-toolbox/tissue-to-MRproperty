@@ -33,6 +33,9 @@ class volume:
         self.look_up = {}
         # This is the Convention Dictionary for labels_id - names - sus_values
 
+        # Creating a dictionary that stores the counts for each label based on their name
+        self.label_counts = {}
+
         # Creating folders for the code
         if not os.path.exists("output"):
             os.makedirs('output')
@@ -428,19 +431,31 @@ class volume:
     def calc_regions(self):
         '''
         For  creating a gaussian distribution we need to group and count every label
+        Must be run after defining a tool in group_seg_labels
 
         Returns:
 
         '''
         unique_labels, counts = np.unique(self.volume, return_counts=True)
         label_counts = dict(zip(unique_labels,counts))
-        
-        for label,count in label_counts.items():
-            print(f"Label{label} : {count} pixels")
+        if self.look_up is {}:
+            print("Please define a tool for a lookup table")
+            
+        else:
+            for lab,count in label_counts.items():
+                #print(f"Label {label} : {count} pixels")
+                label_name = self.look_up.get(lab, ('unknown',0))[0] # unknown is a precaution value
+                # just in case the label isn't found in the lookup table dictionary.
+                if label_name in self.label_counts:
+                    self.label_counts[label_name] += count
+                else:
+                    self.label_counts[label_name] = count
+
+        # Now depending on the tool used we can group them up
 
 
-
-
+        for name, count in self.label_counts.items():
+            print(f"Label name: {name}: {count} pixels")
 
     def __repr__(self):
         return f"SegmentationLabelManager == Volume"
