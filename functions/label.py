@@ -4,6 +4,7 @@ import numpy as np
 
 class SegmentationLabel:
     def __init__(self, label_id, name=None):
+
         self.label_id = label_id
         self.name = name
         self.susceptibility = None
@@ -18,6 +19,7 @@ class SegmentationLabel:
         # The values of T2* and T2 are in ms
         # REMEMBER TO UPDATE on select_tool.py everytime a value is changed
         self.relax_values = {
+
             "air": [0, 0, 0, 0.01, 0.01],
             "bone": [None, 1204, 53, 33.03, 117],  # M0 is often not specified for bone
             "lungs": [None, 1270, None, 1, 0.1],  # Air in lungs doesn't have M0, T2 values?

@@ -33,7 +33,7 @@ class volume:
         # to check ids depending on the tool selected
         self.look_up = {}
         # This is the Convention Dictionary for labels_id - names - sus_values
-        self.relax_values = {}
+        self.relax_values = get_relax_values()
         # This is a dictionary to get the relaxation values used in label.py
 
         # Creating a dictionary that stores the counts for each label based on their name
@@ -55,7 +55,7 @@ class volume:
 
     def group_seg_labels(self,tool,version):
         self.look_up = return_dict_labels(tool,version)
-        self.relax_values = get_relax_values()
+
         # Function to get the relaxation values from label
         for i in self.look_up.keys():
             self.segmentation_labels[i] = SegmentationLabel(i)
