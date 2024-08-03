@@ -5,7 +5,6 @@ import nibabel as nib
 from functions.utils.get_dic_values import to_csv_sus
 import os
 from functions.utils.select_tool import return_dict_labels
-from functions.utils.utils import get_relax_values
 from skimage.measure import label, regionprops
 
 # Parent class for the creation of a non-finite biomechanical model of the body
@@ -33,7 +32,7 @@ class volume:
         # to check ids depending on the tool selected
         self.look_up = {}
         # This is the Convention Dictionary for labels_id - names - sus_values
-        self.relax_values = get_relax_values()
+        self.relax_values = SegmentationLabel.get_relax_values()
         # This is a dictionary to get the relaxation values used in label.py
 
         # Creating a dictionary that stores the counts for each label based on their name
