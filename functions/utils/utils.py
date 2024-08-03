@@ -20,7 +20,6 @@ def is_nifti(filepath):
 
 def get_relax_values():
 
-
     relax = {
 
         "air": [0, 0, 0, 0.01, 0.01],
