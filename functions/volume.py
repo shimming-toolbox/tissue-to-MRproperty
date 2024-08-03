@@ -32,6 +32,8 @@ class volume:
         # to check ids depending on the tool selected
         self.look_up = {}
         # This is the Convention Dictionary for labels_id - names - sus_values
+        self.relax_values = {}
+        # This is a dictionary to get the relaxation values used in label.py
 
         # Creating a dictionary that stores the counts for each label based on their name
         self.label_counts = {}
@@ -51,6 +53,8 @@ class volume:
 
     def group_seg_labels(self,tool,version):
         self.look_up = return_dict_labels(tool,version)
+        self.relax_values = return_dict_labels("relax_values",'')
+        # Function to get the relaxation values from label
         for i in self.look_up.keys():
             self.segmentation_labels[i] = SegmentationLabel(i)
 
@@ -446,7 +450,17 @@ class volume:
 
         for l, count in self.label_counts.items():
             # get the MR property desired
-            property = l.get_type(type)
+            # l is the name (as a str) of the label
+
+            if type == "sus":
+                property = self.look_up.get(l, ('unknown',0))[1]
+            if type == "t2s":
+                property = self.relax_values[l][3]
+            if type == "t2":
+                property = self.relax_values[l][2]
+            if type == "t1":
+                property = self.relax_values[l][1]
+
             label_gaussians[l] = self.calc_gauss(count, mean = property)
             # This way for every label we have a gaussian distribution
 

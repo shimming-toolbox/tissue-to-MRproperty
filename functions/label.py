@@ -16,6 +16,7 @@ class SegmentationLabel:
 
         # Key is the name and value is ordered: M0, T1, T2, T2*, PD
         # The values of T2* and T2 are in ms
+        # REMEMBER TO UPDATE on select_tool.py everytime a value is changed
         self.relax_values = {
             "air": [0, 0, 0, 0.01, 0.01],
             "bone": [None, 1204, 53, 33.03, 117],  # M0 is often not specified for bone
@@ -131,7 +132,6 @@ class SegmentationLabel:
             return self.T1_val
         if type == "t2":
             return self.T2_val
-
 
     def __str__(self):
         # Add the latest attributes additioned to the class
