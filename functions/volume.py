@@ -5,6 +5,7 @@ import nibabel as nib
 from functions.utils.get_dic_values import to_csv_sus
 import os
 from functions.utils.select_tool import return_dict_labels
+from utils.utils import get_relax_values
 from skimage.measure import label, regionprops
 
 # Parent class for the creation of a non-finite biomechanical model of the body
@@ -54,7 +55,7 @@ class volume:
 
     def group_seg_labels(self,tool,version):
         self.look_up = return_dict_labels(tool,version)
-        self.relax_values = return_dict_labels("relax_values",'')
+        self.relax_values = get_relax_values()
         # Function to get the relaxation values from label
         for i in self.look_up.keys():
             self.segmentation_labels[i] = SegmentationLabel(i)
@@ -445,21 +446,21 @@ class volume:
         for name, count in sorted_label_counts:
             print(f"Label name: {name}: {count} pixels")
 
-    def create_gauss_dist(self,type):
+    def create_gauss_dist(self,prop):
         # For input restrictions of type, see Segmentation Label
 
         for l, count in self.label_counts.items():
             # get the MR property desired
             # l is the name (as a str) of the label
 
-            if type == "sus":
+            if prop == "sus":
                 property = self.look_up.get(l, ('unknown',0))[1]
                 print(self.look_up.get(l, ('unknown',0))[0], self.look_up.get(l, ('unknown',0))[1])
-            if type == "t2s":
+            if prop == "t2s":
                 property = self.relax_values[l][3]
-            if type == "t2":
+            if prop == "t2":
                 property = self.relax_values[l][2]
-            if type == "t1":
+            if prop == "t1":
                 property = self.relax_values[l][1]
 
             self.label_gaussians[l] = self.calc_gauss(num_pixels=count, mean = property)
