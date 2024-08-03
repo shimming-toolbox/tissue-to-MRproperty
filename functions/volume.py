@@ -410,34 +410,16 @@ class volume:
         # It might be usefull to get this inputs from different researchers and testing
         pass
 
-    def create_gaussian(self, size, center, sigma):
-
-        """
-        Create a gaussian distribution
-
-        Parameters:
-            size: tuple of the dimensions of the output array (height, weight)
-            center: tuple
-            sigma: float for the standard deviation of the Gaussian distribution
-
-        Returns:
-
-        """
-        z, y, x = np.indices(size)
-        gaussian = np.exp(-((x - center[2]) ** 2 + (y - center[1]) ** 2 + (z - center[0]) ** 2) / (2 * sigma ** 2))
-
-        return gaussian
+    def calc_gauss(self, num_pixels, mean = 0, std_dev = 1):
+        return np.random.normal(loc=mean, scale=std_dev, size=num_pixels)
 
     def calc_regions(self):
-        '''
-        For  creating a gaussian distribution we need to group and count every label
-        Must be run after defining a tool in group_seg_labels
+        #For  creating a gaussian distribution we need to group and count every label
+        #Must be run after defining a tool in group_seg_labels
 
-        Returns:
-
-        '''
         unique_labels, counts = np.unique(self.volume, return_counts=True)
         label_counts = dict(zip(unique_labels,counts))
+
         if self.look_up is {}:
             print("Please define a tool for a lookup table")
 
@@ -455,9 +437,51 @@ class volume:
         # And for visualizing, sorting might be good
         sorted_label_counts = sorted(self.label_counts.items(), key = lambda item: item[1], reverse=True)
 
-
         for name, count in sorted_label_counts:
             print(f"Label name: {name}: {count} pixels")
+
+    def create_gauss_dist(self,type):
+        # For input restrictions of type, see Segmentation Label
+        label_gaussians = {}
+
+        for l, count in self.label_counts.items():
+            # get the MR property desired
+            property = l.get_type(type)
+            label_gaussians[l] = self.calc_gauss(count, mean = property)
+            # This way for every label we have a gaussian distribution
+
+        for i in range(self.dimensions[0]):
+            for j in range(self.dimensions[1]):
+                for k in range(self.dimensions[2]):
+
+                    pixel = self.volume[i,j,k]
+                    label = self.segmentation_labels[pixel]
+                    # Now randomly select a value from the gaussian distribution
+                    gaussian_values = label_gaussians[label]
+                    value = np.random.choice(gaussian_values)
+                    self.gaussian_phantom[i,j,k] = value
+        # Lastly add the gaussian phantom to a Nifti
+        # And save it to output folder
+
+    def save_gauss_dist(self,type, output_name="default"):
+        #Saving the gaussian distribution with type defined
+        if type =='sus':
+
+            pass
+        if type =='t2s':
+            pass
+        if type =='pd':
+            pass
+        if type =='t1':
+            print("T1 value volume comming soon!")
+        if type =='t2':
+            print("T2 volume comming soon!")
+
+        # Working on how to automatically save it
+        # Maybe adding it to the other "save" methods?
+
+
+
 
     def __repr__(self):
         return f"SegmentationLabelManager == Volume"

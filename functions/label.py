@@ -87,7 +87,7 @@ class SegmentationLabel:
 
         if name in self.relax_values.keys():
             self.name = name
-            self.M0 = self.relax_values[name][0]
+            self.M0_val = self.relax_values[name][0]
             self.T1_val = self.relax_values[name][1]
             self.T2_val = self.relax_values[name][2]
             self.T2star_val = self.relax_values[name][3]
@@ -96,10 +96,10 @@ class SegmentationLabel:
         else:
 
             self.name = name
-            self.M0 = 0
+            self.M0_val = 0
             self.T1_val = 0
             self.T2_val = 0
-            self.T2star = 0
+            self.T2star_val = 0
             self.PD_val = 0
 
 
@@ -118,6 +118,20 @@ class SegmentationLabel:
 
     def set_t2star_val(self,t2star):
         self.T2star_val = t2star
+
+    def get_type(self,type):
+        # Input a type as a string and returns the MR property
+        if type == "sus":
+            return self.susceptibility
+        if type == "t2s":
+            return self.T2star_val
+        if type == "pd":
+            return self.PD_val
+        if type == "t1":
+            return self.T1_val
+        if type == "t2":
+            return self.T2_val
+
 
     def __str__(self):
         # Add the latest attributes additioned to the class
