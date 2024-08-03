@@ -414,7 +414,7 @@ class volume:
         # It might be usefull to get this inputs from different researchers and testing
         pass
 
-    def calc_gauss(self, num_pixels, mean = 0, std_dev = 1):
+    def calc_gauss(self, num_pixels, mean , std_dev = 0.1):
         return np.random.normal(loc=mean, scale=std_dev, size=num_pixels)
 
     def calc_regions(self):
@@ -461,7 +461,7 @@ class volume:
             if type == "t1":
                 property = self.relax_values[l][1]
 
-            label_gaussians[l] = self.calc_gauss(count, mean = property)
+            label_gaussians[l] = self.calc_gauss(num_pixels=count, mean = property)
             # This way for every label we have a gaussian distribution
 
         for i in range(self.dimensions[0]):
@@ -483,12 +483,16 @@ class volume:
 
             pass
         if type =='t2s':
+
             pass
         if type =='pd':
+
             pass
         if type =='t1':
+
             print("T1 value volume comming soon!")
         if type =='t2':
+
             print("T2 volume comming soon!")
 
         # Working on how to automatically save it
