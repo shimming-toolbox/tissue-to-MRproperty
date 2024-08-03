@@ -61,7 +61,7 @@ def get_relax_values():
 
         "sinus": [None, None, None, None, None]
     }
-    
+
     return relax
 
 
