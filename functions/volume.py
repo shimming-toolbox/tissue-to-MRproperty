@@ -37,6 +37,7 @@ class volume:
 
         # Creating a dictionary that stores the counts for each label based on their name
         self.label_counts = {}
+        self.label_gaussians = {}
 
         # Creating folders for the code
         if not os.path.exists("output"):
@@ -446,7 +447,6 @@ class volume:
 
     def create_gauss_dist(self,type):
         # For input restrictions of type, see Segmentation Label
-        label_gaussians = {}
 
         for l, count in self.label_counts.items():
             # get the MR property desired
@@ -454,6 +454,7 @@ class volume:
 
             if type == "sus":
                 property = self.look_up.get(l, ('unknown',0))[1]
+                print(self.look_up.get(l, ('unknown',0))[0], self.look_up.get(l, ('unknown',0))[1])
             if type == "t2s":
                 property = self.relax_values[l][3]
             if type == "t2":
@@ -461,7 +462,7 @@ class volume:
             if type == "t1":
                 property = self.relax_values[l][1]
 
-            label_gaussians[l] = self.calc_gauss(num_pixels=count, mean = property)
+            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, mean = property)
             # This way for every label we have a gaussian distribution
 
         for i in range(self.dimensions[0]):
@@ -471,7 +472,7 @@ class volume:
                     pixel = self.volume[i,j,k]
                     lab_name = self.segmentation_labels[pixel].name
                     # Now randomly select a value from the gaussian distribution
-                    gaussian_values = label_gaussians[lab_name]
+                    gaussian_values = self.label_gaussians[lab_name]
                     value = np.random.choice(gaussian_values)
                     self.gaussian_phantom[i,j,k] = value
         # Lastly add the gaussian phantom to a Nifti
