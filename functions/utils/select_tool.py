@@ -260,10 +260,6 @@ def return_dict_labels(tool,version):
         if version == 'v1':
             return dicc
 
-
-    else:
-        print("This tool hasn't been implemented yet.")
-
     if tool == "relax_values":
     # Exactly the same as the relaxation values used in label.py
         relax = {
@@ -308,3 +304,6 @@ def return_dict_labels(tool,version):
         }
 
         return relax
+
+    else:
+        print("This tool hasn't been implemented yet.")

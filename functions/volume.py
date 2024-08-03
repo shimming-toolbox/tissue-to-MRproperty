@@ -469,9 +469,9 @@ class volume:
                 for k in range(self.dimensions[2]):
 
                     pixel = self.volume[i,j,k]
-                    label = self.segmentation_labels[pixel]
+                    lab_name = self.segmentation_labels[pixel].name
                     # Now randomly select a value from the gaussian distribution
-                    gaussian_values = label_gaussians[label]
+                    gaussian_values = label_gaussians[lab_name]
                     value = np.random.choice(gaussian_values)
                     self.gaussian_phantom[i,j,k] = value
         # Lastly add the gaussian phantom to a Nifti
