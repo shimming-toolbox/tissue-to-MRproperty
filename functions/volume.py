@@ -425,20 +425,18 @@ class volume:
         #Must be run after defining a tool in group_seg_labels
 
         unique_labels, counts = np.unique(self.volume, return_counts=True)
-        label_counts = dict(zip(unique_labels,counts))
+        self.label_counts = dict(zip(unique_labels,counts))
 
         if self.look_up is {}:
             print("Please define a tool for a lookup table")
 
         else:
-            for lab,count in label_counts.items():
+            for lab,count in self.label_counts.items():
                 #print(f"Label {label} : {count} pixels")
-                label_name = self.look_up.get(lab, ('unknown',0))[0] # unknown is a precaution value
-                # just in case the label isn't found in the lookup table dictionary.
-                if label_name in self.label_counts:
-                    self.label_counts[label_name] += count
+                if lab in self.label_counts:
+                    self.label_counts[lab] += count
                 else:
-                    self.label_counts[label_name] = count
+                    self.label_counts[lab] = count
 
         # Now depending on the tool used we grouped them up
         # And for visualizing, sorting might be good
