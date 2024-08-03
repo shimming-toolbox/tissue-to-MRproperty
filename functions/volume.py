@@ -65,8 +65,8 @@ class volume:
             sus = value[1]
             self.set_label_name(key, name)
             self.set_label_susceptibility(key, sus)
-            
-        self.relax_values = self.segmentation_labels[0].get_relax_values()
+
+        self.relax_values = self.segmentation_labels[1].relax_values
 
     def create_segmentation_labels_old(self):
 
