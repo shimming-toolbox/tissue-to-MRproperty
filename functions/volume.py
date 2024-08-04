@@ -425,13 +425,13 @@ class volume:
         #Must be run after defining a tool in group_seg_labels
 
         unique_labels, counts = np.unique(self.volume, return_counts=True)
-        label_counts = dict(zip(unique_labels,counts))
+        self.unique_counts = dict(zip(unique_labels,counts))
 
         if self.look_up is {}:
             print("Please define a tool for a lookup table")
 
         else:
-            for l, count in label_counts.items():
+            for l, count in self.unique_counts.items():
                 label_id = l
                 label_name = self.look_up[l][0]
                 label_suscep = self.look_up[l][1]
@@ -450,13 +450,13 @@ class volume:
     def create_gauss_dist(self,prop):
         # For input restrictions of type, see Segmentation Label
 
-        for l, count in self.label_counts.items():
+        for l, count in self.unique_counts.items():
             # get the MR property desired
             # l is the name (as a str) of the label
 
             if prop == "sus":
-                property = self.look_up[l][1]
-                print("label_name: ",self.look_up[l][0], "susceptibility:",property)
+                property = self.look_up.values()[l][1]
+                print("label_name: ",self.look_up.values()[l][0], "susceptibility:",property)
 
             if prop == "t2s":
                 property = self.relax_values[l][3]
