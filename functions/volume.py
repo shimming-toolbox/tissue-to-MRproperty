@@ -456,7 +456,7 @@ class volume:
 
             if prop == "sus":
                 property = self.look_up[l][1]
-                print("label_name: ",self.look_up.get[l][0], "susceptibility:",property)
+                print("label_name: ",self.look_up[l][0], "susceptibility:",property)
 
             if prop == "t2s":
                 property = self.relax_values[l][3]
