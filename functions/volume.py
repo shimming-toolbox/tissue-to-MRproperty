@@ -417,8 +417,8 @@ class volume:
         # It might be usefull to get this inputs from different researchers and testing
         pass
 
-    def calc_gauss(self, num_pixels, mean , std_dev = 0.1):
-        return np.random.normal(loc=mean, scale=std_dev, size=num_pixels)
+    def calc_gauss(self, value, num_pixels, std_dev = 0.1):
+        return np.random.normal(value, std_dev ,num_pixels)
 
     def calc_regions(self):
         #For  creating a gaussian distribution we need to group and count every label
@@ -431,14 +431,14 @@ class volume:
             print("Please define a tool for a lookup table")
 
         else:
-            for lab,count in label_counts.items():
-                #print(f"Label {label} : {count} pixels")
-                label_name = self.look_up.get(lab, ('unknown',0))[0]
-                # just in case the label isn't found in the lookup table dictionary.
-                if label_name in self.label_counts:
-                    self.label_counts[label_name] += count
+            for l, count in label_counts.items():
+                label_id = l
+                label_name = self.look_up[l][0]
+                label_suscep = self.look_up[l][1]
+                if label_name in self.label_counts.keys():
+                    self.look_up[label_name] += count
                 else:
-                    self.label_counts[label_name] = count
+                    self.look_up[label_name] = count
 
         # Now depending on the tool used we grouped them up
         # And for visualizing, sorting might be good
@@ -455,14 +455,20 @@ class volume:
             # l is the name (as a str) of the label
 
             if prop == "sus":
-                property = self.look_up.get(l, ('unknown',0))[1]
-                print(self.look_up.get(l, ('unknown',0))[0], self.look_up.get(l, ('unknown',0))[1])
+                property = self.look_up[l][1]
+                print("label_name: ",self.look_up.get[l][0], "susceptibility:",property)
+
             if prop == "t2s":
                 property = self.relax_values[l][3]
+                print("t2s:", property)
+
             if prop == "t2":
                 property = self.relax_values[l][2]
+                print("t2:", prop)
+
             if prop == "t1":
                 property = self.relax_values[l][1]
+                print("t1:", property)
 
             self.label_gaussians[l] = self.calc_gauss(num_pixels=count, mean = property)
             # This way for every label we have a gaussian distribution
@@ -477,6 +483,7 @@ class volume:
                     gaussian_values = self.label_gaussians[lab_name]
                     value = np.random.choice(gaussian_values)
                     self.gaussian_phantom[i,j,k] = value
+
         # Lastly add the gaussian phantom to a Nifti
         # And save it to output folder
 
