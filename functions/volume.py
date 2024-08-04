@@ -471,7 +471,7 @@ class volume:
                 property = self.relax_values[l][1]
                 print("t1:", property)
 
-            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, mean = property)
+            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property)
             # This way for every label we have a gaussian distribution
 
         for i in range(self.dimensions[0]):
