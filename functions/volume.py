@@ -436,9 +436,9 @@ class volume:
                 label_name = self.look_up[l][0]
                 label_suscep = self.look_up[l][1]
                 if label_name in self.label_counts.keys():
-                    self.look_up[label_name] += count
+                    self.label_counts[label_name] += count
                 else:
-                    self.look_up[label_name] = count
+                    self.label_counts[label_name] = count
 
         # Now depending on the tool used we grouped them up
         # And for visualizing, sorting might be good
