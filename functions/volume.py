@@ -38,6 +38,7 @@ class volume:
         # Creating a dictionary that stores the counts for each label based on their name
         self.label_counts = {}
         self.label_gaussians = {}
+        self.unique_counts = {}
 
         # Creating folders for the code
         if not os.path.exists("output"):
