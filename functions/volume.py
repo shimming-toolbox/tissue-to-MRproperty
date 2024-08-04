@@ -479,9 +479,12 @@ class volume:
                 for k in range(self.dimensions[2]):
 
                     pixel = self.volume[i,j,k]
-                    lab_name = self.segmentation_labels[pixel].name
+                    # Now we need the ID of the label from pixel so
+                    lab_id = self.segmentation_labels[pixel].label_id
+                    # Instead of getting the name of the label we get the label id
+                    # Because label gaussian is created per label 
                     # Now randomly select a value from the gaussian distribution
-                    gaussian_values = self.label_gaussians[lab_name]
+                    gaussian_values = self.label_gaussians[lab_id]
                     value = np.random.choice(gaussian_values)
                     self.gaussian_phantom[i,j,k] = value
 
