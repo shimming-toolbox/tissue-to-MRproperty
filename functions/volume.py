@@ -524,13 +524,13 @@ class volume:
         # If not it will automatically save the empty array
         self.gauss_flag = 1
         if type =='sus':
-            self.save_sus_dist_nii(self,  fn = out_fn )
+            self.save_sus_dist_nii(out_fn )
 
         if type =='t2s':
-            self.save_t2star_dist(self, fn = out_fn)
+            self.save_t2star_dist(out_fn)
 
         if type =='pd':
-            self.save_pd_dist(self, fn = out_fn)
+            self.save_pd_dist(out_fn)
 
         if type =='t1':
             print("T1 value volume comming soon!")
