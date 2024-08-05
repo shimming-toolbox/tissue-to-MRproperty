@@ -492,17 +492,19 @@ class volume:
                 print("t2s:", property)
 
             if prop == "t2":
-                l_name = self.look_up[l][0]
-                property = self.relax_values[l_name][2]
-                print("t2:", prop)
+                print("Relaxation lookup table still missing some values!")
+                print("Coming soon ...")
+                #l_name = self.look_up[l][0]
+                #property = self.relax_values[l_name][2]
+                #print("t2:", prop)
 
             if prop == "t1":
-                l_name = self.look_up[l][0]
-                property = self.relax_values[l_name][1]
-                print("t1:", property)
-            else:
-                print("Wrong property")
-                print("Allowed are: sus, t2s, t2 and t1")
+                #l_name = self.look_up[l][0]
+                #property = self.relax_values[l_name][1]
+                #print("t1:", property)
+                print("Relaxation lookup table still missing some values!")
+                print("Coming soon ...")
+
 
 
             self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property)
