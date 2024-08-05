@@ -505,6 +505,10 @@ class volume:
                 print("Relaxation lookup table still missing some values!")
                 print("Coming soon ...")
 
+            if prop == "pd":
+                l_name = self.look_up[l][0]
+                property = self.relax_values[l_name][4]
+                print("pd: ",property)
 
 
             self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property)
