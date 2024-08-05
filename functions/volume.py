@@ -69,6 +69,7 @@ class volume:
             self.set_label_susceptibility(key, sus)
 
         self.relax_values = self.segmentation_labels[1].relax_values
+        # Getting the relax values dictionary from any label
 
     def create_segmentation_labels_old(self):
 
@@ -100,7 +101,7 @@ class volume:
 
         # For the lungs we have [9,10,11,12,13]
         for i in [9,10,11,12,13]:
-            self.set_label_name(i,'lungs')
+            self.set_label_name(i,'lung')
             self.set_label_susceptibility(i,0.4)
 
         # For the bones we have a lot more labels
@@ -499,6 +500,10 @@ class volume:
                 l_name = self.look_up[l][0]
                 property = self.relax_values[l_name][1]
                 print("t1:", property)
+            else:
+                print("Wrong property")
+                print("Allowed are: sus, t2s, t2 and t1")
+
 
             self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property)
             # This way for every label we have a gaussian distribution
