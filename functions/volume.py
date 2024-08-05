@@ -224,23 +224,25 @@ class volume:
             label = self.segmentation_labels[i]
             print(label) # Calling __str__ from label
 
-    def create_type_vol(self,type,output_name="default"):
+    def create_type_vol(self,type, gauss_flag = 0, output_name="default"):
         # This function is for the CLI app
         # Depending on the type we automatically call the specific function
         #
         if type =='sus':
             self.create_sus_dist()
-            self.save_sus_dist_nii(output_name)
+            self.save_sus_dist_nii(gauss_flag, output_name)
         if type =='t2s':
             self.create_t2_star_vol()
-            self.save_t2star_dist(output_name)
+            self.save_t2star_dist(gauss_flag, output_name)
         if type =='pd':
             self.create_pd_vol()
-            self.save_pd_dist(output_name)
+            self.save_pd_dist(gauss_flag, output_name)
         if type =='t1':
             print("T1 value volume comming soon!")
         if type =='t2':
             print("T2 volume comming soon!")
+
+
 
     def check_pixels(self):
         # Important to before going to conversion
@@ -314,16 +316,25 @@ class volume:
 
         return self.sus_dist
 
-    def save_sus_dist_nii(self, fn):
+    def save_sus_dist_nii(self, gauss_flag, fn):
         # Method to save the susceptibility distribution created to nifti
+        if gauss_flag:
+            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+            g_str = "gauss"
+        else:
+            temp_img = nib.Nifti1Image(self.sus_dist, affine=self.nifti.affine)
+
         if fn == "default":
             fn = 'sus_dist.nii.gz'
-            temp_img = nib.Nifti1Image(self.sus_dist, affine=self.nifti.affine)
+            if gauss_flag:
+                fn = "gauss_" + fn
+            # Conditioning if gauss flag is active, if not. We use the susceptibility np array
             path = os.path.join('output', fn)
             # Save the new NIfTI image to a file
             nib.save(temp_img,path)
         else:
-            temp_img = nib.Nifti1Image(self.sus_dist, affine=self.nifti.affine)
+            if gauss_flag:
+                fn = "gauss_" + fn
             path = os.path.join('output', fn)
             # Save the new NIfTI image to a file
             nib.save(temp_img,path)
@@ -350,16 +361,23 @@ class volume:
                         self.pd_dist[i,j,k] = pd
 
         return self.pd_dist
-    def save_pd_dist(self, fn = 'default'):
+    def save_pd_dist(self,gauss_flag, fn = 'default'):
         # Method to save the proton density distribution created to nifti
+        if gauss_flag:
+            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+        else:
+            temp_img = nib.Nifti1Image(self.pd_dist, affine=self.nifti.affine)
+
         if fn == "default":
             fn = 'pd_dist.nii.gz'
-            temp_img = nib.Nifti1Image(self.pd_dist, affine=self.nifti.affine)
+            if gauss_flag:
+                fn = "gauss_" + fn
             path = os.path.join('output', fn)
             # Save the new NIfTI image to a file
             nib.save(temp_img,path)
         else:
-            temp_img = nib.Nifti1Image(self.pd_dist, affine=self.nifti.affine)
+            if gauss_flag:
+                fn = "gauss_" + fn
             path = os.path.join('output', fn)
             # Save the new NIfTI image to a file
             nib.save(temp_img,path)
@@ -383,16 +401,23 @@ class volume:
                         self.t2star_vol[i,j,k] = t2star
 
         return self.t2star_vol
-    def save_t2star_dist(self, fn = "default"):
-        # Method to save the proton density distribution created to nifti
+    def save_t2star_dist(self, gauss_flag, fn = "default"):
+        # Method to save the volume with T2 star values  created to nifti
+        if gauss_flag:
+            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+        else:
+            temp_img = nib.Nifti1Image(self.t2star_vol, affine=self.nifti.affine)
+
         if fn == "default":
             fn = 't2_star.nii.gz'
-            temp_img = nib.Nifti1Image(self.t2star_vol, affine=self.nifti.affine)
+            if gauss_flag:
+                fn = "gauss_" + fn
             path = os.path.join('output', fn)
             # Save the new NIfTI image to a file
             nib.save(temp_img,path)
         else:
-            temp_img = nib.Nifti1Image(self.t2star_vol, affine=self.nifti.affine)
+            if gauss_flag:
+                fn = "gauss_" + fn
             path = os.path.join('output', fn)
             # Save the new NIfTI image to a file
             nib.save(temp_img,path)
@@ -482,38 +507,33 @@ class volume:
                     # Now we need the ID of the label from pixel so
                     lab_id = self.segmentation_labels[pixel].label_id
                     # Instead of getting the name of the label we get the label id
-                    # Because label gaussian is created per label 
+                    # Because label gaussian is created per label
                     # Now randomly select a value from the gaussian distribution
                     gaussian_values = self.label_gaussians[lab_id]
                     value = np.random.choice(gaussian_values)
-                    self.gaussian_phantom[i,j,k] = value
+                    self.gaussian_phantom[i,j,k] = value\
 
+        print("Finished creating gaussian distributed, based on: ", property)
         # Lastly add the gaussian phantom to a Nifti
         # And save it to output folder
 
-    def save_gauss_dist(self,type, output_name="default"):
+    def save_gauss_dist(self, type, fn = "default"):
         #Saving the gaussian distribution with type defined
+        # This must be run ONLY after creating the create_property.
+        # If not it will automatically save the empty array
         if type =='sus':
+            self.save_sus_dist_nii(self, gauss_flag = 1 , fn)
 
-            pass
         if type =='t2s':
+            self.save_t2star_dist(self, gauss_flag = 1, fn )
 
-            pass
         if type =='pd':
+            self.save_pd_dist(self, gauss_flag = 1, fn)
 
-            pass
         if type =='t1':
-
             print("T1 value volume comming soon!")
+
         if type =='t2':
-
             print("T2 volume comming soon!")
-
-        # Working on how to automatically save it
-        # Maybe adding it to the other "save" methods?
-
-
-
-
     def __repr__(self):
         return f"SegmentationLabelManager == Volume"

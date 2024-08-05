@@ -28,9 +28,9 @@ PROPERTIES = {
 @click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles']), help="State what segmentator was used")
 @click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2']), help="Select the version of your segmentation file")
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
-@click.option("--gauss",required=False)
+@click.option("-g", "--gauss",required=False, default = 0)
 @click.argument('output_file', required=False, type=click.Path())
-def converter(input_file,segtool,version,output_file, type, gauss):
+def converter(input_file, segtool, version, type, gauss, output_file):
     # We need to check if the input is a  nifti file
     if is_nifti(input_file):
         start = time.time()
