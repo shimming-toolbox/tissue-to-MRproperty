@@ -517,18 +517,18 @@ class volume:
         # Lastly add the gaussian phantom to a Nifti
         # And save it to output folder
 
-    def save_gauss_dist(self, type, fn = "default"):
+    def save_gauss_dist(self, type, out_fn = "default"):
         #Saving the gaussian distribution with type defined
         # This must be run ONLY after creating the create_property.
         # If not it will automatically save the empty array
         if type =='sus':
-            self.save_sus_dist_nii(self, gauss_flag = 1 , fn)
+            self.save_sus_dist_nii(self,  fn = out_fn, gauss_flag = 1 )
 
         if type =='t2s':
-            self.save_t2star_dist(self, gauss_flag = 1, fn )
+            self.save_t2star_dist(self, fn = out_fn, gauss_flag = 1)
 
         if type =='pd':
-            self.save_pd_dist(self, gauss_flag = 1, fn)
+            self.save_pd_dist(self, fn = out_fn, gauss_flag = 1)
 
         if type =='t1':
             print("T1 value volume comming soon!")
