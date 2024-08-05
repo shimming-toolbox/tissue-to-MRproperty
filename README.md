@@ -39,16 +39,20 @@ Once in the package is installed, you can process your images directly from the 
 - -s, segmentation_tool : ['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI']
 - -v, version : ['v2','mod0','mod1','mod2']
 - -t, type : ["t2s", "sus", "pd", "t1", "t2"]
+- -g, gauss : ["0", "1"]
 
 Example:
 ```
-tissue_to_mr cli/final_total_seg.nii.gz -t sus -s TotalSeg_CT -v mod0
+tissue_to_mr data/correct_pixels.nii.gz -t sus -s TotalSeg_CT -v mod2 -g 1 sus_gauss_dist.nii.gz
 ```
 
-**Output** The new volume will be saved as Nifti inside the *output* folder.
+**Output** The new volume will be saved as Nifti inside the *output* folder. </br>
 
-*Note*: Only **t2s**, **pd** and **sus** are supported MR properties for conversion. Depending on the tool used for segmentation the code will use different lookup tables for label id-name relationship.
+The code has implemented a **pixel_check** function that will run before running the conversion. If the function finds a pixel with label intensity value outside the known labels, registered on the segmentation label, the code will ask to change the value of the pixel or delete this pixel (set value to 0). If the code changes any value, it will automatically save a new Nifti image in the output folder with name: **corrected_pixels.nii.gz**.
 
+Now the converter has an option of creating the phantom with a Gaussian (normal) distribution based on: the total count of pixels per label and using the fixed value on the look-up table as the mean. Currently only supports **t2s**, **pd** and **sus** volume creation.
+
+*Note*: Only **t2s**, **pd** and **sus** are supported MR properties for conversion. Depending on the tool used for segmentation the code will use different lookup tables for label id-name relationship. </br>
 *T1, T2 and more segmentation tools coming soon!*
 
 # Look-up table
