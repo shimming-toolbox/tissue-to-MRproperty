@@ -445,8 +445,16 @@ class volume:
         # It might be usefull to get this inputs from different researchers and testing
         pass
 
-    def calc_gauss(self, value, num_pixels, std_dev = 0.1):
-        return np.random.normal(value, std_dev ,num_pixels)
+    def calc_gauss(self, value, num_pixels, mr_prop, std_dev = 0.1):
+        val = np.random.normal(value, std_dev, num_pixels)
+        # In areas close to 0, the gaussian distribution must always return positive values
+        # It is not possible to have negative T1, T2, T2s or PD. But susceptibility can be negative
+        if mr_prop == "sus":
+            return val
+        else:
+            abs_val = np.abs(val)
+            return abs_val
+
 
     def calc_regions(self):
         #For  creating a gaussian distribution we need to group and count every label
@@ -511,7 +519,7 @@ class volume:
                 print("pd: ",property)
 
 
-            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property)
+            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property, mr_prop = prop)
             # This way for every label we have a gaussian distribution
 
         for i in range(self.dimensions[0]):
