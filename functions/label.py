@@ -99,11 +99,11 @@ class SegmentationLabel:
             "spinal_cord": 7.64,
 
             "sc_csf": 26.5,
-            # This values are not taken from Whole spine data
+            # These values are not taken from Whole spine data
             # But taken from Brain image.
             # EAO Flash 2.5mm
-            "sc_wm": 9.82,
-            "sc_gm": 12.76,
+            "sc_wm": 1, # 9.82
+            "sc_gm": 1, # 12.76
             "brain": 27.91,
             ### Back to Whole Spine data values
             "fat": 33.78,
