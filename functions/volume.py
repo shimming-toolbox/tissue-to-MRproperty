@@ -35,6 +35,9 @@ class volume:
         self.relax_values = {}
         # This is a dictionary to get the relaxation values used in label.py
 
+        # Now to get the dictionary of standard deviations
+        self.std_devs = {}
+
         # Creating a dictionary that stores the counts for each label based on their name
         self.label_counts = {}
         self.label_gaussians = {}
@@ -70,6 +73,8 @@ class volume:
 
         self.relax_values = self.segmentation_labels[1].relax_values
         # Getting the relax values dictionary from any label
+        self.std_devs = self.segmentation_labels[1].std_dev
+        # Getting the standard deviation per label name
 
     def create_segmentation_labels_old(self):
 
@@ -445,7 +450,7 @@ class volume:
         # It might be usefull to get this inputs from different researchers and testing
         pass
 
-    def calc_gauss(self, value, num_pixels, mr_prop, std_dev = 0.1):
+    def calc_gauss(self, value, num_pixels, mr_prop, std_dev ):
         val = np.random.normal(value, std_dev, num_pixels)
         # In areas close to 0, the gaussian distribution must always return positive values
         # It is not possible to have negative T1, T2, T2s or PD. But susceptibility can be negative
@@ -492,12 +497,15 @@ class volume:
 
             if prop == "sus":
                 property = self.look_up[l][1]
-                print("label_name: ",self.look_up[l][0], "susceptibility:",property)
+                l_name = self.look_up[l][0]
+                SD = self.std_devs[l_name]
+                print("label_name: ",self.look_up[l][0], " susceptibility: ",property, " SD: ", SD)
 
             if prop == "t2s":
                 l_name = self.look_up[l][0]
                 property = self.relax_values[l_name][3]
-                print("t2s:", property)
+                SD = self.std_devs[l_name]
+                print("label_name: ",self.look_up[l][0], " t2s: ",property, " SD: ", SD)
 
             if prop == "t2":
                 print("Relaxation lookup table still missing some values!")
@@ -516,10 +524,11 @@ class volume:
             if prop == "pd":
                 l_name = self.look_up[l][0]
                 property = self.relax_values[l_name][4]
-                print("pd: ",property)
+                SD = self.std_devs[l_name]
+                print("label_name: ",self.look_up[l][0], " proton density: ",property, " SD: ", SD)
 
 
-            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property, mr_prop = prop)
+            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property, mr_prop = prop, std_dev= SD)
             # This way for every label we have a gaussian distribution
 
         for i in range(self.dimensions[0]):

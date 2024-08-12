@@ -14,6 +14,7 @@ class SegmentationLabel:
         self.T2_val = None
         self.T2star_val = None
         self.PD_val = 0
+        self.std_dev = {}
 
         # Key is the name and value is ordered: M0, T1, T2, T2*, PD
         # The values of T2* and T2 are in ms
@@ -85,6 +86,49 @@ class SegmentationLabel:
     # Proton density should be independent of field strength, we are using a value relative to water being 100
     #
 
+        self.std_dev = {
+
+            "air": 2.78,  # air is backgrund
+            # To all labels we have substracted air std_dev
+            "bone": 10.87,
+            "lung": 8.01,
+            # Water is a value similar to CSF
+            "water": 27.79,
+            "CSF": 26.5,
+
+            "spinal_cord": 7.64,
+
+            "sc_csf": 26.5,
+            # This values are not taken from Whole spine data
+            # But taken from Brain image.
+            # EAO Flash 2.5mm
+            "sc_wm": 9.82,
+            "sc_gm": 12.76,
+            "brain": 27.91,
+            ### Back to Whole Spine data values
+            "fat": 33.78,
+            "liver": 14.82,
+            "spleen": 16.17,
+
+            # "white_matter": ,  # This is the brain WM
+            # "gray_matter": ,  # This is the brain GM
+
+            "heart": 15.49,
+            "kidney": 14.35,
+            "pancreas": 16.94,
+            "cartilage": 10.21,
+            "bone_marrow": 12.2,
+            "SpinalCanal": 18.895,  # sc_csf + (sc_wm + sc_gm / 2 )
+            "esophagus": 17.33,
+            "trachea": 10.21,  # Trachea should have similar to lung
+            "organ": 14.66,
+            "gland": 15.82,
+
+            "extra": 14.91,
+
+            "sinus": 9.53
+        }
+
 
     def set_name(self, name):
 
@@ -138,6 +182,18 @@ class SegmentationLabel:
     def get_relax_values(self):
         # To send the dictionary to other functions in the folder
         return self.relax_values
+
+    def get_std_dev(self):
+        # We need to differentiate the labels for a more realistic MR simulation
+        # We need to identify per label
+        # Using Whole Spine data - T2w images
+
+        # With higher std_dev the values will have more distribution
+        # I want to be able to differentiate water from organs
+        # So the value of distribution for all the organs will be less than half
+        # of that from tissue/fat label
+
+        return self.std_dev
 
     def __str__(self):
         # Add the latest attributes additioned to the class
