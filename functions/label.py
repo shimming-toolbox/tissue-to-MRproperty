@@ -21,7 +21,7 @@ class SegmentationLabel:
         # REMEMBER TO UPDATE on select_tool.py everytime a value is changed
         self.relax_values = {
 
-            "air": [0, 0, 0, 0.01, 0.01],
+            "air": [0.01, 0.01, 0.02, 0.01, 0.01],
             "bone": [None, 1204, 53, 33.03, 117],  # M0 is often not specified for bone
             "lung": [None, 1270, None, 1, 0.1],  # Air in lungs doesn't have M0, T2 values?
             "water": [None, 2500, 2500, 1000, 100],  # High M0 value
@@ -90,43 +90,43 @@ class SegmentationLabel:
 
             "air": 2.78,  # air is backgrund
             # To all labels we have substracted air std_dev
-            "bone": 10.87,
-            "lung": 8.01,
+            "bone": 5.42, # 10.87
+            "lung": 4.01, # 8.01
             # Water is a value similar to CSF
-            "water": 27.79,
-            "CSF": 26.5,
+            "water": 10.29, # 27.79
+            "CSF": 12.25, # 26.5
 
             "spinal_cord": 7.64,
 
-            "sc_csf": 26.5,
+            "sc_csf": 12.25, # 26.5
             # These values are not taken from Whole spine data
             # But taken from Brain image.
             # EAO Flash 2.5mm
             "sc_wm": 1, # 9.82
             "sc_gm": 1, # 12.76
-            "brain": 27.91,
+            "brain": 18.45, # 27.91
             ### Back to Whole Spine data values
-            "fat": 33.78,
-            "liver": 14.82,
-            "spleen": 16.17,
+            "fat": 15.39, # 33.78
+            "liver": 7.41, # 14.82
+            "spleen": 8.08, # 16.17
 
             # "white_matter": ,  # This is the brain WM
             # "gray_matter": ,  # This is the brain GM
 
-            "heart": 15.49,
-            "kidney": 14.35,
-            "pancreas": 16.94,
-            "cartilage": 10.21,
-            "bone_marrow": 12.2,
-            "SpinalCanal": 18.895,  # sc_csf + (sc_wm + sc_gm / 2 )
-            "esophagus": 17.33,
-            "trachea": 10.21,  # Trachea should have similar to lung
-            "organ": 14.66,
-            "gland": 15.82,
+            "heart": 7.28, # 15.49
+            "kidney": 7.17, # 14.35
+            "pancreas": 8.49, # 16.94
+            "cartilage": 5.16, # 10.21
+            "bone_marrow": 6.1, # 12.2
+            "SpinalCanal": 9.98, # 18.895 # sc_csf + (sc_wm + sc_gm / 2 )
+            "esophagus": 8.96, # 17.33
+            "trachea": 5.16, # 10.21 # Trachea should have similar to lung
+            "organ": 7.33, # 14.66
+            "gland": 7.91, # 15.82
 
-            "extra": 14.91,
+            "extra": 7.45, # 14.91
 
-            "sinus": 9.53
+            "sinus": 4.26 # 9.53
         }
 
 
