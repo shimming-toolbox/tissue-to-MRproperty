@@ -528,7 +528,7 @@ class volume:
                 print("label_name: ",self.look_up[l][0], " proton density: ",property, " SD: ", SD)
 
 
-            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property, mr_prop = prop, std_dev= SD)
+            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property, mr_prop = prop, std_dev= SD/2)
             # This way for every label we have a gaussian distribution
 
         for i in range(self.dimensions[0]):
