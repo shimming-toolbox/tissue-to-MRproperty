@@ -498,7 +498,8 @@ class volume:
             if prop == "sus":
                 property = self.look_up[l][1]
                 l_name = self.look_up[l][0]
-                SD = self.std_devs[l_name]
+                #SD = self.std_devs[l_name]
+                SD = 0.5
                 print("label_name: ",self.look_up[l][0], " susceptibility: ",property, " SD: ", SD)
 
             if prop == "t2s":
