@@ -172,7 +172,7 @@ def return_dict_labels(tool,version):
     if tool == 'TotalSeg_MRI':
 
         dicc = {
-
+            0: ("air", 0.35),
             1: ("spleen", -9.05),
             2: ("kidney", -9.05),  # kidney_right
             3: ("kidney", -9.05),  # kidney_left
