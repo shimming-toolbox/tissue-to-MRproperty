@@ -238,7 +238,7 @@ def return_dict_labels(tool,version):
             # Adding similar to CT case
             # Adds labels with "head"
             dicc[144] = ("head", 8.97)
-            pass
+            return dicc
 
     if tool == 'ProCord_MRI':
         pass
