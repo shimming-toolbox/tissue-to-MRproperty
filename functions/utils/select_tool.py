@@ -239,6 +239,7 @@ def return_dict_labels(tool,version):
             # Adds labels with "head"
             dicc[144] = ("head", -8.97)
             dicc[169] = ("torso",-8.97)
+            dicc[100] = ('bone', -9)
             return dicc
 
     if tool == 'ProCord_MRI':
