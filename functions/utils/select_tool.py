@@ -193,7 +193,7 @@ def return_dict_labels(tool,version):
             18: ("bone", -9),  # sacrum
             19: ("bone", -9),  # vertebrae
             20: ("bone", -9),  # intervertebral_discs
-            21: ("spinal_cord", 0),  # spinal_cord
+            21: ("spinal_cord", -9.055),  # spinal_cord
             22: ("heart", -9.04),  # heart
             23: ("extra", -9.04),  # aorta
             24: ("extra", -9.04),  # inferior_vena_cava
