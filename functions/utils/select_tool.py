@@ -264,6 +264,17 @@ def return_dict_labels(tool,version):
         if version == 'v1':
             return dicc
 
+    if tool == "compare_fm":
+        dicc = {
+            0 : ("air", 0.35),
+            1 : ("head", -8.97),
+            2 : ("bone", -9),
+            3 : ("air", 0.35),
+            4 : ("air", 0.35)
+        }
+        if version == 'mod0':
+            return dicc
+
 
     else:
         print("This tool hasn't been implemented yet.")
