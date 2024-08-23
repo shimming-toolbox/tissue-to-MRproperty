@@ -25,7 +25,7 @@ PROPERTIES = {
 }
 @click.command()
 @click.argument("input_file", required=True) #, help="Input must be segmented label nifti",type=click.Path(exists=True))
-@click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles']), help="State what segmentator was used")
+@click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles','compare_fm']), help="State what segmentator was used")
 @click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2']), help="Select the version of your segmentation file")
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
 @click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = 0, help = "Set to 1 to use Gaussian distribution")
