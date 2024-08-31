@@ -48,7 +48,7 @@ def converter(input_file, segtool, version, type, gauss, output_file):
         if ans == 0:
             print("Converting ...")
 
-            if gauss:
+            if gauss==1:
 
                 new_vol.gauss_flag = 1
                 print("Gaussian option enabled ...")
