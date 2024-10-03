@@ -265,11 +265,13 @@ def return_dict_labels(tool,version):
             return dicc
 
     if tool == "compare_fm":
+
         dicc = {
             0 : ("air", 0.35),
             2 : ("fat", -8.92),
-            5 : ("discs", -9.055),
-            7 : ("magical_air", 0.2),
+            3 : ("bone", -11.5),
+            5 : ("inter_vert_discs", -9.055),
+            7 : ("air", 0.2), # magical air inside lungs and esophagus
             10 : ("organ", -9.04),
             12: ("muscle", -9.032),
             256: ("spinal canal",-9.055)

@@ -22,13 +22,13 @@ class SegmentationLabel:
         self.relax_values = {
 
             "air": [0.01, 0.01, 0.02, 0.01, 0.01],
-            "bone": [None, 1204, 53, 33.03, 117],  # M0 is often not specified for bone
+            "bone": [None, 1204, 53, 3.30, 117],  # M0 is often not specified for bone
             "lung": [None, 1270, None, 1, 0.1],  # Air in lungs doesn't have M0, T2 values?
             "water": [None, 2500, 2500, 1000, 100],  # High M0 value
             "CSF": [None, 3200, 2000, 1000, 100],  # High M0
 
             "spinal_cord":[None, 990, 125, 76, 59.5], # From the new label 256
-            # PD & T2* GM + WM / 2 =>  82 + 70 /2 =    , T2star = 66 + 53 / 2 =
+            # PD & T2* GM + WM / 2 =>  82 + 70 /2 =    , T2-star = 66 + 53 / 2 =
             # T2 is a guess
 
             "sc_csf": [None, 3200, 2000, 1000, 100], # From the new label 289
@@ -60,8 +60,9 @@ class SegmentationLabel:
 
             "sinus" :[None, None, None, None, None],
 
-            # Used in total_mr
-            "inter_vert_discs" : [None, None, 69.20, None, None]
+            # Used in total_mr & compare fm
+            "inter_vert_discs" : [None, None, 69.20, None, None],
+            "muscle" : [None, None, 25, None, None]
         }
     # Literature values from:
     # Jorge Zavala Bojorquez, Stéphanie Bricq, Clement Acquitter, François Brunotte, Paul M. Walker, Alain Lalande, What are normal relaxation times of tissues at 3 T?, Magnetic Resonance Imaging, Volume 35, 2017, Pages 69-80, ISSN 0730-725X, https://doi.org/10.1016/j.mri.2016.08.021.
