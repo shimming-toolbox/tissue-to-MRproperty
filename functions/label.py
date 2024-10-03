@@ -61,8 +61,8 @@ class SegmentationLabel:
             "sinus" :[None, None, None, None, None],
 
             # Used in total_mr & compare fm
-            "inter_vert_discs" : [None, None, 69.20, None, None],
-            "muscle" : [None, None, 25, None, None]
+            "inter_vert_discs" : [None, None, None, 69.20, None],
+            "muscle" : [None, None, None, 25, None]
         }
     # Literature values from:
     # Jorge Zavala Bojorquez, Stéphanie Bricq, Clement Acquitter, François Brunotte, Paul M. Walker, Alain Lalande, What are normal relaxation times of tissues at 3 T?, Magnetic Resonance Imaging, Volume 35, 2017, Pages 69-80, ISSN 0730-725X, https://doi.org/10.1016/j.mri.2016.08.021.
