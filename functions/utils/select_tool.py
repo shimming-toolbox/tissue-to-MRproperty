@@ -267,12 +267,12 @@ def return_dict_labels(tool,version):
     if tool == "compare_fm":
         dicc = {
             0 : ("air", 0.35),
-            1 : ("air", 0.35),
-            2 : ("bone", -9),
-            3 : ("air", 0.35),
-            4 : ("air", 0.35),
-            102: ("bone", -9),
-            145: ("head",-8.97)
+            2 : ("fat", -8.92),
+            5 : ("discs", -9.055),
+            7 : ("magical_air", 0.2),
+            10 : ("organ", -9.04),
+            12: ("muscle", -9.032),
+            256: ("spinal canal",-9.055)
         }
         if version == 'mod0':
             return dicc
