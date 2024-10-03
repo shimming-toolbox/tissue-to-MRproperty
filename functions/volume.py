@@ -5,7 +5,7 @@ import nibabel as nib
 from functions.utils.get_dic_values import to_csv_sus
 import os
 from functions.utils.select_tool import return_dict_labels
-from skimage.measure import label, regionprops
+#from skimage.measure import label, regionprops
 
 # Parent class for the creation of a non-finite biomechanical model of the body
 class volume:

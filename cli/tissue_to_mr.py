@@ -28,7 +28,7 @@ PROPERTIES = {
 @click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles','compare_fm']), help="State what segmentator was used")
 @click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2']), help="Select the version of your segmentation file")
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
-@click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = 0, help = "Set to 1 to use Gaussian distribution")
+@click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = "0", help = "Set to 1 to use Gaussian distribution")
 @click.argument('output_file', required=False, type=click.Path())
 def converter(input_file, segtool, version, type, gauss, output_file):
     # We need to check if the input is a  nifti file
@@ -48,7 +48,7 @@ def converter(input_file, segtool, version, type, gauss, output_file):
         if ans == 0:
             print("Converting ...")
 
-            if gauss==1:
+            if gauss == "1":
 
                 new_vol.gauss_flag = 1
                 print("Gaussian option enabled ...")
@@ -61,11 +61,12 @@ def converter(input_file, segtool, version, type, gauss, output_file):
                     new_vol.save_gauss_dist(type,output_file)
 
 
-            else:
+            elif gauss == 0 :
 
                 if output_file == None:
 
                     new_vol.create_type_vol(type) # This creates and saves a Nifti file
+
                 else:
                     new_vol.create_type_vol(type,output_file)
 
@@ -73,7 +74,9 @@ def converter(input_file, segtool, version, type, gauss, output_file):
             end = time.time()
             elapsed = end-start
             print("Time elapsed: ",elapsed)
+
         else:
+
             print("Pixel integrity error")
 
     else:
