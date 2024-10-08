@@ -4,7 +4,7 @@
 # I encourage to read her repo: https://github.com/evaalonsoortiz/Fourier-based-field-estimation
 
 # Important: When editing this lookup tables don't forget to edit the color map for itk and fsl
-def return_dict_labels(tool,version):
+def return_dict_labels(tool,version,new_chi = None):
 
     if tool == "TotalSeg_CT":
 
@@ -279,6 +279,11 @@ def return_dict_labels(tool,version):
         if version == 'mod0':
             return dicc
 
+        if version == "dyn":
+            # This is for dynamically changing the susceptiblity values
+            # Only changing the value of air in label 7
+            dicc[7] = ("air",new_chi)
+            return dicc
 
     else:
         print("This tool hasn't been implemented yet.")

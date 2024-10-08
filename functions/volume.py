@@ -57,8 +57,20 @@ class volume:
         self.real = None
         self.imaginary = None
 
+        # For the fieldmap comparison project:
+        self.new_chi = None
+
     def group_seg_labels(self,tool,version):
-        self.look_up = return_dict_labels(tool,version)
+        #self.look_up = return_dict_labels(tool,version)
+        # For the fieldmap comparison project
+        if tool == "compare_fm" and version == "dyn":
+            # If the version is dynamic
+            # The new value will replace None
+            # We can check just in case
+            if self.new_chi != None:
+                self.look_up = return_dict_labels(tool,version,self.new_chi)
+            else:
+                self.look_up = return_dict_labels(tool,version)
 
         # Function to get the relaxation values from label
         for i in self.look_up.keys():
