@@ -67,10 +67,9 @@ class volume:
             # If the version is dynamic
             # The new value will replace None
             # We can check just in case
-            if self.new_chi != None:
-                self.look_up = return_dict_labels(tool,version,self.new_chi)
-            else:
-                self.look_up = return_dict_labels(tool,version)
+            self.look_up = return_dict_labels(tool,version, new_chi=self.new_chi)
+        else:
+            self.look_up = return_dict_labels(tool,version)
 
         # Function to get the relaxation values from label
         for i in self.look_up.keys():
@@ -402,6 +401,7 @@ class volume:
             nib.save(temp_img,path)
         del temp_img
         del path
+
     def create_t2_star_vol(self):
         # This method will use the lookup table of T2 star values to create a new volume
         # This new volume will use the labels to quickly create a volume with relaxation time

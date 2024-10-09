@@ -4,7 +4,7 @@
 # I encourage to read her repo: https://github.com/evaalonsoortiz/Fourier-based-field-estimation
 
 # Important: When editing this lookup tables don't forget to edit the color map for itk and fsl
-def return_dict_labels(tool,version,new_chi = None):
+def return_dict_labels(tool,version, new_chi = None):
 
     if tool == "TotalSeg_CT":
 
