@@ -271,7 +271,7 @@ def return_dict_labels(tool,version, new_chi = None):
             2 : ("fat", -8.92),
             3 : ("bone", -11.5),
             5 : ("inter_vert_discs", -9.055),
-            7 : ("air", 0.2), # magical air inside lungs and esophagus
+            7 : ("lungs", 0.2), # magical air inside lungs and esophagus
             10 : ("organ", -9.04),
             12: ("muscle", -9.032),
             256: ("spinal canal",-9.055)
@@ -282,7 +282,10 @@ def return_dict_labels(tool,version, new_chi = None):
         if version == "dyn":
             # This is for dynamically changing the susceptiblity values
             # Only changing the value of air in label 7
-            dicc[7] = ("air",new_chi)
+            lst = list(dicc[7])
+            lst[1] = new_chi
+            dicc[7] = tuple(lst)
+            print("Changing susceptibility of air to: ", new_chi)
             return dicc
 
     else:

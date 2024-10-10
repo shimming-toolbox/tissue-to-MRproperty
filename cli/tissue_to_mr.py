@@ -43,9 +43,9 @@ def converter(input_file, segtool, version, type, gauss, chi, output_file):
         new_vol = volume(file)
         print("Grouping labels")
         # Using the type:
-        new_vol.group_seg_labels(segtool,version) # Automatically adding the names to known labels
-        print(new_vol.segmentation_labels)
+
         # This for the FM comparison project:
+        # Needs to be before grouping labels, if not it will put none
         if segtool == "compare_fm" and version == "dyn":
             if chi != None:
                 new_vol.new_chi = chi
@@ -54,6 +54,12 @@ def converter(input_file, segtool, version, type, gauss, chi, output_file):
                 print("When using new dynamic version you must provide a chi value")
                 new_vol.new_chi = 0.3
                 print("Using default: ", new_vol.new_chi)
+
+        new_vol.group_seg_labels(segtool, version)  # Automatically adding the names to known labels
+        #print(new_vol.segmentation_labels[7])
+        # Printing one label can help see the structure as well as verifying values selected
+        # Specially when working with field map comparison project where chi can be changed
+
         print("Checking pixel integrity")
         ans = new_vol.check_pixels()
 
@@ -73,14 +79,14 @@ def converter(input_file, segtool, version, type, gauss, chi, output_file):
                     new_vol.save_gauss_dist(type,output_file)
 
 
-            elif gauss == 0 :
+            else:
 
                 if output_file == None:
-                    print("Default volume creation")
+                    print("Piece-wise mode: on")
                     new_vol.create_type_vol(type) # This creates and saves a Nifti file
 
                 else:
-                    print("Custom output file creation")
+                    print("Piece-wise ON - custom out_fn")
                     new_vol.create_type_vol(type,output_file)
 
             print(f"Input segmented by: {segtool}, version: {version}")

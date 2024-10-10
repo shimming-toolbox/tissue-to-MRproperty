@@ -23,7 +23,7 @@ class SegmentationLabel:
 
             "air": [0.01, 0.01, 0.02, 0.01, 0.01],
             "bone": [None, 1204, 53, 3.30, 117],  # M0 is often not specified for bone
-            "lung": [None, 1270, None, 1, 0.1],  # Air in lungs doesn't have M0, T2 values?
+            "lungs": [None, 1270, None, 1, 0.1],  # Air in lungs doesn't have M0, T2 values?
             "water": [None, 2500, 2500, 1000, 100],  # High M0 value
             "CSF": [None, 3200, 2000, 1000, 100],  # High M0
 
@@ -96,7 +96,7 @@ class SegmentationLabel:
             "air": 2.78,  # air is backgrund
             # To all labels we have substracted air std_dev
             "bone": 5.42, # 10.87
-            "lung": 4.01, # 8.01
+            "lungs": 4.01, # 8.01
             # Water is a value similar to CSF
             "water": 10.29, # 27.79
             "CSF": 12.25, # 26.5

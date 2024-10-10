@@ -67,7 +67,7 @@ class volume:
             # If the version is dynamic
             # The new value will replace None
             # We can check just in case
-            self.look_up = return_dict_labels(tool,version, new_chi=self.new_chi)
+            self.look_up = return_dict_labels(tool,version, new_chi = self.new_chi)
         else:
             self.look_up = return_dict_labels(tool,version)
 
@@ -81,6 +81,8 @@ class volume:
             sus = value[1]
             self.set_label_name(key, name)
             self.set_label_susceptibility(key, sus)
+            print("###")
+            print(name,sus)
 
         self.relax_values = self.segmentation_labels[0].relax_values
         # Getting the relax values dictionary from any label
@@ -245,10 +247,11 @@ class volume:
     def create_type_vol(self,type, output_name="default"):
         # This function is for the CLI app
         # Depending on the type we automatically call the specific function
-        #
+        # Piece-wise mode: on :P
         if type =='sus':
             self.create_sus_dist()
             self.save_sus_dist_nii(output_name)
+
         if type =='t2s':
             self.create_t2_star_vol()
             self.save_t2star_dist(output_name)
