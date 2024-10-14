@@ -8,7 +8,7 @@ with open(path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-    name="tissue-to-MRproperty",
+    name="tissue2mrprop",
     python_requires = ">=3.8.8",
     description = "Code that creates a volume from a segmented Nifti file to a selected MR property",
     long_description = long_description,
@@ -19,6 +19,7 @@ setup(
         ]
     },
     packages=find_packages(exclude=["docs"]),
+    package_dir={'tissue2mrprop': 'tissue2mrprop'},
     install_requires=[
         "click",
         "pandas",
@@ -32,7 +33,6 @@ setup(
         "pytest",
         "jupyterlab",
         "scipy",
-
         "scikit-image"
     ]
 )
