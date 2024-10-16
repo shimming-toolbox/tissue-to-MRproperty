@@ -276,7 +276,7 @@ def return_dict_labels(tool,version, new_chi = None):
             7 : ("lungs", -4.84), # magical air inside lungs and esophagus
             10 : ("organ", -9.055), # Susceptibility of water
             12: ("muscle", -9.032), # Muscle has slightly different value than water
-            256: ("spinal canal",-9.055) # Soft tissue for this project
+            256: ("spinal cord",-9.055) # Soft tissue for this project
         }
         if version == 'mod0':
             return dicc
