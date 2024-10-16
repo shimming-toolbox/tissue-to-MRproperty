@@ -265,16 +265,18 @@ def return_dict_labels(tool,version, new_chi = None):
             return dicc
 
     if tool == "compare_fm":
-
+        # This project aims to simulate only 3 different tissue types
+        # Bones, soft tisssue and air
+        #
         dicc = {
-            0 : ("air", 0.35),
-            2 : ("fat", -8.92),
-            3 : ("bone", -11.5),
+            0 : ("air", 0.35), # Outside of the image
+            2 : ("fat", -9.032), # Water and muscle surrounding the labels
+            3 : ("bone", -11.5), #
             5 : ("inter_vert_discs", -9.055),
-            7 : ("lungs", 0.2), # magical air inside lungs and esophagus
-            10 : ("organ", -9.04),
-            12: ("muscle", -9.032),
-            256: ("spinal canal",-9.055)
+            7 : ("lungs", -4.84), # magical air inside lungs and esophagus
+            10 : ("organ", -9.055), # Susceptibility of water
+            12: ("muscle", -9.032), # Muscle has slightly different value than water
+            256: ("spinal canal",-9.055) # Soft tissue for this project
         }
         if version == 'mod0':
             return dicc
@@ -287,6 +289,7 @@ def return_dict_labels(tool,version, new_chi = None):
             dicc[7] = tuple(lst)
             print("Changing susceptibility of air to: ", new_chi)
             return dicc
+
 
     else:
         print("This tool hasn't been implemented yet.")
