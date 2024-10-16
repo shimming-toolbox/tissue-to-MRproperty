@@ -274,6 +274,7 @@ def return_dict_labels(tool,version, new_chi = None):
             3 : ("bone", -11.5), #
             5 : ("inter_vert_discs", -9.055),
             7 : ("lungs", -4.84), # magical air inside lungs and esophagus
+            8 : ("trachea", 0.2), # Air in the trachea
             10 : ("organ", -9.055), # Susceptibility of water
             12: ("muscle", -9.032), # Muscle has slightly different value than water
             256: ("spinal cord",-9.055) # Soft tissue for this project
