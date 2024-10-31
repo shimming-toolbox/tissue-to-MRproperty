@@ -33,7 +33,7 @@ PROPERTIES = {
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
 @click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = "0", help = "Set to 1 to use Gaussian distribution")
 @click.option("-x","--chi", required = False, type = float, default = None, help = "Used to define new chi value for FM comparison approach")
-@click.option('-o', '--output', 'output_file', type=click.Path(exists=True), required= False,
+@click.option('-o', '--output', 'output_file', type=click.Path(), default= "sus_dist.nii.gz", required= False,
               help = "By default it saves the chimap to the output folder")
 
 def converter(input_file, segtool, version, type, gauss, chi, output_file):
