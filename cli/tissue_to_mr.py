@@ -23,8 +23,9 @@ PROPERTIES = {
     "t1" : "T1",
     "t2" : "T2",
 }
-@click.command()
+
 #@click.argument("input_file", required=True) #, help="Input must be segmented label nifti",type=click.Path(exists=True))
+@click.command()
 @click.option('-i','--input','input_file', type=click.Path(exists=True), required=True,
               help="Input segmentations distribution, supported extensions: .nii, .nii.gz")
 @click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles','compare_fm']), help="State what segmentator was used")
@@ -32,7 +33,6 @@ PROPERTIES = {
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
 @click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = "0", help = "Set to 1 to use Gaussian distribution")
 @click.option("-x","--chi", required = False, type = float, default = None, help = "Used to define new chi value for FM comparison approach")
-@click.argument('output_file', required=False, type=click.Path())
 @click.option('-o', '--output', 'output_file', type=click.Path(exists=True), required= False,
               help = "By default it saves the chimap to the output folder")
 
