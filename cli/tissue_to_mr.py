@@ -33,7 +33,8 @@ PROPERTIES = {
 @click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = "0", help = "Set to 1 to use Gaussian distribution")
 @click.option("-x","--chi", required = False, type = float, default = None, help = "Used to define new chi value for FM comparison approach")
 @click.argument('output_file', required=False, type=click.Path())
-@click.option('-o', '--output', 'output_file', type=click.Path())
+@click.option('-o', '--output', 'output_file', type=click.Path(exists=True), required= False,
+              help = "By default it saves the chimap to the output folder")
 
 def converter(input_file, segtool, version, type, gauss, chi, output_file):
     # We need to check if the input is a  nifti file
