@@ -307,6 +307,8 @@ def return_dict_labels(tool,version, new_chi = None):
             10 : ("organ", -9.05), # Susceptibility of water
             12: ("muscle", -9.05), # Muscle has slightly different value than water
             15 : ("sinus", -2), # Air in the sinuses and ear canal
+            23: ("brain", -9.04), # Brain from Samseg
+            25: ("skull", -11), # Skull from Samseg with manual correction in Slicer
             256: ("spinal cord",-9.05) # Soft tissue for this project
             }
             return dicc2
