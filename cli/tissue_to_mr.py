@@ -29,7 +29,7 @@ PROPERTIES = {
 @click.option('-i','--input','input_file', type=click.Path(exists=True), required=True,
               help="Input segmentations distribution, supported extensions: .nii, .nii.gz")
 @click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles','compare_fm']), help="State what segmentator was used")
-@click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2','dyn','mod_PAM50']), help="Select the version of your segmentation file")
+@click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2','dyn','mod_PAM50',"mathieu"]), help="Select the version of your segmentation file")
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
 @click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = "0", help = "Set to 1 to use Gaussian distribution")
 @click.option("-x","--chi", required = False, type = float, default = None, help = "Used to define new chi value for FM comparison approach")
