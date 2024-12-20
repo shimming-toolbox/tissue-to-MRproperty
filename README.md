@@ -36,19 +36,26 @@ pip install .
 Once in the package is installed, you can process your images directly from the terminal. A description follows. </br>
 
 **Arguments** 
-- -s, segmentation_tool : ['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI']
-- -v, version : ['v2','mod0','mod1','mod2']
+- -i, input filename (expected to be compressed nifti, must end in .nii.gz)
+- -s, segmentation_tool : ['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI','compare_fm']
+- -v, version : ['v1','v2','mod0','mod1','mod2','dyn']
 - -t, type : ["t2s", "sus", "pd", "t1", "t2"]
 - -g, gauss : ["0", "1"]
+- x, Susceptibility value (only used if tool is compare_fm tool and version is dynamic)
+- -o, output filename (expected to be compressed nifti, must end in .nii.gz)
 
 Example:
 ```
-tissue_to_mr data/correct_pixels.nii.gz -t sus -s TotalSeg_CT -v mod2 -g 1 sus_gauss_dist.nii.gz
+tissue_to_mr -i data/correct_pixels.nii.gz -t sus -s TotalSeg_CT -v mod2 -g 1 -o sus_gauss_dist.nii.gz
+```
+
+```
+tissue_to_MR -i input_seg.nii.gz -s compare_fm -v dyn -t sus -x -4.36 -o chi_opt_map.nii.gz
 ```
 
 **Output** The new volume will be saved as Nifti inside the *output* folder. </br>
 
-The code has implemented a **pixel_check** function that will run before running the conversion. If the function finds a pixel with label intensity value outside the known labels, registered on the segmentation label, the code will ask to change the value of the pixel or delete this pixel (set value to 0). If the code changes any value, it will automatically save a new Nifti image in the output folder with name: **corrected_pixels.nii.gz**.
+The code has implemented a **pixel_check** function that will run before running the conversion. If the function finds a pixel with label intensity value outside the known labels in the dictionary provided by *-s*, segmentation label, the code will ask to change the value of the pixel or delete this pixel (set value to 0). If the code changes any value, it will automatically save a new Nifti image in the output folder with name: **corrected_pixels.nii.gz**.
 
 Now the converter has an option of creating the phantom with a Gaussian (normal) distribution based on: the total count of pixels per label and using the fixed value on the look-up table as the mean. Currently only supports **t2s**, **pd** and **sus** volume creation.
 
