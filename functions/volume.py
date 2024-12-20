@@ -57,8 +57,19 @@ class volume:
         self.real = None
         self.imaginary = None
 
+        # For the fieldmap comparison project:
+        self.new_chi = None
+
     def group_seg_labels(self,tool,version):
-        self.look_up = return_dict_labels(tool,version)
+        #self.look_up = return_dict_labels(tool,version)
+        # For the fieldmap comparison project
+        if tool == "compare_fm" and version == "dyn":
+            # If the version is dynamic
+            # The new value will replace None
+            # We can check just in case
+            self.look_up = return_dict_labels(tool,version, new_chi = self.new_chi)
+        else:
+            self.look_up = return_dict_labels(tool,version)
 
         # Function to get the relaxation values from label
         for i in self.look_up.keys():
@@ -70,6 +81,8 @@ class volume:
             sus = value[1]
             self.set_label_name(key, name)
             self.set_label_susceptibility(key, sus)
+            print("###")
+            print(name,sus)
 
         self.relax_values = self.segmentation_labels[0].relax_values
         # Getting the relax values dictionary from any label
@@ -234,10 +247,11 @@ class volume:
     def create_type_vol(self,type, output_name="default"):
         # This function is for the CLI app
         # Depending on the type we automatically call the specific function
-        #
+        # Piece-wise mode: on :P
         if type =='sus':
             self.create_sus_dist()
             self.save_sus_dist_nii(output_name)
+
         if type =='t2s':
             self.create_t2_star_vol()
             self.save_t2star_dist(output_name)
@@ -390,6 +404,7 @@ class volume:
             nib.save(temp_img,path)
         del temp_img
         del path
+
     def create_t2_star_vol(self):
         # This method will use the lookup table of T2 star values to create a new volume
         # This new volume will use the labels to quickly create a volume with relaxation time

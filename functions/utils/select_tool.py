@@ -4,7 +4,7 @@
 # I encourage to read her repo: https://github.com/evaalonsoortiz/Fourier-based-field-estimation
 
 # Important: When editing this lookup tables don't forget to edit the color map for itk and fsl
-def return_dict_labels(tool,version):
+def return_dict_labels(tool,version, new_chi = None):
 
     if tool == "TotalSeg_CT":
 
@@ -265,20 +265,74 @@ def return_dict_labels(tool,version):
             return dicc
 
     if tool == "compare_fm":
-
+        # This project aims to simulate only 3 different tissue types
+        # Bones, soft tisssue and air
+        #
+        # Some values were changed for ISMRM abstract. More precise values may be implemented later
         dicc = {
-            0 : ("air", 0.35),
-            2 : ("fat", -8.92),
-            3 : ("bone", -11.5),
-            5 : ("inter_vert_discs", -9.055),
-            7 : ("air", 0.2), # magical air inside lungs and esophagus
-            10 : ("organ", -9.04),
-            12: ("muscle", -9.032),
-            256: ("spinal canal",-9.055)
+            0: ("air", 0.35), # Outside of the body
+            2: ("fat", -9.05), # Water and muscle surrounding the labels ## Before -9.032
+            3: ("bone", -11), # Spine
+            5: ("inter_vert_discs", -9.05),
+            7: ("lungs", -4.2), # magical air inside lungs and esophagus
+            8: ("trachea", -4.2), # Air in the trachea
+            10: ("organ", -9.05), # Susceptibility of water
+            12: ("muscle", -9.05), # Muscle has slightly different value than water
+            15: ("sinus", -2),
+            23: ("brain", -9.04),  # Brain from Samseg
+            25: ("skull", -11),  # Skull from Samseg with manual correction in Slicer
+            256: ("spinal cord",-9.055), # Soft tissue for this project
+            289:("sc_csf,",-9.055) # Same as 256 for this project, might change later
         }
         if version == 'mod0':
             return dicc
 
+        if version == "dyn":
+            # This is for dynamically changing the susceptiblity values
+            # Only changing the value of air in lungs and trachea
+
+            lst1 = list(dicc[7])
+            lst2 = list(dicc[8])
+            lst1[1] = new_chi
+            lst2[1] = new_chi
+            dicc[7] = tuple(lst1)
+            dicc[8] = tuple(lst2)
+            print("Changing susceptibility of air to: ", new_chi)
+            return dicc
+
+        if version == 'mod_PAM50':
+            dicc2 = {
+            0 : ("air", 0.35), # Air surrounding the body
+            2 : ("fat", -9.05), # Water and muscle surrounding the labels
+            3 : ("bone", -11), #
+            5 : ("inter_vert_discs", -9.055),
+            7 : ("lungs", -4.2), # magical air inside lungs and esophagus
+            8 : ("trachea", -4.2), # Air in the trachea
+            10 : ("organ", -9.05), # Susceptibility of water
+            12: ("muscle", -9.05), # Muscle has slightly different value than water
+            15 : ("sinus", -2), # Air in the sinuses and ear canal
+            256: ("spinal cord",-9.05) # Soft tissue for this project
+            }
+            return dicc2
+
+        if version == 'mathieu':
+            dicc3 = {
+                0: ("air", 0.35),  # Air surrounding the body
+                1: ("fat", -9.05),
+                2: ("sinus", -2),
+                3: ("sinus",-2),
+                4: ("trachea",-2.3),
+                5: ("lungs",-2.3),
+                6: ("lungs",-2.3),
+                56: ("brain",-9.04),
+                60: ("eyes",-9.05),
+                91: ("skull",-11),
+                92: ("bone",-11),
+                93: ("inter_vert_discs",-9.055),
+                100:("spinal cord",-9.05)
+
+            }
+            return dicc3
 
     else:
         print("This tool hasn't been implemented yet.")
