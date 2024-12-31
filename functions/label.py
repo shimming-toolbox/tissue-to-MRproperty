@@ -32,28 +32,30 @@ class SegmentationLabel:
             # T2 is a guess
 
             "sc_csf": [None, 3200, 2000, 1000, 100], # From the new label 289
-            "sc_wm": [None, None, None, 53, 70], # From NumericalModel - Eva
-            "sc_gm": [None, None, None, 66, 82], # From Numerical Model - Eva
+            "sc_wm": [None, 888, 75, 75/2, 70], # From NumericalModel - Eva
+            "sc_gm": [None, 1446, 95, 95/2, 82], # From Numerical Model - Eva
 
             "fat": [None, 380, 108, 35, 140], # T2star value : 0.5*70e-3 # Daniel PD=90
-            "liver": [None, 809, 34, 34/2, 70],
-            "spleen": [None, 1328, 61, 65/2, 80],
+            "liver": [None, 809, 48, 30, 70],
+            "spleen": [None, 1328, 60, 65/2, 80],
             # In this initial segmentation the whole brain will be considered 60% GM and 40% WM
             # Given the values a ponderated estimation is 60.8 ms
-            "brain":[None,None,None, 60.8, 90],
-            "white_matter": [None, None, None, 53 ,70], # This is the brain WM
-            "gray_matter": [None, None, None, 66, 82], # This is the brain GM
 
-            "heart":[1000 ,1300, 55, 18.5/2, 85],
-            "kidney":[None, 1190, 56, 65.4/2, 70],
-            "pancreas":[None, 725,43, 37, 75],
-            "cartilage":[None, 1240,32, 20, 50], # PD value is a guess
-            "bone_marrow":[None, 365, 23, None, 60],  # PD value is a guess
+            "brain":[None,None,None, 60.8, 90],
+            "white_matter": [None, 888, 75, 75/2 ,70], # This is the brain WM
+            "gray_matter": [None, 1446, 95, 95/2, 82], # This is the brain GM
+
+            "heart":[1000 ,1250, 46, 24, 85],
+            "kidney":[None, 870, 78, 78/2, 70],
+            "pancreas":[None, 798,43, 43/2, 75],
+            "cartilage":[None, 1240, 42, 26, 50], # PD value is a guess
+            "bone_marrow":[None, 580, 49, 49/2, 60],  # PD value is a guess
             "SpinalCanal":[None, 993, 78, 60, 100], #
             "esophagus":[None,None, None, 17, 35], #
             "trachea":[None, None, None, 25, 15],
             "organ":[None, 800, 34, 17, 50], # Values similar to those from liver
             "gland":[None, None, None, 50, 100],
+
             # There are some organs that don't have enough documentation on the literature to complete
             # the required values so an estimation is used for these:
             "extra" : [None, 750, 50, 35,120],
