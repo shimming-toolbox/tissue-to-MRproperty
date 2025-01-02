@@ -81,8 +81,10 @@ def converter(input_file, segtool, version, type, gauss, chi, output_file):
                 print("Creating a Gaussian distribution phantom from ", type, " values")
                 if output_file == None:
                     new_vol.save_gauss_dist(type)
+                    print("Gaussian phantom created")
                 else:
                     new_vol.save_gauss_dist(type,output_file)
+                    print("Gaussian phantom created - custom out_fn")
 
 
             else:

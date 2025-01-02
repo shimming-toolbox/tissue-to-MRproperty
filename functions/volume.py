@@ -491,8 +491,8 @@ class volume:
 
 
     def calc_regions(self):
-        #For  creating a gaussian distribution we need to group and count every label
-        #Must be run after defining a tool in group_seg_labels
+        # For  creating a gaussian distribution we need to group and count every label
+        # Must be run after defining a tool in group_seg_labels
 
         unique_labels, counts = np.unique(self.volume, return_counts=True)
         self.unique_counts = dict(zip(unique_labels,counts))
@@ -515,6 +515,7 @@ class volume:
         sorted_label_counts = sorted(self.label_counts.items(), key = lambda item: item[1], reverse=True)
 
         for name, count in sorted_label_counts:
+            # Display the pixel count per label
             print(f"Label name: {name}: {count} pixels")
 
     def create_gauss_dist(self,prop):
@@ -557,10 +558,10 @@ class volume:
                 SD = self.std_devs[l_name]
                 print("label_name: ",self.look_up[l][0], " proton density: ",property, " SD: ", SD)
 
-
             self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property, mr_prop = prop, std_dev= SD/2)
             # This way for every label we have a gaussian distribution
 
+        print("Creating gaussian phantom -> longer for big files")
         for i in range(self.dimensions[0]):
             for j in range(self.dimensions[1]):
                 for k in range(self.dimensions[2]):
@@ -573,7 +574,7 @@ class volume:
                     # Now randomly select a value from the gaussian distribution
                     gaussian_values = self.label_gaussians[lab_id]
                     value = np.random.choice(gaussian_values)
-                    self.gaussian_phantom[i,j,k] = value\
+                    self.gaussian_phantom[i,j,k] = value
 
         print("Finished creating gaussian distributed, based on: ", prop)
         # Lastly add the gaussian phantom to a Nifti

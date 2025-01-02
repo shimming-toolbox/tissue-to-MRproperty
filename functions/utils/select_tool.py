@@ -27,13 +27,13 @@ def return_dict_labels(tool,version, new_chi = None):
             7: ("organ",-9.05), # pancreas
             8: ("gland",-9.05), # adrenal gland left
             9: ("gland",-9.05), # adrenal_gland_left
-            10: ("lung",0.2), # lung_upper_lobe_left
-            11: ("lung",0.2), # lung_lower_lobe_left
-            12: ("lung",0.2), # lung_upper_lobe_right
-            13: ("lung",0.2), # lung_middle_lobe_right
-            14: ("lung",0.2), # lung_lower_lobe_right
-            15: ("esophagus",-9.05),
-            16: ("trachea",0.2),
+            10: ("lungs",-0.27), # lung_upper_lobe_left
+            11: ("lungs",-0.27), # lung_lower_lobe_left
+            12: ("lungs",-0.27), # lung_upper_lobe_right
+            13: ("lungs",-0.27), # lung_middle_lobe_right
+            14: ("lungs",-0.27), # lung_lower_lobe_right
+            15: ("esophagus", -9.05),
+            16: ("trachea", -4.36), # Updated as of January 2025 (compare_fm + chi_opt)
             17: ("gland",-9.05), # thyroid_gland
             18: ("organ",-9.05), # small_bowel
             19: ("organ",-9.05), # duodenum
@@ -182,8 +182,8 @@ def return_dict_labels(tool,version, new_chi = None):
             7: ("organ", -9.05),  # pancreas
             8: ("gland", -9.05),  # adrenal_gland_right
             9: ("gland", -9.05),  # adrenal_gland_left
-            10: ("lung", 0.2),  # lung_left
-            11: ("lung", 0.2),  # lung_right
+            10: ("lungs", 0.2),  # lung_left
+            11: ("lungs", 0.2),  # lung_right
             12: ("esophagus", -9.05),  # esophagus
             13: ("organ", -9.05),  # small_bowel
             14: ("organ", -9.05),  # duodenum
