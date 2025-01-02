@@ -57,16 +57,17 @@ def converter(input_file, segtool, version, type, gauss, chi, output_file):
                 print("Using new susceptibility value for air: ",chi)
             else:
                 print("When using new dynamic version you must provide a chi value")
-                new_vol.new_chi = 0.3
-                print("Using default: ", new_vol.new_chi)
+                new_vol.new_chi = -4.36
+                print("Using default: ", new_vol.new_chi) # Value found while Optimization Abstract work
+                # Is a value used in single value optimization of measured FM vs simulated FM
 
-        new_vol.group_seg_labels(segtool, version)  # Automatically adding the names to known labels
+        new_vol.group_seg_labels(segtool, version,type)  # Automatically adding the names to known labels
         #print(new_vol.segmentation_labels[7])
         # Printing one label can help see the structure as well as verifying values selected
         # Specially when working with field map comparison project where chi can be changed
 
         print("Checking pixel integrity")
-        ans = new_vol.check_pixels()
+        ans = new_vol.check_pixels(input_file)
 
         if ans == 0:
             print("Converting ...")

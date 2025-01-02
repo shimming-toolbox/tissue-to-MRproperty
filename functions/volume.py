@@ -60,7 +60,7 @@ class volume:
         # For the fieldmap comparison project:
         self.new_chi = None
 
-    def group_seg_labels(self,tool,version):
+    def group_seg_labels(self,tool,version,type):
         #self.look_up = return_dict_labels(tool,version)
         # For the fieldmap comparison project
         if tool == "compare_fm" and version == "dyn":
@@ -82,7 +82,17 @@ class volume:
             self.set_label_name(key, name)
             self.set_label_susceptibility(key, sus)
             print("###")
-            print(name,sus)
+            if type == "sus":
+                print(name," Chi:",sus)
+            if type == "pd":
+                print(name," PD:",self.segmentation_labels[key].PD_val)
+            if type == "t2s":
+                print(name," T2s:",self.segmentation_labels[key].T2star_val)
+            if type == "t1":
+                print(name," T1:",self.segmentation_labels[key].T1_val)
+            if type == "t2":
+                print(name," T2:",self.segmentation_labels[key].T2_val)
+
 
         self.relax_values = self.segmentation_labels[0].relax_values
         # Getting the relax values dictionary from any label
@@ -265,7 +275,7 @@ class volume:
 
 
 
-    def check_pixels(self):
+    def check_pixels(self,input_name):
         # Important to before going to conversion
         # If there is a pixel that is outside of range conversion won't work
         # because it won't be treated as a label but as a float
@@ -305,7 +315,11 @@ class volume:
 
                 print("Saving corrected volume for later usage!")
                 tmp_img = nib.Nifti1Image(self.volume, affine = self.nifti.affine)
-                path = os.path.join('output',"corrected_pixels.nii.gz")
+                if input_name.endswith(".nii.gz"):  # Maybe code for .nii later (not urgent)
+                    base_name = input_name[:-7]  # Remove the `.nii.gz`
+                    extension = ".nii.gz"
+                out_name = base_name + "corrected_pixels.nii.gz"
+                path = os.path.join('output', out_name)
                 nib.save(tmp_img,path)
                 del tmp_img
                 del path
