@@ -77,6 +77,7 @@ def converter(input_file, segtool, version, type, gauss, chi, output_file):
                 new_vol.gauss_flag = 1
                 print("Gaussian option enabled ...")
                 new_vol.calc_regions()
+                #print("Calc region done")
                 new_vol.create_gauss_dist(type)
                 print("Creating a Gaussian distribution phantom from ", type, " values")
                 if output_file == None:

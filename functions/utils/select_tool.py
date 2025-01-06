@@ -42,32 +42,32 @@ def return_dict_labels(tool,version, new_chi = None):
             22: ("organ",-9.05), # prostate
             23: ("kidney",-9.05), # kidney_cyst_left
             24: ("kidney",-9.05), # kidney_cyst_right
-            25: ("bone",-9), # sacrum
-            26: ("bone",-9), #vertebrae_S1
-            27: ("bone",-9), # vertebrae_L5
-            28: ("bone",-9), # vertebrae_L4
-            29: ("bone",-9), # vertebrae_L3
-            30: ("bone",-9), # vertebrae_L2
-            31: ("bone",-9), # vertebrae_L1
-            32: ("bone",-9), # vertebrae_T12
-            33: ("bone",-9), # vertebrae_T11
-            34: ("bone",-9), # vertebrae_T10
-            35: ("bone",-9), # vertebrae_T9
-            36: ("bone",-9), # vertebrae_T8
-            37: ("bone",-9), # vertebrae_T7
-            38: ("bone",-9), # vertebrae_T6
-            39: ("bone",-9), #vertebrae_T5
-            40: ("bone",-9), # vertebrae_T4
-            41: ("bone",-9), #vertebrae_T3
-            42: ("bone",-9), # vertebrae_T2
-            43: ("bone",-9), # vertebrae_T1
-            44: ("bone",-9), # vertebrae_C7
-            45: ("bone",-9), # vertebrae_C6
-            46: ("bone",-9), # vertebrae_C5
-            47: ("bone",-9), # vertebrae_C4
-            48: ("bone",-9), # vertebrae_C3
-            49: ("bone",-9), # vertebrae_C2
-            50: ("bone",-9), # vertebrae_C1
+            25: ("v_bone",-9), # sacrum
+            26: ("v_bone",-9), #vertebrae_S1
+            27: ("v_bone",-9), # vertebrae_L5
+            28: ("v_bone",-9), # vertebrae_L4
+            29: ("v_bone",-9), # vertebrae_L3
+            30: ("v_bone",-9), # vertebrae_L2
+            31: ("v_bone",-9), # vertebrae_L1
+            32: ("v_bone",-9), # vertebrae_T12
+            33: ("v_bone",-9), # vertebrae_T11
+            34: ("v_bone",-9), # vertebrae_T10
+            35: ("v_bone",-9), # vertebrae_T9
+            36: ("v_bone",-9), # vertebrae_T8
+            37: ("v_bone",-9), # vertebrae_T7
+            38: ("v_bone",-9), # vertebrae_T6
+            39: ("v_bone",-9), #vertebrae_T5
+            40: ("v_bone",-9), # vertebrae_T4
+            41: ("v_bone",-9), #vertebrae_T3
+            42: ("v_bone",-9), # vertebrae_T2
+            43: ("v_bone",-9), # vertebrae_T1
+            44: ("v_bone",-9), # vertebrae_C7
+            45: ("v_bone",-9), # vertebrae_C6
+            46: ("v_bone",-9), # vertebrae_C5
+            47: ("v_bone",-9), # vertebrae_C4
+            48: ("v_bone",-9), # vertebrae_C3
+            49: ("v_bone",-9), # vertebrae_C2
+            50: ("v_bone",-9), # vertebrae_C1
             51: ("heart",-9.04), # heart
             52: ("extra",-9.04), # aorta
             53: ("extra",-9.04), # pulmonary_vein

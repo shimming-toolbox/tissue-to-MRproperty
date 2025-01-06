@@ -20,12 +20,14 @@ class volume:
         self.volume = self.nifti.get_fdata()
         self.dimensions = np.array(self.volume.shape) # It is initially a tuple, but it needs to be an array
         self.uniq_labels = np.unique(self.volume)
-        self.segmentation_labels = {} 
-        self.sus_dist = np.zeros(self.dimensions)
-        self.t2star_vol = np.zeros(self.dimensions)
-        self.pd_dist = np.zeros(self.dimensions)
-        self.deltaB0 = np.zeros(self.dimensions)
-        self.gaussian_phantom = np.zeros(self.dimensions)
+        self.segmentation_labels = {}
+        #self.sus_dist = {}
+        #self.t2star_vol = np.zeros(self.dimensions)
+        #self.pd_dist = np.zeros(self.dimensions)
+        #self.t1_vol = {}
+        #self.t2_vol = np.zeros(self.dimensions)
+        #self.deltaB0 = np.zeros(self.dimensions)
+        #self.gaussian_phantom = np.zeros(self.dimensions)
         # The dictionary has keys for every id number and each value 
         # is the corresponding SegmentationLabel daughter class
 
@@ -228,6 +230,13 @@ class volume:
             # SImilar to set_label_name
             self.segmentation_labels[label_id].set_susceptibility(susceptibility)
         else: print(f"Label ID {label_id} not found.")
+    def set_T1(self, label_id, t1):
+        ids = self.look_up.keys()
+        if label_id in ids:
+        # SImilar to set_label_name
+            self.segmentation_labels[label_id].set_t2star_val(t1)
+        else:
+            print(f"Label ID {label_id} not found.")
     def set_label_pd(self,label_id,pd):
         ids = self.look_up.keys()
         if label_id in ids:
@@ -254,23 +263,23 @@ class volume:
             label = self.segmentation_labels[i]
             print(label) # Calling __str__ from label
 
-    def create_type_vol(self,type, output_name="default"):
+    def create_type_vol(self, type, output_name="default"):
         # This function is for the CLI app
         # Depending on the type we automatically call the specific function
         # Piece-wise mode: on :P
-        if type =='sus':
+        if type == 'sus':
             self.create_sus_dist()
             self.save_sus_dist_nii(output_name)
-
-        if type =='t2s':
+        if type == 't2s':
             self.create_t2_star_vol()
             self.save_t2star_dist(output_name)
-        if type =='pd':
+        if type == 'pd':
             self.create_pd_vol()
             self.save_pd_dist(output_name)
-        if type =='t1':
-            print("T1 value volume comming soon!")
-        if type =='t2':
+        if type == 't1':
+            self.create_t1_vol()
+            self.save_t1_dist(output_name)
+        if type == 't2':
             print("T2 volume comming soon!")
 
 
@@ -279,7 +288,7 @@ class volume:
         # Important to before going to conversion
         # If there is a pixel that is outside of range conversion won't work
         # because it won't be treated as a label but as a float
-        flag = 0 # Flag to save in case there were changes
+        flag = 0  # Flag to save in case there were changes
         for i in range(self.dimensions[0]):
             for j in range(self.dimensions[1]):
                 for k in range(self.dimensions[2]):
@@ -299,7 +308,7 @@ class volume:
                             rem2 = int(input("Choose the value: "))
 
                             if rem2 in self.segmentation_labels:
-                                print("Changed value to: ",rem2)
+                                print("Changed value to: ", rem2)
                                 self.volume[i, j, k] = rem2
 
                             else:
@@ -307,7 +316,7 @@ class volume:
                                 return 1
 
                         if rem == "Y" or rem == "y":
-                            self.volume[i,j,k] = 0
+                            self.volume[i, j, k] = 0
 
         else:
 
@@ -332,6 +341,7 @@ class volume:
     def create_sus_dist(self):
         # Code for create a susceptibility distribution volume
         # Using the label class
+        self.sus_dist = np.zeros(self.dimensions)
         for i in range(self.dimensions[0]):
             for j in range(self.dimensions[1]):
                 for k in range(self.dimensions[2]):
@@ -377,10 +387,47 @@ class volume:
         del temp_img
         del path
 
+    def create_t1_vol(self):
+        self.t1_vol = np.zeros(self.dimensions)
+        for i in range(self.dimensions[0]):
+            for j in range(self.dimensions[1]):
+                for k in range(self.dimensions[2]):
+                    pixel = self.volume[i,j,k]
+                    label = self.segmentation_labels[pixel]
+                    val_t1 = label.T1_val
+                    if val_t1 == None:
+                        print("Label: ",label.name," does not have T1 value")
+                        self.t1_vol[i,j,k] = 0
+                    else:
+                        self.t1_vol[i, j, k] = val_t1
+        return self.t1_vol
+
+    def save_t1_dist(self, fn = "default"):
+        # Method to save T1 volume created to nifti
+        if self.gauss_flag:
+            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+        else:
+            temp_img = nib.Nifti1Image(self.t1_vol, affine=self.nifti.affine)
+
+        if fn == "default":
+            fn = 't1_dist.nii.gz'
+            if self.gauss_flag:
+                fn = "gauss_" + fn
+            path = os.path.join('output', fn)
+            nib.save(temp_img,path)
+        else:
+            if self.gauss_flag:
+                fn = "gauss_" + fn
+            path = os.path.join('output', fn)
+            nib.save(temp_img,path)
+        del temp_img
+        del path
+
     def create_pd_vol(self):
         # This method will use the lookup table of PD values to create a new volume
         # This new volume will use the labels to quickly create a volume with ProtonDensity values
 
+        self.pd_dist = np.zeros(self.dimensions)
         for i in range(self.dimensions[0]):
             for j in range(self.dimensions[1]):
                 for k in range(self.dimensions[2]):
@@ -422,6 +469,7 @@ class volume:
     def create_t2_star_vol(self):
         # This method will use the lookup table of T2 star values to create a new volume
         # This new volume will use the labels to quickly create a volume with relaxation time
+        self.t2star_vol = np.zeros(self.dimensions)
         for i in range(self.dimensions[0]):
             for j in range(self.dimensions[1]):
                 for k in range(self.dimensions[2]):
@@ -479,21 +527,10 @@ class volume:
         # It might be usefull to get this inputs from different researchers and testing
         pass
 
-    def calc_gauss(self, value, num_pixels, mr_prop, std_dev ):
-        val = np.random.normal(value, std_dev, num_pixels)
-        # In areas close to 0, the gaussian distribution must always return positive values
-        # It is not possible to have negative T1, T2, T2s or PD. But susceptibility can be negative
-        if mr_prop == "sus":
-            return val
-        else:
-            abs_val = np.abs(val)
-            return abs_val
-
-
     def calc_regions(self):
         # For  creating a gaussian distribution we need to group and count every label
         # Must be run after defining a tool in group_seg_labels
-
+        self.gaussian_phantom = np.zeros(self.dimensions)
         unique_labels, counts = np.unique(self.volume, return_counts=True)
         self.unique_counts = dict(zip(unique_labels,counts))
 
@@ -539,18 +576,19 @@ class volume:
                 print("label_name: ",self.look_up[l][0], " t2s: ",property, " SD: ", SD)
 
             if prop == "t2":
-                print("Relaxation lookup table still missing some values!")
-                print("Coming soon ...")
-                #l_name = self.look_up[l][0]
-                #property = self.relax_values[l_name][2]
-                #print("t2:", prop)
+                l_name = self.look_up[l][0]
+                property = self.relax_values[l_name][2]
+                SD = self.std_devs[l_name]
+                print("label_name: ", self.look_up[l][0], " t2: ", property, " SD: ", SD/2)
+
+
 
             if prop == "t1":
-                #l_name = self.look_up[l][0]
-                #property = self.relax_values[l_name][1]
-                #print("t1:", property)
-                print("Relaxation lookup table still missing some values!")
-                print("Coming soon ...")
+                l_name = self.look_up[l][0]
+                property = self.relax_values[l_name][1]
+                SD = self.std_devs[l_name]
+                print("label_name: ", self.look_up[l][0], " t1: ", property, " SD: ", SD/2)
+
 
             if prop == "pd":
                 l_name = self.look_up[l][0]
@@ -558,7 +596,7 @@ class volume:
                 SD = self.std_devs[l_name]
                 print("label_name: ",self.look_up[l][0], " proton density: ",property, " SD: ", SD)
 
-            self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value = property, mr_prop = prop, std_dev= SD/2)
+            self.label_gaussians[l] = self.calc_gauss(num_pixels = count, value = property, mr_prop = prop, std_dev = SD/2)
             # This way for every label we have a gaussian distribution
 
         print("Creating gaussian phantom -> longer for big files")
@@ -579,6 +617,15 @@ class volume:
         print("Finished creating gaussian distributed, based on: ", prop)
         # Lastly add the gaussian phantom to a Nifti
         # And save it to output folder
+    def calc_gauss(self, value, num_pixels, mr_prop, std_dev):
+        val = np.random.normal(value, std_dev, num_pixels)
+        # In areas close to 0, the gaussian distribution must always return positive values
+        # It is not possible to have negative T1, T2, T2s or PD. But susceptibility can be negative
+        if mr_prop == "sus":
+            return val
+        else:
+            abs_val = np.abs(val)
+            return abs_val
 
     def save_gauss_dist(self, type, out_fn = "default"):
         #Saving the gaussian distribution with type defined
@@ -595,7 +642,7 @@ class volume:
             self.save_pd_dist(out_fn)
 
         if type =='t1':
-            print("T1 value volume comming soon!")
+            self.save_t1_dist(out_fn)
 
         if type =='t2':
             print("T2 volume comming soon!")

@@ -17,54 +17,61 @@ class SegmentationLabel:
         self.std_dev = {}
 
         # Key is the name and value is ordered: M0, T1, T2, T2*, PD
+        # M0 = C * PD, where C is a scaling factor
+        # C represents smoothly-varying spatial modulation of the PD map
+        # by the profile of the receive coil gain (B-)
         # The values of T2* and T2 are in ms
+        # Unit of PD is [pu] percentage units
+
         # REMEMBER TO UPDATE on select_tool.py everytime a value is changed
         self.relax_values = {
 
-            "air": [0.01, 0.01, 0.02, 0.01, 0.01],
-            "bone": [None, 1204, 53, 3.30, 117],  # M0 is often not specified for bone
-            "lungs": [None, 1270, None, 1, 0.1],  # Air in lungs doesn't have M0, T2 values?
-            "water": [None, 2500, 2500, 1000, 100],  # High M0 value
-            "CSF": [None, 3200, 2000, 1000, 100],  # High M0
+            "air": [None, 0.01, 0.02, 0.01, 0.01],
+            "bone": [None, 224.8, 53, 0.4, 20],  # uMRI study showed T1: [1,1.6]s at 7T
+            "lungs": [None, 1372, 1, 1, 30],  # Air in lungs doesn't have M0, T2 values?
+            "water": [None, 2500, 275, 275/2, 100],  # High M0 value
+            "CSF": [None, 1953, 275, 275/2, 100],  # High M0 t1 from ITIS
 
-            "spinal_cord":[None, 990, 125, 76, 59.5], # From the new label 256
+            "spinal_cord":[None, 936.5, 76.75, 40.07, 60], # From the new label 256
             # PD & T2* GM + WM / 2 =>  82 + 70 /2 =    , T2-star = 66 + 53 / 2 =
             # T2 is a guess
 
-            "sc_csf": [None, 3200, 2000, 1000, 100], # From the new label 289
-            "sc_wm": [None, 888, 75, 75/2, 70], # From NumericalModel - Eva
-            "sc_gm": [None, 1446, 95, 95/2, 82], # From Numerical Model - Eva
+            "sc_csf": [None, 5128, 1419.84, 709.92, 100], # Values from https://pmc.ncbi.nlm.nih.gov/articles/PMC7410772/pdf/zj4788.pdf scaled to 3T
+            "sc_wm": [None, 857, 75, 38.65, 70], # From NumericalModel - Eva
+            "sc_gm": [None, 983.5, 95, 44.4, 82], # From Numerical Model - Eva
+            "v_bone": [None, 400, 53, 0.4, 20], # Values from same articel as sc_csf
 
-            "fat": [None, 380, 108, 35, 140], # T2star value : 0.5*70e-3 # Daniel PD=90
-            "liver": [None, 809, 48, 30, 70],
-            "spleen": [None, 1328, 60, 65/2, 80],
+            "fat": [None, 401, 129.3, 64.65, 90], # T2star value : 0.5*70e-3 # Daniel PD=90
+            "liver": [None, 798.75, 25.5, 18.82, 70],
+            "spleen": [None, 1328, 60.9, 16.3, 80],
             # In this initial segmentation the whole brain will be considered 60% GM and 40% WM
             # Given the values a ponderated estimation is 60.8 ms
 
-            "brain":[None,None,None, 60.8, 90],
-            "white_matter": [None, 888, 75, 75/2 ,70], # This is the brain WM
-            "gray_matter": [None, 1446, 95, 95/2, 82], # This is the brain GM
+            "brain":[None, 1222.9, 82.9, 42.8, 90], # Assuming 40% more wm than GM
+            "white_matter": [None, 887.7, 65.4, 35 ,70], # This is the brain WM
+            "gray_matter": [None, 1446.1, 94.3, 48, 82], # This is the brain GM
 
-            "heart":[1000 ,1250, 46, 24, 85],
-            "kidney":[None, 870, 78, 78/2, 70],
-            "pancreas":[None, 798,43, 43/2, 75],
-            "cartilage":[None, 1240, 42, 26, 50], # PD value is a guess
-            "bone_marrow":[None, 580, 49, 49/2, 60],  # PD value is a guess
-            "SpinalCanal":[None, 993, 78, 60, 100], #
-            "esophagus":[None,None, None, 17, 35], #
-            "trachea":[None, None, None, 25, 15],
-            "organ":[None, 800, 34, 17, 50], # Values similar to those from liver
-            "gland":[None, None, None, 50, 100],
+            "heart":[None ,1215.67, 49.35, 25.195, 85],
+            "kidney":[None, 1338, 86.835, 57.55, 70],
+            "pancreas":[None, 797.55, 43.5, 21.1, 75],
+            "cartilage":[None, 1201, 43.225, 26.04, 50], # PD value is a guess
+            "bone_marrow":[None, 583, 49, 24.5, 60],  # PD value is a guess
+            "SpinalCanal":[None, 993, 78, 78/2, 90], #
+
+            "esophagus":[None, 1000, 32, 17, 45], # Assuming trachea is almost 100% muscle
+            "trachea":[None, 1000, 35, 15, 15], # Assuming trachea is almost 100% cartilage
+            "organ":[None, 800, 40, 20, 65], # Values similar to those from liver
+            "gland":[None, 1600, 72, 72/2, 80], # Values from ITIS foundation for Salivatory gland
 
             # There are some organs that don't have enough documentation on the literature to complete
             # the required values so an estimation is used for these:
-            "extra" : [None, 750, 50, 35,120],
+            "extra": [None, 800, 50, 35, 80], # Mostly blood carriers or muscle (high water content)
 
-            "sinus" :[None, None, None, None, None],
+            "sinus":[None, None, None, None, None], # Not used in CT tool // missing values
 
             # Used in total_mr & compare fm
-            "inter_vert_discs" : [None, None, None, 69.20, None],
-            "muscle" : [None, None, None, 25, None]
+            "inter_vert_discs" : [None, 1201, 42, 26, 50], # Same as cartilage
+            "muscle" : [None, 1237.825, 36.1, 24.1, 45]
         }
     # Literature values from:
     # Jorge Zavala Bojorquez, Stéphanie Bricq, Clement Acquitter, François Brunotte, Paul M. Walker, Alain Lalande, What are normal relaxation times of tissues at 3 T?, Magnetic Resonance Imaging, Volume 35, 2017, Pages 69-80, ISSN 0730-725X, https://doi.org/10.1016/j.mri.2016.08.021.
@@ -98,6 +105,7 @@ class SegmentationLabel:
             "air": 2.78,  # air is backgrund
             # To all labels we have substracted air std_dev
             "bone": 5.42, # 10.87
+            "v_bone": 5.42, # Same as bone
             "lungs": 4.01, # 8.01
             # Water is a value similar to CSF
             "water": 10.29, # 27.79
