@@ -14,8 +14,11 @@ setup(
     long_description = long_description,
     url = "https://github.com/shimming-toolbox/tissue-to-MRproperty",
     entry_points = {
+        # On the left is the cmd caller
+        # Right now we have: tissue_to_MR and mr_prop_viewer
         'console_scripts': [
-        "tissue_to_MR = cli.tissue_to_mr:converter"
+        "tissue_to_MR = cli.tissue_to_mr:converter",
+        "mr_prop_viewer = cli.display:display"
         ]
     },
     packages=find_packages(exclude=["docs"]),
