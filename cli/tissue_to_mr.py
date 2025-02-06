@@ -12,6 +12,23 @@ from functions.utils.utils import is_nifti
 # tissue_to_mr --input [labeled_nifti] --type [choose_MR_property] --output [name=default]
 
 import time
+
+# For the json sidecar
+from pathlib import Path
+import argparse
+import os
+
+from typing import List
+import numpy.typing as npt
+
+import numpy as np
+import pandas as pd
+import matplotlib as plt
+import json
+import datetime
+import git
+import sys
+
 @click.group()
 def my_commands():
     pass
@@ -37,6 +54,10 @@ PROPERTIES = {
               help = "By default it saves the chimap to the output folder")
 
 def converter(input_file, segtool, version, type, gauss, chi, output_file):
+
+    # Pulling information of the command for output json file
+    command = " ".join(sys.argv)
+
     # We need to check if the input is a  nifti file
     if is_nifti(input_file):
         start = time.time()
@@ -109,6 +130,39 @@ def converter(input_file, segtool, version, type, gauss, chi, output_file):
 
     else:
         print("Input must be a Nifti file (.nii or .nii.gz extensions)")
+
+    # After everything is finished, we can create the json side car
+    try:
+        repo = git.Repo(search_parent_directories=True)
+    except git.exc.InvalidGitRepositoryError:
+        # This in case that converter tool is not ran under the folder
+        print("No Git repository found in parent directories.")
+        repo = None
+
+    print("Creating json sidecar for the operation")
+    converter_sidecar = {}
+    # This depends on the OS system 
+    author_name = os.getenv('USER') or os.getenv('USERNAME') or os.getenv('LOGNAME')
+    converter_sidecar['author'] = author_name if author_name else "Unknown User"
+    converter_sidecar['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    converter_sidecar['script'] = str(Path(os.path.abspath(__file__)).resolve())
+    converter_sidecar['command'] = command
+    if repo:
+        converter_sidecar['script source'] = repo.remotes.origin.url
+        converter_sidecar['script commit hash'] = repo.head.object.hexsha
+    else:
+        converter_sidecar['script source'] = "tissue_to_MR"
+        converter_sidecar['script commit hash'] = "check with git status"
+
+    json_out_name = output_file.replace(".nii.gz", ".json")
+    json_out_path = os.path.join("output", json_out_name)
+    print(json_out_path)
+    if os.path.exists(json_out_path):
+        print("Json sidecar found, overwritting ...")
+        os.remove(json_out_path)
+
+    with open(json_out_path, 'w', encoding='utf-8') as f:
+        json.dump(converter_sidecar, f, ensure_ascii=False, indent=4)
 
 #my_commands.add_command(converter)
 #if __name__ == "__main__":

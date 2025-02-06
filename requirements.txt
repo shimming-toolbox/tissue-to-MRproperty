@@ -10,3 +10,4 @@ treelib
 pytest
 jupyterlab
 scipy
+gitpython
