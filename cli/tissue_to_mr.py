@@ -141,7 +141,7 @@ def converter(input_file, segtool, version, type, gauss, chi, output_file):
 
     print("Creating json sidecar for the operation")
     converter_sidecar = {}
-    # This depends on the OS system 
+    # This depends on the OS system
     author_name = os.getenv('USER') or os.getenv('USERNAME') or os.getenv('LOGNAME')
     converter_sidecar['author'] = author_name if author_name else "Unknown User"
     converter_sidecar['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
