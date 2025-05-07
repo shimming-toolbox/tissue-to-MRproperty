@@ -50,10 +50,10 @@ PROPERTIES = {
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
 @click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = "0", help = "Set to 1 to use Gaussian distribution")
 @click.option("-x","--chi", required = False, type = float, default = None, help = "Used to define new chi value for FM comparison approach")
+@click.option("-r", "--ref",required=False,type=float,default=0,help="Use as a reference flag to demodulate the values by a constant. Only use with Susceptibility property")
 @click.option('-o', '--output', 'output_file', type=click.Path(), default= "sus_dist.nii.gz", required= False,
               help = "By default it saves the chimap to the output folder")
-
-def converter(input_file, segtool, version, type, gauss, chi, output_file):
+def converter(input_file, segtool, version, type, gauss, chi, ref,output_file):
 
     # Pulling information of the command for output json file
     command = " ".join(sys.argv)
@@ -81,9 +81,15 @@ def converter(input_file, segtool, version, type, gauss, chi, output_file):
                 new_vol.new_chi = -4.36
                 print("Using default: ", new_vol.new_chi) # Value found while Optimization Abstract work
                 # Is a value used in single value optimization of measured FM vs simulated FM
+        if ref != 0:
+            if type == 'sus':
+                new_vol.group_seg_labels(segtool, version,type, ref = ref)  # Automatically adding the names to known labels
+                print(f"Using {ref} as a reference value")
+            else:
+                print("Type must be susceptibility to use the reference flag")
+                exit()
 
-        new_vol.group_seg_labels(segtool, version,type)  # Automatically adding the names to known labels
-        #print(new_vol.segmentation_labels[7])
+        new_vol.group_seg_labels(segtool, version, type, ref=ref)
         # Printing one label can help see the structure as well as verifying values selected
         # Specially when working with field map comparison project where chi can be changed
 

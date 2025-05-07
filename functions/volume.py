@@ -62,7 +62,7 @@ class volume:
         # For the fieldmap comparison project:
         self.new_chi = None
 
-    def group_seg_labels(self,tool,version,type):
+    def group_seg_labels(self,tool,version,type, ref):
         #self.look_up = return_dict_labels(tool,version)
         # For the fieldmap comparison project
         if tool == "compare_fm" and version == "dyn":
@@ -80,7 +80,7 @@ class volume:
         for key,value in self.look_up.items():
             # Key is the number of ID and value is (name, sus)
             name = value[0]
-            sus = value[1]
+            sus = value[1] - ref
             self.set_label_name(key, name)
             self.set_label_susceptibility(key, sus)
             print("###")
