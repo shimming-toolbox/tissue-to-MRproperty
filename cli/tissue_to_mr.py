@@ -53,7 +53,7 @@ PROPERTIES = {
 @click.option("-r", "--ref",required=False,type=float,default=0,help="Use as a reference flag to demodulate the values by a constant. Only use with Susceptibility property")
 @click.option('-o', '--output', 'output_file', type=click.Path(), default= "sus_dist.nii.gz", required= False,
               help = "By default it saves the chimap to the output folder")
-def converter(input_file, segtool, version, type, gauss, chi, ref,output_file):
+def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
 
     # Pulling information of the command for output json file
     command = " ".join(sys.argv)
@@ -105,7 +105,7 @@ def converter(input_file, segtool, version, type, gauss, chi, ref,output_file):
                 print("Gaussian option enabled ...")
                 new_vol.calc_regions()
                 # print("Calc region done")
-                new_vol.create_gauss_dist(type)
+                new_vol.test_create_gauss_dist(type)
                 print("Creating a Gaussian distribution phantom from ", type, " values")
                 if output_file == None:
                     new_vol.save_gauss_dist(type)
