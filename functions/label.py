@@ -16,86 +16,68 @@ class SegmentationLabel:
         self.PD_val = 0
         self.std_dev = {}
 
-        # Key is the name and value is ordered: M0, T1, T2, T2*, PD
+        # Key is the name and value is ordered:
+        # M0, T1, T2, T2*, PD
+        # M0 = C * PD, where C is a scaling factor
+        # C represents smoothly-varying spatial modulation of the PD map
+        # by the profile of the receive coil gain (B-)
         # The values of T2* and T2 are in ms
+        # Unit of PD is [pu] percentage units
+
         # REMEMBER TO UPDATE on select_tool.py everytime a value is changed
         self.relax_values = {
+            # Official labels for the Whole Body phantom by S.R.
+            "fat": [None, 401.2, 129.3, 64.65, 20],
+            "heart": [None, 1215.67, 49.35, 25.195, 77],
+            "liver": [None, 798.75, 33, 18.82, 70],
+            "pancreas": [None, 797.55, 43.5, 21.1, 70],
+            "kidney": [None, 1338, 86.835, 57.55, 82],
+            "brain": [None, 1232.9, 82.9, 42.8, 74.5],
+            "spleen": [None, 1328, 60.9, 16.3, 75],
+            "cartilage": [None, 1201, 43.225, 26.04, 70],
+            "bone_marrow":[None, 586, 49, 24.5, 27],
 
-            "air": [0.01, 0.01, 0.02, 0.01, 0.01],
-            "bone": [None, 1204, 53, 3.30, 117],  # M0 is often not specified for bone
-            "lungs": [None, 1270, None, 1, 0.1],  # Air in lungs doesn't have M0, T2 values?
-            "water": [None, 2500, 2500, 1000, 100],  # High M0 value
-            "CSF": [None, 3200, 2000, 1000, 100],  # High M0
+            "sc_wm": [None, 857, 73, 38.65, 70],
+            "sc_gm": [None, 983.5, 76, 44.4, 80],
+            "sc_csf": [None, 5128, 1419.84, 709.92, 100],
 
-            "spinal_cord":[None, 990, 125, 76, 59.5], # From the new label 256
-            # PD & T2* GM + WM / 2 =>  82 + 70 /2 =    , T2-star = 66 + 53 / 2 =
-            # T2 is a guess
+            "muscle": [None, 1237.825, 36.1, 24.1, 45],
+            "bone": [None, 223, 0.39, 1.16, 18],
+            "v_bone": [None, 618.5, 80.685, 40.3, 40],
+            "lungs": [None, 1400, 35.5, 1.62, 15],
+            "trachea": [None, 1100, 40, 12, 5],
+            "air": [None, 0.01, 0.01, 0.01, 0.01],
 
-            "sc_csf": [None, 3200, 2000, 1000, 100], # From the new label 289
-            "sc_wm": [None, None, None, 53, 70], # From NumericalModel - Eva
-            "sc_gm": [None, None, None, 66, 82], # From Numerical Model - Eva
+            "extra": [None, 800, 50, 35, 50],  # Mostly blood carriers or muscle (high water content)
 
-            "fat": [None, 380, 108, 35, 140], # T2star value : 0.5*70e-3 # Daniel PD=90
-            "liver": [None, 809, 34, 34/2, 70],
-            "spleen": [None, 1328, 61, 65/2, 80],
-            # In this initial segmentation the whole brain will be considered 60% GM and 40% WM
-            # Given the values a ponderated estimation is 60.8 ms
-            "brain":[None,None,None, 60.8, 90],
-            "white_matter": [None, None, None, 53 ,70], # This is the brain WM
-            "gray_matter": [None, None, None, 66, 82], # This is the brain GM
+            # Other labels for other segmentation tools available :)
+            # Literature review pending
+            "spinal_cord":[None, 936.5, 76.75, 40.07, 60],
 
-            "heart":[1000 ,1300, 55, 18.5/2, 85],
-            "kidney":[None, 1190, 56, 65.4/2, 70],
-            "pancreas":[None, 725,43, 37, 75],
-            "cartilage":[None, 1240,32, 20, 50], # PD value is a guess
-            "bone_marrow":[None, 365, 23, None, 60],  # PD value is a guess
-            "SpinalCanal":[None, 993, 78, 60, 100], #
-            "esophagus":[None,None, None, 17, 35], #
-            "trachea":[None, None, None, 25, 15],
-            "organ":[None, 800, 34, 17, 50], # Values similar to those from liver
-            "gland":[None, None, None, 50, 100],
+            "water": [None, 2500, 275, 275/2, 100],  # High M0 value
+            "CSF": [None, 1953, 275, 275/2, 100],  # High M0 t1 from ITIS
+            "white_matter": [None, 887.7, 65.4, 35 ,70], # This is the brain WM
+            "gray_matter": [None, 1446.1, 94.3, 48, 82], # This is the brain GM
+            "SpinalCanal":[None, 993, 78, 78/2, 90], #
+            "esophagus":[None, 1000, 32, 17, 45], # Assuming trachea is almost 100% muscle
+            "organ":[None, 800, 40, 20, 65], # Values similar to those from liver
+            "gland":[None, 1600, 72, 72/2, 80], # Values from ITIS foundation for Salivatory gland
             # There are some organs that don't have enough documentation on the literature to complete
             # the required values so an estimation is used for these:
-            "extra" : [None, 750, 50, 35,120],
+            "sinus":[None, None, None, None, None], # Not used in CT tool // missing values
+            # Used in totalSeg_mr & compare fm
+            "inter_vert_discs" : [None, 1201, 42, 26, 50], # Same as cartilage
 
-            "sinus" :[None, None, None, None, None],
-
-            # Used in total_mr & compare fm
-            "inter_vert_discs" : [None, None, None, 69.20, None],
-            "muscle" : [None, None, None, 25, None]
         }
-    # Literature values from:
-    # Jorge Zavala Bojorquez, Stéphanie Bricq, Clement Acquitter, François Brunotte, Paul M. Walker, Alain Lalande, What are normal relaxation times of tissues at 3 T?, Magnetic Resonance Imaging, Volume 35, 2017, Pages 69-80, ISSN 0730-725X, https://doi.org/10.1016/j.mri.2016.08.021.
-    #
-    # Stanisz, G.J., Odrobina, E.E., Pun, J., Escaravage, M., Graham, S.J., Bronskill, M.J. and Henkelman, R.M. (2005), T1, T2 relaxation and magnetization transfer in tissue at 3T. Magn. Reson. Med., 54: 507-512. https://doi.org/10.1002/mrm.20605
-    # Arnold, J., Fidler, F., Wang, T. et al. Imaging lung function using rapid dynamic acquisition of T 1-maps during oxygen enhancement. Magn Reson Mater Phy 16, 246–253 (2004). https://doi.org/10.1007/s10334-004-0034-z
-    # Meloni, A., De Marchi, D., Positano, V. et al. Accurate estimate of pancreatic T2* values: how to deal with fat infiltration. Abdom Imaging 40, 3129–3136 (2015). https://doi.org/10.1007/s00261-015-0522-9
-    # Hesper, T., Hosalkar, H.S., Bittersohl, D. et al. T2* mapping for articular cartilage assessment: principles, current applications, and future prospects. Skeletal Radiol 43, 1429–1445 (2014). https://doi.org/10.1007/s00256-014-1852-3
-    # Wu, X., Song, H., Stenger, V.A., Gach, H.M. (2023). Quantification of B0 Inhomogeneities in the Abdomen at 3 T. In: Selvaraj, H., Chmaj, G., Zydek, D. (eds) Advances in Systems Engineering. ICSEng 2023. Lecture Notes in Networks and Systems, vol 761. Springer, Cham. https://doi.org/10.1007/978-3-031-40579-2_11
-    #
-
-    # MRI from Picture to Proton
-    # Questions and answers in MRI website : Courtesy of Allen D. Elster, MRIquestions.com
-    ########### For some T2star values #############
-    # Some T2 star values from the literature are at 1.5T: liver, spleen, kidney, WM and GM, cartilage
-    # T2 star values should decrease with higher field strength due to faster spin dephase
-    # For the purpose of this code, the values at 1.5T are assumed to half at 3T
-    # T2 star value of lungs from : Wu, X., Song, H., Stenger, V.A., Gach, H.M. (2023). Quantification of B0 Inhomogeneities in the Abdomen at 3 T. In: Selvaraj, H., Chmaj, G., Zydek, D. (eds) Advances in Systems Engineering. ICSEng 2023. Lecture Notes in Networks and Systems, vol 761. Springer, Cham. https://doi.org/10.1007/978-3-031-40579-2_11
-
-
-    # Cristina Rossi, Andreas Boss, Michael Haap, Petros Martirosian, Claus D. Claussen, Fritz Schick, Whole-body T2⁎ mapping at 1.5 T, Magnetic Resonance Imaging, Volume 27, Issue 4, 2009, Pages 489-496, ISSN 0730-725X, https://doi.org/10.1016/j.mri.2008.08.004.
-    # For brain T2star values: Andrew M. Peters, Matthew J. Brookes, Frank G. Hoogenraad, Penny A. Gowland, Susan T. Francis, Peter G. Morris, Richard Bowtell, T2* measurements in human brain at 1.5, 3 and 7 T,
-    # Magnetic Resonance Imaging, Volume 25, Issue 6, 2007, Pages 748-753, ISSN 0730-725X, https://doi.org/10.1016/j.mri.2007.02.014.
-
-    # For Proton density:
-    # Proton density should be independent of field strength, we are using a value relative to water being 100
-    #
+    # Literature values will have a link to a paper/abstract soon!
+    # It's a literature review
 
         self.std_dev = {
 
             "air": 2.78,  # air is backgrund
             # To all labels we have substracted air std_dev
             "bone": 5.42, # 10.87
+            "v_bone": 5.42, # Same as bone
             "lungs": 4.01, # 8.01
             # Water is a value similar to CSF
             "water": 10.29, # 27.79
