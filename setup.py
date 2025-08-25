@@ -35,7 +35,7 @@ setup(
         "pytest",
         "jupyterlab",
         "scipy",
-
+        "gitpython",
         "scikit-image"
     ]
 )

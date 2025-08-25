@@ -67,7 +67,7 @@ def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
         file = nib.load(input_file)
         print("file loaded")
         new_vol = volume(file)
-        print("Grouping labels")
+        print("# Step 1. Group segmentation labels #")
         # Using the type:
 
         # This for the FM comparison project:
@@ -93,11 +93,11 @@ def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
         # Printing one label can help see the structure as well as verifying values selected
         # Specially when working with field map comparison project where chi can be changed
 
-        print("Checking pixel integrity")
+        print("# Step 2. Checking pixel integrity #")
         ans = new_vol.check_pixels(input_file)
 
         if ans == 0:
-            print("Converting ...")
+            print("# Step 3. Converting ... #")
 
             if gauss == "1":
 
@@ -105,7 +105,7 @@ def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
                 print("Gaussian option enabled ...")
                 new_vol.calc_regions()
                 # print("Calc region done")
-                new_vol.test_create_gauss_dist(type)
+                new_vol.create_gauss_sc_dist(type)
                 print("Creating a Gaussian distribution phantom from ", type, " values")
                 if output_file == None:
                     new_vol.save_gauss_dist(type)
@@ -144,8 +144,8 @@ def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
         # This in case that converter tool is not ran under the folder
         print("No Git repository found in parent directories.")
         repo = None
+    print("# Step 3. Creating json sidecar for the convertion #")
 
-    print("Creating json sidecar for the operation")
     converter_sidecar = {}
     # This depends on the OS system
     author_name = os.getenv('USER') or os.getenv('USERNAME') or os.getenv('LOGNAME')

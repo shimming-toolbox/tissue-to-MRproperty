@@ -68,8 +68,8 @@ def return_dict_labels(tool,version, new_chi = None):
             48: ("v_bone",-9), # vertebrae_C3
             49: ("v_bone",-9), # vertebrae_C2
             50: ("v_bone",-9), # vertebrae_C1
-            51: ("heart",-9.04), # heart
-            52: ("extra",-9.04), # aorta
+            51: ("heart",-9.05), # heart
+            52: ("extra",-9.05), # aorta
             53: ("extra",-9.04), # pulmonary_vein
             54: ("extra",-9.04), # brachiocephalic_trunk
             55: ("extra",-9.04), # subclavian_artery_right
@@ -97,16 +97,16 @@ def return_dict_labels(tool,version, new_chi = None):
             77: ("bone",-9), # hip_left
             78: ("bone",-9), # hip_right
             79: ("SpinalCanal",-9.055), # Spinal Canal (from Total Seg)
-            80: ("extra",-9.04), # gluteus_maximus_left
-            81: ("extra",-9.04), # gluteus_maximus_right
-            82: ("extra",-9.04), # gluteus_medius_left
-            83: ("extra",-9.04), # gluteus_medius_right
-            84: ("extra",-9.04), # gluteus_minimus_left
-            85: ("extra",-9.04), # gluteus_minimus_right
-            86: ("extra",-9.04), # autochthon_left
-            87: ("extra",-9.04), # autochthon_right
-            88: ("extra",-9.04), # iliopsoas_left
-            89: ("extra",-9.04), # iliopsoas_right
+            80: ("muscle",-9.04), # gluteus_maximus_left
+            81: ("muscle",-9.04), # gluteus_maximus_right
+            82: ("muscle",-9.04), # gluteus_medius_left
+            83: ("muscle",-9.04), # gluteus_medius_right
+            84: ("muscle",-9.04), # gluteus_minimus_left
+            85: ("muscle",-9.04), # gluteus_minimus_right
+            86: ("muscle",-9.04), # autochthon_left
+            87: ("muscle",-9.04), # autochthon_right
+            88: ("muscle",-9.04), # iliopsoas_left
+            89: ("muscle",-9.04), # iliopsoas_right
             90: ("brain",-9.04), # brain
             91: ("bone",-9), # skull
             92: ("bone",-9), # rib_left_1
@@ -134,7 +134,7 @@ def return_dict_labels(tool,version, new_chi = None):
             114: ("bone",-9), # rib_right_11
             115: ("bone",-9), # rib_right_12
             116: ("bone",-9), # sternum
-            117: ("bone",-9) # costal_cartilages
+            117: ("cartilage",-9) # costal_cartilages
         }
 
         if version == "v2":

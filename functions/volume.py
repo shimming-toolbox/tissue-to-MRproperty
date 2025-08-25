@@ -16,7 +16,7 @@ class volume:
         # In this version we correct that the output should be the nifti image
         # This way we can attribute the information from nifti files to the class
 
-        self.nifti = volume # This is now directing to a Nifti file
+        self.nifti = volume # This points to a Nifti file
         self.volume = self.nifti.get_fdata()
         self.dimensions = np.array(self.volume.shape) # It is initially a tuple, but it needs to be an array
         self.uniq_labels = np.unique(self.volume)
@@ -71,7 +71,7 @@ class volume:
             # If the version is dynamic
             # The new value will replace None
             # We can check just in case
-            self.look_up = return_dict_labels(tool,version, new_chi=self.new_chi)
+            self.look_up = return_dict_labels(tool,version, new_chi = self.new_chi)
         else:
             self.look_up = return_dict_labels(tool,version)
 
@@ -90,7 +90,7 @@ class volume:
             self.set_label_name(key, name)
             self.set_label_susceptibility(key, sus)
 
-            print("###")
+
             if type == "sus":
                 print(name, " Chi:", sus)
             if type == "pd":
@@ -565,18 +565,21 @@ class volume:
             # Display the pixel count per label
             print(f"Label name: {name}: {count} pixels")
 
-    def test_create_gauss_dist(self, prop):
+    def create_gauss_sc_dist(self, prop):
         std_values = {
             "sus": {"sc_wm": 0.0104, "sc_gm": 0.031}, # => Avg taken from regions 1 through 7 of QSM RC2 paper (Deep gray matter) and WM
-            "t2s": {"sc_wm": 5.4, "sc_gm": 5.6},
-            "t2": {"sc_wm": 5.4, "sc_gm": 5.6}, # Same as T2* for now
-            "t1": {"sc_wm": 42, "sc_gm": 44},
+            "t2s": {"sc_wm": 4.6875, "sc_gm": 3.688}, # For WM we use: https://pmc.ncbi.nlm.nih.gov/articles/PMC3508464
+            # For GM we use downscaled T2* values from QSM RC2 phantom as no 3T data was found, at 7T average was 9.757 ms
+            # Values of t2s @ 7T where: for WM: 12.4 ms and for GM: 9.757 (from QSM RC2 in-vivo maps)
+            "t2": {"sc_wm": 4.6875, "sc_gm": 3.688}, # Same as T2* for now (we have T2 map from same sub used for T1, can do later when needed)
+            "t1": {"sc_wm": 106.15, "sc_gm": 114.895}, # Using sub-MKP611 from https://openneuro.org/datasets/ds004611/versions/1.0.2
             "pd": {"sc_wm": 5.54, "sc_gm": 6.95}, # Same as M0 for now
             "M0": {"sc_wm": 13.41, "sc_gm": 16.83} # => Avg taken from regions 1 through 7 of QSM RC2 paper (Deep gray matter) for GM and WM
         }
-        # WM should be corpus callosum, but that segmentation mask is not available
+        # WM values come from corpus callosum
+        # GM values come from Deep Gray Matter regions in the brain
         # M0 values got from QSM RC2 need to be re-scaled because the values range from 0 to XX
-        # Using a brain mask on said phantom, max_QSM_RC2_phantom = 242
+        # Using a brain mask on QSM RC2 phantom, max_QSM_RC2_phantom_M0 = 242
         # If the PD max is 100 we can use the following scaling factor:
         # scaling_for_PD = max(PD)/max(M0)
         # Which results in 100/242 = 0.413
