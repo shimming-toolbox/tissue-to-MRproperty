@@ -42,32 +42,32 @@ def return_dict_labels(tool,version, new_chi = None):
             22: ("organ",-9.05), # prostate
             23: ("kidney",-9.05), # kidney_cyst_left
             24: ("kidney",-9.05), # kidney_cyst_right
-            25: ("v_bone",-9), # sacrum
-            26: ("v_bone",-9), #vertebrae_S1
-            27: ("v_bone",-9), # vertebrae_L5
-            28: ("v_bone",-9), # vertebrae_L4
-            29: ("v_bone",-9), # vertebrae_L3
-            30: ("v_bone",-9), # vertebrae_L2
-            31: ("v_bone",-9), # vertebrae_L1
-            32: ("v_bone",-9), # vertebrae_T12
-            33: ("v_bone",-9), # vertebrae_T11
-            34: ("v_bone",-9), # vertebrae_T10
-            35: ("v_bone",-9), # vertebrae_T9
-            36: ("v_bone",-9), # vertebrae_T8
-            37: ("v_bone",-9), # vertebrae_T7
-            38: ("v_bone",-9), # vertebrae_T6
-            39: ("v_bone",-9), #vertebrae_T5
-            40: ("v_bone",-9), # vertebrae_T4
-            41: ("v_bone",-9), #vertebrae_T3
-            42: ("v_bone",-9), # vertebrae_T2
-            43: ("v_bone",-9), # vertebrae_T1
-            44: ("v_bone",-9), # vertebrae_C7
-            45: ("v_bone",-9), # vertebrae_C6
-            46: ("v_bone",-9), # vertebrae_C5
-            47: ("v_bone",-9), # vertebrae_C4
-            48: ("v_bone",-9), # vertebrae_C3
-            49: ("v_bone",-9), # vertebrae_C2
-            50: ("v_bone",-9), # vertebrae_C1
+            25: ("v_bone",-9.7), # sacrum
+            26: ("v_bone",-9.7), #vertebrae_S1
+            27: ("v_bone",-9.7), # vertebrae_L5
+            28: ("v_bone",-9.7), # vertebrae_L4
+            29: ("v_bone",-9.7), # vertebrae_L3
+            30: ("v_bone",-9.7), # vertebrae_L2
+            31: ("v_bone",-9.7), # vertebrae_L1
+            32: ("v_bone",-9.7), # vertebrae_T12
+            33: ("v_bone",-9.7), # vertebrae_T11
+            34: ("v_bone",-9.7), # vertebrae_T10
+            35: ("v_bone",-9.7), # vertebrae_T9
+            36: ("v_bone",-9.7), # vertebrae_T8
+            37: ("v_bone",-9.7), # vertebrae_T7
+            38: ("v_bone",-9.7), # vertebrae_T6
+            39: ("v_bone",-9.7), #vertebrae_T5
+            40: ("v_bone",-9.7), # vertebrae_T4
+            41: ("v_bone",-9.7), #vertebrae_T3
+            42: ("v_bone",-9.7), # vertebrae_T2
+            43: ("v_bone",-9.7), # vertebrae_T1
+            44: ("v_bone",-9.7), # vertebrae_C7
+            45: ("v_bone",-9.7), # vertebrae_C6
+            46: ("v_bone",-9.7), # vertebrae_C5
+            47: ("v_bone",-9.7), # vertebrae_C4
+            48: ("v_bone",-9.7), # vertebrae_C3
+            49: ("v_bone",-9.7), # vertebrae_C2
+            50: ("v_bone",-9.7), # vertebrae_C1
             51: ("heart",-9.05), # heart
             52: ("extra",-9.05), # aorta
             53: ("extra",-9.04), # pulmonary_vein
@@ -86,62 +86,62 @@ def return_dict_labels(tool,version, new_chi = None):
             66: ("extra",-9.04), # iliac_artery_right
             67: ("extra",-9.04), # iliac_vena_left
             68: ("extra",-9.04), # iliac_vena_right
-            69: ("bone",-9), # humerus_left
-            70: ("bone",-9), # humerus_right
-            71: ("bone",-9), # scapula_left
-            72: ("bone",-9), # scapula_right
-            73: ("bone",-9), # clavicula_left
-            74: ("bone",-9), # clavicula_right
-            75: ("bone",-9), # femur_left
-            76: ("bone",-9), # femur_right
-            77: ("bone",-9), # hip_left
-            78: ("bone",-9), # hip_right
+            69: ("bone",-11.1), # humerus_left
+            70: ("bone",-11.1), # humerus_right
+            71: ("bone",-11.1), # scapula_left
+            72: ("bone",-11.1), # scapula_right
+            73: ("bone",-11.1), # clavicula_left
+            74: ("bone",-11.1), # clavicula_right
+            75: ("bone",-11.1), # femur_left
+            76: ("bone",-11.1), # femur_right
+            77: ("bone",-11.1), # hip_left
+            78: ("bone",-11.1), # hip_right
             79: ("SpinalCanal",-9.055), # Spinal Canal (from Total Seg)
-            80: ("muscle",-9.04), # gluteus_maximus_left
-            81: ("muscle",-9.04), # gluteus_maximus_right
-            82: ("muscle",-9.04), # gluteus_medius_left
-            83: ("muscle",-9.04), # gluteus_medius_right
-            84: ("muscle",-9.04), # gluteus_minimus_left
-            85: ("muscle",-9.04), # gluteus_minimus_right
-            86: ("muscle",-9.04), # autochthon_left
-            87: ("muscle",-9.04), # autochthon_right
-            88: ("muscle",-9.04), # iliopsoas_left
-            89: ("muscle",-9.04), # iliopsoas_right
-            90: ("brain",-9.04), # brain
-            91: ("bone",-9), # skull
-            92: ("bone",-9), # rib_left_1
-            93: ("bone",-9), # rib_left_2
-            94: ("bone",-9), # rib_left_3
-            95: ("bone",-9), # rib_left_4
-            96: ("bone",-9), # rib_left_5
-            97: ("bone",-9), # rib_left_6
-            98: ("bone",-9), # rib_left_7
-            99: ("bone",-9), # rib_left_8
-            100: ("bone",-9), # rib_left_9
-            101: ("bone",-9), # rib_left_10
-            102: ("bone",-9), # rib_left_11
-            103: ("bone",-9), # rib_left_12
-            104: ("bone",-9), # rib_right_1
-            105: ("bone",-9), # rib_right_2
-            106: ("bone",-9), # rib_right_3
-            107: ("bone",-9), # rib_right_4
-            108: ("bone",-9), # rib_right_5
-            109: ("bone",-9), # rib_right_6
-            110: ("bone",-9), # rib_right_7
-            111: ("bone",-9), # rib_right_8
-            112: ("bone",-9), # rib_right_9
-            113: ("bone",-9), # rib_right_10
-            114: ("bone",-9), # rib_right_11
-            115: ("bone",-9), # rib_right_12
-            116: ("bone",-9), # sternum
-            117: ("cartilage",-9) # costal_cartilages
+            80: ("muscle",-9.03), # gluteus_maximus_left
+            81: ("muscle",-9.03), # gluteus_maximus_right
+            82: ("muscle",-9.03), # gluteus_medius_left
+            83: ("muscle",-9.03), # gluteus_medius_right
+            84: ("muscle",-9.03), # gluteus_minimus_left
+            85: ("muscle",-9.03), # gluteus_minimus_right
+            86: ("muscle",-9.03), # autochthon_left
+            87: ("muscle",-9.03), # autochthon_right
+            88: ("muscle",-9.03), # iliopsoas_left
+            89: ("muscle",-9.03), # iliopsoas_right
+            90: ("brain",-9.05), # brain
+            91: ("bone",-11.1), # skull
+            92: ("bone",-11.1), # rib_left_1
+            93: ("bone",-11.1), # rib_left_2
+            94: ("bone",-11.1), # rib_left_3
+            95: ("bone",-11.1), # rib_left_4
+            96: ("bone",-11.1), # rib_left_5
+            97: ("bone",-11.1), # rib_left_6
+            98: ("bone",-11.1), # rib_left_7
+            99: ("bone",-11.1), # rib_left_8
+            100: ("bone",-11.1), # rib_left_9
+            101: ("bone",-11.1), # rib_left_10
+            102: ("bone",-11.1), # rib_left_11
+            103: ("bone",-11.1), # rib_left_12
+            104: ("bone",-11.1), # rib_right_1
+            105: ("bone",-11.1), # rib_right_2
+            106: ("bone",-11.1), # rib_right_3
+            107: ("bone",-11.1), # rib_right_4
+            108: ("bone",-11.1), # rib_right_5
+            109: ("bone",-11.1), # rib_right_6
+            110: ("bone",-11.1), # rib_right_7
+            111: ("bone",-11.1), # rib_right_8
+            112: ("bone",-11.1), # rib_right_9
+            113: ("bone",-11.1), # rib_right_10
+            114: ("bone",-11.1), # rib_right_11
+            115: ("bone",-11.1), # rib_right_12
+            116: ("bone",-11.1), # sternum
+            117: ("cartilage",-9.055) # costal_cartilages
         }
 
         if version == "v2":
             return dicc
 
         if version =="mod0":
-            # This means it has labes + fat = Whole body
+            # This means it has labels + fat = Whole body
             dicc[264]=("fat",-8.92)
             return dicc
 
