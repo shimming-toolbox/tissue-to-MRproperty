@@ -65,41 +65,43 @@ Depending on the tool used for segmentation the code will use different lookup t
 # Look-up table
 Here we document the respective look-up tables used for assigning MR property values to labels. This are acquired from literature publications, reference to the literature used for creating the look-up table are inside the code for the [label](functions/label.py) class.
 
-## Relaxation Values (S.R.)
+## Relaxation Values & Susceptibility v1.0
 
-| Tissue/Label        | T1 (ms) | T2 (ms) | T2* (ms) | PD (%) |
-|----------------------|---------|---------|----------|--------|
-| fat                 | 401.2   | 129.3   | 64.65    | 20     |
-| heart               | 1215.67 | 49.35   | 25.195   | 77     |
-| liver               | 798.75  | 33      | 18.82    | 70     |
-| pancreas            | 797.55  | 43.5    | 21.1     | 70     |
-| kidney              | 1338    | 86.835  | 57.55    | 82     |
-| brain               | 1232.9  | 82.9    | 42.8     | 74.5   |
-| spleen              | 1328    | 60.9    | 16.3     | 75     |
-| cartilage           | 1201    | 43.225  | 26.04    | 70     |
-| bone_marrow         | 586     | 49      | 24.5     | 27     |
-| sc_wm (Spinal WM)   | 857     | 73      | 38.65    | 70     |
-| sc_gm (Spinal GM)   | 983.5   | 76      | 44.4     | 80     |
-| sc_csf (Spinal CSF) | 5128    | 1419.84 | 709.92   | 100    |
-| muscle              | 1237.825| 36.1    | 24.1     | 45     |
-| bone                | 223     | 0.39    | 1.16     | 18     |
-| v_bone (Vertebrae)  | 618.5   | 80.685  | 40.3     | 40     |
-| lungs               | 1400    | 35.5    | 1.62     | 15     |
-| trachea             | 1100    | 40      | 12       | 5      |
-| air                 | 0.01    | 0.01    | 0.01     | 0.01   |
-| extra (blood/muscle)| 800     | 50      | 35       | 50     |
-| spinal_cord         | 936.5   | 76.75   | 40.07    | 60     |
-| water               | 2500    | 275     | 137.5    | 100    |
-| CSF                 | 1953    | 275     | 137.5    | 100    |
-| white_matter        | 887.7   | 65.4    | 35       | 70     |
-| gray_matter         | 1446.1  | 94.3    | 48       | 82     |
-| SpinalCanal         | 993     | 78      | 39       | 90     |
-| esophagus           | 1000    | 32      | 17       | 45     |
-| organ (liver-like)  | 800     | 40      | 20       | 65     |
-| gland (salivary)    | 1600    | 72      | 36       | 80     |
-| sinus               | –       | –       | –        | –      |
-| inter_vert_discs    | 1201    | 42      | 26       | 50     |
+| Tissue/Label        | T1 (ms) | T2 (ms) | T2* (ms) | PD (%) | Susceptibility (ppm) |
+|----------------------|---------|---------|----------|--------|-----------------------|
+| fat                 | 401.2   | 129.3   | 64.65    | 20     | -8.92 |
+| heart               | 1215.67 | 49.35   | 25.195   | 77     | -9.05 |
+| liver               | 798.75  | 33      | 18.82    | 70     | -9.05 |
+| pancreas            | 797.55  | 43.5    | 21.1     | 70     | -9.05 |
+| kidney              | 1338    | 86.835  | 57.55    | 82     | -9.05 |
+| brain               | 1232.9  | 82.9    | 42.8     | 74.5   | -9.05 |
+| spleen              | 1328    | 60.9    | 16.3     | 75     | -9.05 |
+| cartilage           | 1201    | 43.225  | 26.04    | 70     | -9.055|
+| bone_marrow         | 586     | 49      | 24.5     | 27     | -9.05 |
+| sc_wm (Spinal WM)   | 857     | 73      | 38.65    | 70     | -9.083|
+| sc_gm (Spinal GM)   | 983.5   | 76      | 44.4     | 80     | -9.03 |
+| sc_csf (Spinal CSF) | 5128    | 1419.84 | 709.92   | 100    | -9.03 |
+| muscle              | 1237.825| 36.1    | 24.1     | 45     | -9.03 |
+| bone                | 223     | 0.39    | 1.16     | 18     | -11.1 |
+| v_bone (Vertebrae)  | 618.5   | 80.685  | 40.3     | 40     | -9.7  |
+| lungs               | 1400    | 35.5    | 1.62     | 15     | -0.27* |
+| trachea             | 1100    | 40      | 12       | 5      | -4.36* |
+| air                 | 0.01    | 0.01    | 0.01     | 0.01   | 0.35  |
+| extra (blood/muscle)| 800     | 50      | 35       | 50     | -9.04 |
+| spinal_cord         | 936.5   | 76.75   | 40.07    | 60     | -9.055|
+| water               | 2500    | 275     | 137.5    | 100    | -9.05 |
+| CSF                 | 1953    | 275     | 137.5    | 100    | -9.05 |
+| white_matter        | 887.7   | 65.4    | 35       | 70     | –     |
+| gray_matter         | 1446.1  | 94.3    | 48       | 82     | –     |
+| SpinalCanal         | 993     | 78      | 39       | 90     | -9.055|
+| esophagus           | 1000    | 32      | 17       | 45     | -9.05 |
+| organ (liver-like)  | 800     | 40      | 20       | 65     | -9.05 |
+| gland (salivary)    | 1600    | 72      | 36       | 80     | -9.05 |
+| sinus               | –       | –       | –        | –      | -     |
+| inter_vert_discs    | 1201    | 42      | 26       | 50     | -9.055|
 
+
+* Susceptibility for Air cavities: lungs & trachea are guesses from a WIP project.
 
 Citation to come with publication soon!. </br>
 
