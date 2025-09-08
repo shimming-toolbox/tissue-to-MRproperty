@@ -33,9 +33,9 @@ setup(
         "ipython",
         "treelib",
         "pytest",
-        "jupyterlab",
-        "scipy",
+        #"jupyterlab",
+        #"scipy",
         "gitpython",
-        "scikit-image"
+        #"scikit-image"
     ]
 )

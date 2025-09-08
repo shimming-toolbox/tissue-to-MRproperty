@@ -21,13 +21,13 @@ class volume:
         self.dimensions = np.array(self.volume.shape) # It is initially a tuple, but it needs to be an array
         self.uniq_labels = np.unique(self.volume)
         self.segmentation_labels = {}
-        #self.sus_dist = {}
-        #self.t2star_vol = np.zeros(self.dimensions)
-        #self.pd_dist = np.zeros(self.dimensions)
-        #self.t1_vol = {}
-        #self.t2_vol = np.zeros(self.dimensions)
+        self.sus_dist = None
+        self.t2star_vol = None
+        self.pd_dist = None
+        self.t1_vol = None
+        self.t2_vol = None
         #self.deltaB0 = np.zeros(self.dimensions)
-        #self.gaussian_phantom = np.zeros(self.dimensions)
+        self.gaussian_phantom = None
         # The dictionary has keys for every id number and each value 
         # is the corresponding SegmentationLabel daughter class
 
@@ -512,6 +512,49 @@ class volume:
             nib.save(temp_img,path)
         del temp_img
         del path
+
+    def create_t2_vol(self):
+        # This method will use the lookup table of T2 star values to create a new volume
+        # This new volume will use the labels to quickly create a volume with relaxation time
+        self.t2_vol = np.zeros(self.dimensions)
+        for i in range(self.dimensions[0]):
+            for j in range(self.dimensions[1]):
+                for k in range(self.dimensions[2]):
+
+                    pixel = self.volume[i, j, k]
+                    label = self.segmentation_labels[pixel]
+                    t2val = label.T2_val
+                    if t2val == None:
+                        # THis means the label does not have T2 defined
+                        self.t2_vol[i, j, k] = 0.001
+                    else:
+                        # If the label has value it will put this value on the volume
+                        self.t2_vol[i, j, k] = t2val
+
+        return self.t2star_vol
+
+    def save_t2_dist(self, fn = "default"):
+        # Method to save the volume with T2 star values  created to nifti
+        if self.gauss_flag:
+            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+        else:
+            temp_img = nib.Nifti1Image(self.t2_vol, affine=self.nifti.affine)
+
+        if fn == "default":
+            fn = 't2_map.nii.gz'
+            if self.gauss_flag:
+                fn = "gauss_" + fn
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img,path)
+        else:
+            if self.gauss_flag:
+                fn = "gauss_" + fn
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img,path)
+        del temp_img
+        del path
     def save_sus_csv(self):
         data = []
         for i in self.segmentation_labels.keys():
@@ -571,7 +614,7 @@ class volume:
             "t2s": {"sc_wm": 4.6875, "sc_gm": 3.688}, # For WM we use: https://pmc.ncbi.nlm.nih.gov/articles/PMC3508464
             # For GM we use downscaled T2* values from QSM RC2 phantom as no 3T data was found, at 7T average was 9.757 ms
             # Values of t2s @ 7T where: for WM: 12.4 ms and for GM: 9.757 (from QSM RC2 in-vivo maps)
-            "t2": {"sc_wm": 4.6875, "sc_gm": 3.688}, # Same as T2* for now (we have T2 map from same sub used for T1, can do later when needed)
+            "t2": {"sc_wm": 8.725, "sc_gm": 14.935}, # Using sub-MKP611 from https://openneuro.org/datasets/ds004611/versions/1.0.2
             "t1": {"sc_wm": 106.15, "sc_gm": 114.895}, # Using sub-MKP611 from https://openneuro.org/datasets/ds004611/versions/1.0.2
             "pd": {"sc_wm": 5.54, "sc_gm": 6.95}, # Same as M0 for now
             "M0": {"sc_wm": 13.41, "sc_gm": 16.83} # => Avg taken from regions 1 through 7 of QSM RC2 paper (Deep gray matter) for GM and WM
@@ -585,7 +628,7 @@ class volume:
         # Which results in 100/242 = 0.413
         # PD_std = M0_std*0.413
 
-        print("Step1. Populate phantom with piecewise values")
+        print("Step1 for Texture. Populate phantom with piecewise values")
         for i in range(self.dimensions[0]):
             for j in range(self.dimensions[1]):
                 for k in range(self.dimensions[2]):
@@ -606,7 +649,7 @@ class volume:
 
         # Step 2: Apply gaussian distribution only to sc_wm and gm
 
-        print("Step2. Calculate gaussian distribution for sc_wm and sc_gm")
+        print("Step2 for Texture. Calculate gaussian distribution for sc_wm and sc_gm")
         for l, count in self.unique_counts.items():
             #label_id = l
             label_name = self.look_up[l][0]
@@ -631,7 +674,7 @@ class volume:
                 mr_prop=prop,
                 std_dev=std_dev
                 )
-        # Step 3: Replacing with gaussian values only in SC WM and SC GM
+        # Step 3 for Texture. Replacing with gaussian values only in SC WM and SC GM
         print("Creating gaussian phantom -> longer for big files")
 
         # Optimized Gaussian Phantom Creation Loop
@@ -802,6 +845,6 @@ class volume:
             self.save_t1_dist(out_fn)
 
         if type == 't2':
-            print("T2 volume comming soon!")
+            self.save_t2_dist(out_fn)
     def __repr__(self):
         return f"SegmentationLabelManager == Volume"
