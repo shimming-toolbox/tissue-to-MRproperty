@@ -39,6 +39,10 @@ PROPERTIES = {
     "pd" : "Proton density",
     "t1" : "T1",
     "t2" : "T2",
+    "perm3T": "Permittivity@3T",
+    "cond3T": "Conductivity@3T",
+    "perm7T": "Permittivity@7T",
+    "cond7T": "Conductivity@7T"
 }
 
 #@click.argument("input_file", required=True) #, help="Input must be segmented label nifti",type=click.Path(exists=True))
@@ -46,7 +50,7 @@ PROPERTIES = {
 @click.option('-i','--input','input_file', type=click.Path(exists=True), required=True,
               help="Input segmentations distribution, supported extensions: .nii, .nii.gz")
 @click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles','compare_fm']), help="State what segmentator was used")
-@click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2','dyn','mod_PAM50',"mathieu"]), help="Select the version of your segmentation file")
+@click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2','dyn','mod_PAM50',"ds005616"]), help="Select the version of your segmentation file")
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
 @click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = "0", help = "Set to 1 to use Gaussian distribution")
 @click.option("-x","--chi", required = False, type = float, default = None, help = "Used to define new chi value for FM comparison approach")
@@ -74,11 +78,11 @@ def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
         # Needs to be before grouping labels, if not it will put none
         if segtool == "compare_fm" and version == "dyn":
             if chi != None:
-                new_vol.new_chi = chi
+                new_vol.new_chi = chi # This needs to be improved ... (S.R. comment)
                 print("Using new susceptibility value for air: ",chi)
             else:
                 print("When using new dynamic version you must provide a chi value")
-                new_vol.new_chi = -4.36
+                new_vol.new_chi = -2.438
                 print("Using default: ", new_vol.new_chi) # Value found while Optimization Abstract work
                 # Is a value used in single value optimization of measured FM vs simulated FM
         if ref != 0:
@@ -114,16 +118,15 @@ def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
                     new_vol.save_gauss_dist(type,output_file)
                     print("Gaussian phantom created - custom out_fn")
 
-
             else:
 
                 if output_file == None:
                     print("Piece-wise mode: on")
-                    new_vol.create_type_vol(type) # This creates and saves a Nifti file
+                    new_vol.create_type_vol(type)  # This creates and saves a Nifti file
 
                 else:
                     print("Piece-wise ON - custom out_fn")
-                    new_vol.create_type_vol(type,output_file)
+                    new_vol.create_type_vol(type, output_file)
 
             print(f"Input segmented by: {segtool}, version: {version}")
             end = time.time()

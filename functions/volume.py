@@ -26,6 +26,7 @@ class volume:
         self.pd_dist = None
         self.t1_vol = None
         self.t2_vol = None
+        self.static_vol = None
         #self.deltaB0 = np.zeros(self.dimensions)
         self.gaussian_phantom = None
         # The dictionary has keys for every id number and each value 
@@ -35,6 +36,7 @@ class volume:
         self.look_up = {}
         # This is the Convention Dictionary for labels_id - names - sus_values
         self.relax_values = {}
+        self.static_vals = {}
         # This is a dictionary to get the relaxation values used in label.py
 
         # Now to get the dictionary of standard deviations
@@ -79,17 +81,17 @@ class volume:
         for i in self.look_up.keys():
             self.segmentation_labels[i] = SegmentationLabel(i)
 
-        for key,value in self.look_up.items():
+        for key, value in self.look_up.items():
             # Key is the number of ID and value is (name, sus)
             name = value[0]
             sus = value[1]
+
             if ref != 0:
                 new_sus = sus - ref
                 self.set_label_susceptibility(key, new_sus)
 
-            self.set_label_name(key, name)
+            self.set_label_name(key, name, type)
             self.set_label_susceptibility(key, sus)
-
 
             if type == "sus":
                 print(name, " Chi:", sus)
@@ -101,137 +103,38 @@ class volume:
                 print(name, " T1:", self.segmentation_labels[key].T1_val)
             if type == "t2":
                 print(name, " T2:", self.segmentation_labels[key].T2_val)
+            if type == "perm3T":
+                print(name, " Permittivity@3T:", self.segmentation_labels[key].perm3T)
+            if type == "cond3T":
+                print(name, " Conductivity @3T:", self.segmentation_labels[key].cond3T)
+            if type == "perm7T":
+                print(name, " Permittivity @7T:", self.segmentation_labels[key].perm7T)
+            if type == "cond7T":
+                print(name, " Permittivity @7T:", self.segmentation_labels[key].cond7T)
 
         # Getting the relax values dictionary from any label
         self.relax_values = self.segmentation_labels[0].relax_values
-        # Getting the standard deviation per label name
-        #self.std_devs = self.segmentation_labels[0].std_dev
-        # Not needed, gaussian will only apply to SC WM and SC GM
+        self.static_vals = self.segmentation_labels[0].static_values_short
 
-
-    def create_segmentation_labels_old(self):
-
-        #Now this code checks the tool and the version for label-name relationship
-        # Still keeping this method just in case
-        # New method is group_seg_labels
-
-        # The most important labels are:
-        # lungs Bone Soft Tissue SpinalCord CSF
-        # These are the regions of the body that impact the most
-        # For susceptibility valuesfrom bone, fat and soft tissue:
-        # https://pfeifer.phas.ubc.ca/refbase/files/Truong-MRI-2002-20-759.pdf
-        #
-        # We can create an already pre-defined from convention of label_ids
-
-        # In TotalSegmentator this is labeled Spinal Cord, but
-        # it really is the Spinal Canal = Spinal Cord + CSF
-        # For SC is (GM + WM)/2 = -9.055
-        # From Eva's code GM = -9.03 and WM = -9.08
-        self.set_label_name(76,"SpinalCanal")
-        self.set_label_susceptibility(76,-9.055)
-        # IN this branch of the code, we have added labels for the SC
-        # We correct the fact that in Total Seg it was Spinal Canal
-        self.set_label_name(256, "spinal_cord")
-        self.set_label_susceptibility(256,-9.055)
-        self.set_label_name(289, "sc_csf")
-        self.set_label_susceptibility(289,-9.05)
-
-
-        # For the lungs we have [9,10,11,12,13]
-        for i in [9,10,11,12,13]:
-            self.set_label_name(i,'lung')
-            self.set_label_susceptibility(i,0.4)
-
-        # For the bones we have a lot more labels
-        # Vertebrae and ribs. But all of them can have the same value: -11.1
-        # Vertebrae list goes from Sacrum to C1
-        vertebra_list = np.arange(22,48)
-        rib_list = np.append(np.arange(89,114),[68,69,70,71,74,75,88])
-
-        # It was -11.1, but now it is -9.0
-        for i in vertebra_list:
-            self.set_label_name(i,"bone")
-            self.set_label_susceptibility(i,-9.0)
-
-        for i in rib_list:
-            self.set_label_name(i, "bone")
-            self.set_label_susceptibility(i, -9.0)
-
-        # Last but not least is to give susceptibility values to the organs
-        # and soft tissue => susceptibility value of water = -9.05
-
-        sus_water_list = [1, 2, 3, 4, 5, 6, 7, 8, 14, 16]
-
-        self.set_label_name(1, "spleen")
-        self.set_label_name(2, "kidney") #Right
-        self.set_label_name(3, "kidney") # Left
-        self.set_label_name(4, "organ") # Gallblader
-        self.set_label_name(5, "liver")
-        self.set_label_name(6, "organ") #Stomach
-        self.set_label_name(7, "gland") # AdrenalGland
-        self.set_label_name(8, "gland") # AdrenalGland
-        self.set_label_name(14, "esophagus")
-        self.set_label_name(15, "trachea")
-        self.set_label_name(16, "gland") # Thyroid
-
-
-        # Susceptibility value of fat = -8.39
-
-        for i in sus_water_list:
-            self.set_label_susceptibility(i, -9.05)
-
-        # For trachea, it should have a susceptibilty value closer to air but withsome muscle so a bit diamag.
-        self.set_label_susceptibility(15, 0.2)
-
-        # Soft tissue == water
-        # Inside of body == fat
-
-
-        self.set_label_name(0,"air") # Outside of brain
-        self.set_label_susceptibility(0,0.35)
-
-        # If label has not been set it can be considered as fat
-        # susceptibility of fat label is considering fat and muscle proportion of the body
-        # sus of fat is -7.5, muscle is -9.05 and soft tissue is -9.5
-        # Assuming that body is 20% fat, 40% muscle and 40% soft tissue
-        # The weighted average of the fat label should be: -8.92
-
-        self.set_label_name(264,"fat")
-        self.set_label_susceptibility(264,-8.92)
-
-        # For simulating GRE acquisition we need to set name of organs
-        # brain, liver, spleen, kidney
-        self.set_label_name(87, "brain")
-        self.set_label_name(48,"heart")
-
-
-        # The other labels missing without names follow
-
-        intestines = [17,18,19,20,21,22,23]
-        # small intestine duodenum colon urinary bladder prostate kidney cyst left and right
-        for i in intestines:
-            self.set_label_name(i,"organ")
-            self.set_label_susceptibility(i,-9.05)
-
-        # Lastly if everything was labeled properly what's left are veins and muscles
-        # The susceptibility of csf and water is -9.05, of muscle is -9.03 we can combine them
-        for i in self.uniq_labels:
-            if self.segmentation_labels[i].name == None:
-                self.set_label_name(i,"extra")
-                self.set_label_susceptibility(i,-9.04)
-
-        # This way we should have everything labeled
     def check_labels(self):
         for i in self.uniq_labels:
             if self.segmentation_labels[i].name == None:
                 print("Label: ",self.segmentation_labels[i]["name"]," doesn't have name assigned")
 
-    def set_label_name(self, label_id, name):
+    def set_label_name(self, label_id, name, type):
+        '''
+        This is the most important set function, as this function enables the calling the tissue properties as attributes
+        if and only if the label is found in the ids
+        '''
         ids = self.look_up.keys()
         if label_id in ids:
+            if type == "perm3T" or type == "cond3T" or type == "perm7T" or type == "cond7T":
+                self.segmentation_labels[label_id].set_static_name(name)
+
             self.segmentation_labels[label_id].set_name(name)
         else:
             print(f"Label ID {label_id} not found, check version selected")
+            exit()
 
     def set_label_susceptibility(self, label_id, susceptibility):
         ids = self.look_up.keys()
@@ -239,12 +142,14 @@ class volume:
             self.segmentation_labels[label_id].set_susceptibility(susceptibility)
         else:
             print(f"Label ID {label_id} not found.")
+            exit()
     def set_T1(self, label_id, t1):
         ids = self.look_up.keys()
         if label_id in ids:
             self.segmentation_labels[label_id].set_t2star_val(t1)
         else:
             print(f"Label ID {label_id} not found.")
+            exit()
     def set_label_pd(self,label_id,pd):
         ids = self.look_up.keys()
         if label_id in ids:
@@ -287,6 +192,10 @@ class volume:
             self.save_t1_dist(output_name)
         if type == 't2':
             print("T2 volume comming soon!")
+
+        if type == 'perm3T' or type == 'cond3T' or type == 'perm7T' or type == 'cond7T':
+            self.create_static_vol(type)
+            self.save_static_vol(type, output_name)
 
 
 
@@ -389,6 +298,67 @@ class volume:
             path = os.path.join('output', fn)
             # Save the new NIfTI image to a file
             nib.save(temp_img,path)
+
+        del temp_img
+        del path
+
+    def create_static_vol(self, type):
+
+        self.static_vol = np.zeros(self.dimensions)
+        # Recall the type will tell us what index to take from the perm&cond dictionary
+
+        for i in range(self.dimensions[0]):
+            for j in range(self.dimensions[1]):
+                for k in range(self.dimensions[2]):
+
+                    pixel = self.volume[i,j,k]
+
+                    label = self.segmentation_labels[pixel]
+
+                    if type == "perm3T":
+                        stat = label.perm3T
+                        self.static_vol[i, j, k] = stat
+
+                    if type == "cond3T":
+                        stat = label.cond3T
+                        self.static_vol[i, j, k] = stat
+
+                    if type == "perm7T":
+                        stat = label.perm7T
+                        self.static_vol[i, j, k] = stat
+
+                    if type == "cond7T":
+                        stat = label.cond7T
+                        self.static_vol[i, j, k] = stat
+                        
+                    #else:
+                        #print(f"Label {label} doesn't have a Perm or Cond value associated, check dictionary")
+                        #exit()
+
+        return self.static_vol
+
+    def save_static_vol(self, type, fn="default"):
+        # Method to save the Perm or Cond vol created to nifti
+        if self.gauss_flag:
+            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+            g_str = "gauss"
+        else:
+            temp_img = nib.Nifti1Image(self.static_vol, affine=self.nifti.affine)
+
+        if fn == "default":
+            fn = type+'.nii.gz'
+            if self.gauss_flag:
+                fn = "gauss_" + fn
+            # Conditioning if gauss flag is active, if not. We use the static_vol np array
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img, path)
+        else:
+            if self.gauss_flag:
+                fn = "gauss_" + fn
+            path = os.path.join('output', fn)
+            # Save the new NIfTI image to a file
+            nib.save(temp_img, path)
 
         del temp_img
         del path
@@ -531,7 +501,7 @@ class volume:
                         # If the label has value it will put this value on the volume
                         self.t2_vol[i, j, k] = t2val
 
-        return self.t2star_vol
+        return self.t2_vol
 
     def save_t2_dist(self, fn = "default"):
         # Method to save the volume with T2 star values  created to nifti
@@ -690,6 +660,15 @@ class volume:
                         self.gaussian_phantom[i, j, k] = value
 
     def create_gauss_dist(self,prop):
+        '''
+        This is an old function S.R. implemented to add gaussian distribution to all labels
+        It could be deleted, but I'm leaving here in case eventually we want to use it again
+        Args:
+            prop:
+
+        Returns:
+
+        '''
         # For input restrictions of type, see Segmentation Label
 
         for l, count in self.unique_counts.items():

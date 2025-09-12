@@ -4,7 +4,7 @@
 # I encourage to read her repo: https://github.com/evaalonsoortiz/Fourier-based-field-estimation
 
 # Important: When editing this lookup tables don't forget to edit the color map for itk and fsl
-def return_dict_labels(tool,version, new_chi = None):
+def return_dict_labels(tool, version, new_chi=None):
 
     if tool == "TotalSeg_CT":
 
@@ -283,7 +283,7 @@ def return_dict_labels(tool,version, new_chi = None):
             15: ("sinus", -2),
             23: ("brain", -9.04),  # Brain from Samseg
             25: ("skull", -11),  # Skull from Samseg with manual correction in Slicer
-            256: ("spinal cord",-9.055), # Soft tissue for this project
+            256: ("spinal_cord",-9.055), # Soft tissue for this project
             289:("sc_csf,",-9.055) # Same as 256 for this project, might change later
         }
         if version == 'mod0':
@@ -317,7 +317,7 @@ def return_dict_labels(tool,version, new_chi = None):
             }
             return dicc2
 
-        if version == 'mathieu':
+        if version == 'ds005616':
             dicc3 = {
                 0: ("air", 0.35),  # Air surrounding the body
                 1: ("fat", -9.05),
@@ -331,7 +331,7 @@ def return_dict_labels(tool,version, new_chi = None):
                 91: ("skull",-11),
                 92: ("bone",-11),
                 93: ("inter_vert_discs",-9.055),
-                100:("spinal cord",-9.05)
+                100:("spinal_cord",-9.05)
 
             }
             return dicc3

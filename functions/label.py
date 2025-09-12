@@ -14,6 +14,10 @@ class SegmentationLabel:
         self.T2star_val = None
         self.PD_val = 0
         self.std_dev = {}
+        self.perm3T = None
+        self.cond3T = None
+        self.perm7T = None
+        self.cond7T = None
 
         # Key is the name and value is ordered:
         # M0, T1, T2, T2*, PD
@@ -68,6 +72,71 @@ class SegmentationLabel:
             # Used in totalSeg_mr & compare fm
             "inter_vert_discs": [None, 1201, 42, 26, 50],  # Same as cartilage
 
+        }
+
+        # Here we have Permittivity@3T, Conductivity@3T, Permittivity@7T, Conductivity@7T
+        # Values come from IT'IS foundation using 177.74 MHz for 3T values
+        # And 298.06 MHz for 7T
+        # Gyromagnetic ratio used: 42.58
+        # Units of conductivity S/m
+        self.static_values = {
+            # Will eventually need to be completed, for now use short version until required
+            "fat": [],
+            "heart": [],
+            "liver": [],
+            "pancreas": [],
+            "kidney": [],
+            "brain": [],
+            "spleen": [],
+            "cartilage": [],
+            "bone_marrow": [],
+
+            "sc_wm": [],
+            "sc_gm": [],
+            "sc_csf": [],
+
+            "muscle": [],
+            "bone": [],
+            "v_bone": [],
+            "lungs": [],
+            "trachea": [],
+            "air": [],
+
+            "extra": [],
+
+            "spinal_cord": [],
+            "water": [],
+            "CSF": [],
+            "white_matter": [],
+            "gray_matter": [],
+            "SpinalCanal": [],
+            "esophagus": [],
+            "organ": [],
+            "gland": [],
+
+            "sinus": [],
+            "inter_vert_discs": [],
+
+        }
+
+        self.static_values_short = {
+
+            "fat": [48.17, 0.52, 44.25, 0.562],  # We use avg_infiltrated(30%) + muscle (70%)
+            "brain": [79.80, 0.829, 59.8, 0.972],  # Considered cerebellum
+            "muscle": [63.5, 0.719, 58.2, 0.77],
+            "bone": [14.7, 0.0673, 13.4, 0.0825],  # Cortical
+            "lungs": [29.5, 0.316, 24.8, 0.356],  # Using value of Inflated Lungs
+            "trachea": [50.6, 0.559, 45.3, 0.61],
+            "air": [1, 0, 1, 0],
+            "spinal_cord": [44.1, 0.354, 36.9, 0.418],
+            "sc_csf": [84.1, 2.14, 72.8, 2.22],
+            "organ": [89.7, 0.852, 70.6, 1.02],  # Using Kidney as reference
+            "sinus": [5.435, 0.0426, 4.48, 0.051],  # Considering healthy sinus is 95% air and 5% soft tissue
+            "inter_vert_discs": [52.9, 0.488, 46.8, 0.552],  # Considered cartilage
+
+            # For ds005616 we have the eyes label
+            "skull": [14.7, 0.0673, 13.4, 0.0825], # Considered cortical bone
+            "eyes": [84.1, 2.14, 72.8, 2.22],  # Which according to IT'IS foundation, can be considered as CSF
         }
     # Literature values will have a link to a paper/abstract soon!
     # It's a literature review
@@ -126,6 +195,13 @@ class SegmentationLabel:
             self.T2star_val = self.relax_values[name][3]
             self.PD_val = self.relax_values[name][4]
 
+        elif name in self.static_values_short.keys():
+            self.name = name
+            self.perm3T = self.static_values_short[name][0]
+            self.cond3T = self.static_values_short[name][1]
+            self.perm7T = self.static_values_short[name][2]
+            self.cond7T = self.static_values_short[name][3]
+
         else:
 
             self.name = name
@@ -134,6 +210,22 @@ class SegmentationLabel:
             self.T2_val = 0
             self.T2star_val = 0
             self.PD_val = 0
+
+    def set_static_name(self, name):
+
+        if name in self.static_values_short.keys():
+            self.name = name
+            self.perm3T = self.static_values_short[name][0]
+            self.cond3T = self.static_values_short[name][1]
+            self.perm7T = self.static_values_short[name][2]
+            self.cond7T = self.static_values_short[name][3]
+
+        else:
+            self.name = name
+            self.perm3T = 0
+            self.cond3T = 0
+            self.perm7T = 0
+            self.cond7T = 0
 
     def set_susceptibility(self, susceptibility):
 
@@ -188,5 +280,5 @@ class SegmentationLabel:
 
     def __str__(self):
         # Add the latest attributes addition to the class
-        return (f"SegmentationLabel(label_id={self.label_id}, name={self.name}, susceptibility={self.susceptibility},"
+        return (f"SegmentationLabel(label_id={self.label_id}, name={self.name}, chi={self.susceptibility},"
                 f"M0={self.M0_val}, T1,T2,T2* = {self.T1_val,self.T2_val,self.T2star_val}, PD = {self.PD_val} )")
