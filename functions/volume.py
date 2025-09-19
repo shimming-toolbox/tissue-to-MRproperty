@@ -330,7 +330,7 @@ class volume:
                     if type == "cond7T":
                         stat = label.cond7T
                         self.static_vol[i, j, k] = stat
-                        
+
                     #else:
                         #print(f"Label {label} doesn't have a Perm or Cond value associated, check dictionary")
                         #exit()
