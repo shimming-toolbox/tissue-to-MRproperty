@@ -4,8 +4,8 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from click.testing import CliRunner
-from cli.tissue_to_mr import hello
-from functions import is_nifti
+from tissue2mrprop.cli.tissue_to_mr import hello
+from tissue2mrprop.functions import is_nifti
 
 
 def test_converter():

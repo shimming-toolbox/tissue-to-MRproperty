@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tissue2mrprop"
+description = "Code that creates a volume from a segmented Nifti file to a selected MR property"
+readme = "README.md"
+dynamic = ["version"]
+requires-python = ">=3.8.8"
+license = { text = "GPL-3.0-or-later" }
+authors = [
+    { name = "NeuroPoly Lab", email = "shimming-toolbox@googlegroups.com" }
+]
+urls = { "Homepage" = "https://github.com/shimming-toolbox/tissue-to-MRproperty" }
+dependencies = [
+    "click",
+    "pandas",
+    "nibabel",
+    "nilearn",
+    "numpy",
+    "matplotlib",
+    "ipykernel",
+    "ipython",
+    "treelib",
+    "pytest",
+    "gitpython",
+]
+
+[project.scripts]
+tissue_to_MR = "tissue2mrprop.cli.tissue_to_mr:converter"
+mr_prop_viewer = "tissue2mrprop.cli.display:display"
+
+[tool.setuptools.packages.find]
+exclude = ["docs"]
+
+[tool.setuptools.dynamic]
+version = { attr = "tissue2mrprop.__init__.__version__" }
