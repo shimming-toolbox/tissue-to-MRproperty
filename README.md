@@ -65,7 +65,7 @@ Depending on the tool used for segmentation the code will use different lookup t
 # Look-up table
 Here we document the respective look-up tables used for assigning MR property values to labels. This are acquired from literature publications, reference to the literature used for creating the look-up table are inside the code for the [label](functions/label.py) class.
 
-## Relaxation Values & Susceptibility v1.0
+## Relaxation Values & Susceptibility
 
 | Tissue/Label        | T1 (ms) | T2 (ms) | T2* (ms) | PD (%) | Susceptibility (ppm) |
 |----------------------|---------|---------|----------|--------|-----------------------|
