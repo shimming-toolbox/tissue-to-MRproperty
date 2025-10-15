@@ -51,6 +51,8 @@ class SegmentationLabel:
             "v_bone": [None, 618.5, 80.685, 40.3, 40],
             "lungs": [None, 1400, 35.5, 1.62, 15],
             "trachea": [None, 1100, 40, 12, 5],
+            "tr_cartilage":[None, 1201, 43.225, 26.04, 70],
+            "tr_lumen": [None, 0.01, 0.01, 0.01, 0.01],
             "air": [None, 0.01, 0.01, 0.01, 0.01],
 
             "extra": [None, 800, 50, 35, 50],  # Mostly blood carriers or muscle (high water content)

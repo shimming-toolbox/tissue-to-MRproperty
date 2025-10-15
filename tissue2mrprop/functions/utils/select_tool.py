@@ -166,10 +166,26 @@ def return_dict_labels(tool, version, new_chi=None):
 
             dicc[196] = ("sc_wm", -9.083)
             dicc[324] = ("sc_gm", -9.03)
-            # Future implementation
-            # Currently manually segmentating resampled registered CT image
-            # to get WM/GM segmentation masks
+
             return dicc
+
+        if version == "mod3":
+            # This means it has CSF + Spinal Cord + WM/GM segmentation instead of Spina Canal
+            dicc[264] = ("fat", -8.92)
+            # dicc[256] = ("spinal_cord", -9.055)
+            # If labels are done correctly, spinalcord (as well as spinal canal #79)
+            # should not be really appearing and not needed to state values for them
+            # hence my comment on previous line.
+            dicc[289] = ("sc_csf", -9.05)
+
+            dicc[196] = ("sc_wm", -9.083)
+            dicc[324] = ("sc_gm", -9.03)
+            # Additional to this we add trachea_cartilage and trachea_lumen
+            dicc[170] = ("tr_cartilage", -9.055)
+            dicc[171] = ("tr_lumen", 0.27)  # Calculation done by S.R. following values from CRC Handbook
+            return dicc
+
+
 
     if tool == 'TotalSeg_MRI':
 
