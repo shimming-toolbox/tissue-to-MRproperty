@@ -182,7 +182,7 @@ def return_dict_labels(tool, version, new_chi=None):
             dicc[324] = ("sc_gm", -9.03)
             # Additional to this we add trachea_cartilage and trachea_lumen
             dicc[170] = ("tr_cartilage", -9.055)
-            dicc[171] = ("tr_lumen", 0.27)  # Calculation done by S.R. following values from CRC Handbook
+            dicc[171] = ("tr_lumen", 0.196)  # Calculation done by S.R. following values from CRC Handbook and chi-opt
             return dicc
 
 
@@ -352,5 +352,171 @@ def return_dict_labels(tool, version, new_chi=None):
             }
             return dicc3
 
+    if tool  == "bracesTS":
+        if version == "v1":
+            # Unmerged labels - same values as v2
+            dicc_braces = {  # ICPR 143
+                0: ("air", 0.35),  # Air surrounding the body
+                1: ("kidney", -9.05),  # Adrenal, left
+                2: ("kidney", -9.05),  # Adrenal, right
+                3: ("Anterior nasal passage", -9.05),  # Anterior nasal passage (ET1)
+                4: ("Posterior nasal passage", -9.05),  # Posterior nasal passage (ET2)
+                5: ("Oral mucosa", -9.05),  # Oral mucosa, tongue
+                6: ("Oral mucosa", -9.05),  # Oral mucosa, lips and cheeks
+                7: ("trachea", -9.055),  # !!!!! only the tissue, air is separate
+                8: ("Bronchi", -9.05),  # !!!!! only the tissue air is separete
+                9: ("extra (blood/muscle)", -9.04),  # Blood vessels, head
+                10: ("extra (blood/muscle)", -9.04),  # Blood vessels, trunk
+                11: ("extra (blood/muscle)", -9.04),  # Blood vessels, arms
+                12: ("extra (blood/muscle)", -9.04),  # Blood vessels, legs
+                13: ("bone", -11.1),  # Humeri, upper half, cortical
+                14: ("bone", -11.1),  # Humeri, upper half, spongiosa
+                15: ("bone", -11.1),  # Humeri, upper half, medullary cavity
+                16: ("bone", -11.1),  # Humeri, lower half, cortical
+                17: ("bone", -11.1),  # Humeri, lower half, spongiosa
+                18: ("bone", -11.1),  # Humeri, lower half, medullary cavity
+                19: ("bone", -11.1),  # Ulnae and radii, cortical
+                20: ("bone", -11.1),  # Ulnae and radii, spongiosa
+                21: ("bone", -11.1),  # Ulnae and radii, medullary cavity
+                22: ("bone", -11.1),  # Wrists and hand bones, cortical
+                23: ("bone", -11.1),  # Wrists and hand bones, spongiosa
+                24: ("bone", -11.1),  # Clavicles, cortical
+                25: ("bone", -11.1),  # Clavicles, spongiosa
+                26: ("bone", -11.1),  # Cranium, cortical
+                27: ("bone", -11.1),  # Cranium, spongiosa
+                28: ("bone", -11.1),  # Femora, upper half, cortical
+                29: ("bone", -11.1),  # Femora, upper half, spongiosa
+                30: ("bone", -11.1),  # Femora, upper half, medullary cavity
+                31: ("bone", -11.1),  # Femora, lower half, cortical
+                32: ("bone", -11.1),  # Femora, lower half, spongiosa
+                33: ("bone", -11.1),  # Femora, lower half, medullary cavity
+                34: ("bone", -11.1),  # Tibiae, fibulae and patellae, cortical
+                35: ("bone", -11.1),  # Tibiae, fibulae and patellae, spongiosa
+                36: ("bone", -11.1),  # Tibiae, fibulae and patellae, medullary cavity
+                37: ("bone", -11.1),  # Ankles and foot bones, cortical
+                38: ("bone", -11.1),  # Ankles and foot bones, spongiosa
+                39: ("bone", -11.1),  # Mandible, cortical
+                40: ("bone", -11.1),  # Mandible, spongiosa
+                41: ("bone", -11.1),  # Pelvis, cortical
+                42: ("bone", -11.1),  # Pelvis, spongiosa
+                43: ("bone", -11.1),  # Ribs, cortical
+                44: ("bone", -11.1),  # Ribs, spongiosa
+                45: ("bone", -11.1),  # Scapulae, cortical
+                46: ("bone", -11.1),  # Scapulae, spongiosa
+                47: ("Cervical spine", -9.7),  # Cervical spine, cortical
+                48: ("Cervical spine", -9.7),  # Cervical spine, spongiosa
+                49: ("Thoracic spine", -9.7),  # Thoracic spine, cortical
+                50: ("Thoracic spine", -9.7),  # Thoracic spine, spongiosa
+                51: ("Lumbar spine", -9.7),  # Lumbar spine, cortical
+                52: ("Lumbar spine", -9.7),  # Lumbar spine, spongiosa
+                53: ("Sacrum", -9.7),  # Sacrum, cortical
+                54: ("Sacrum", -9.7),  # Sacrum, spongiosa
+                55: ("bone", -11.1),  # Sternum, cortical
+                56: ("bone", -11.1),  # Sternum, spongiosa
+                57: ("cartilage", -9.055),  # Cartilage, head
+                58: ("cartilage", -9.055),  # Cartilage, trunk
+                59: ("cartilage", -9.055),  # Cartilage, arms
+                60: ("cartilage", -9.055),  # Cartilage, legs
+                61: ("brain", -9.05),
+                62: ("fat", -8.92),  # Breast, left, adipose tissue
+                63: ("Breast", -9.05),  # Breast, left, glandular tissue
+                64: ("fat", -8.92),  # Breast, right, adipose tissue
+                65: ("Breast", -9.05),  # Breast, right, glandular tissue
+                66: ("Eye lens", -9.05),  # Eye lense, left
+                67: ("Eye bulb", -9.05),  # Eye bulb, left
+                68: ("Eye lens", -9.05),  # Eye lense, right
+                69: ("Eye bulb", -9.05),  # Eye bulb, right
+                70: ("Gall bladder", -9.05),  # Gall bladder wall
+                71: ("Gall bladder", -9.05),  # Gall bladder contents
+                72: ("Stomach", -9.05),  # Stomach wall
+                73: ("Stomach", -9.05),  # Stomach contents
+                74: ("Small intestine", -9.05),  # Small intestine wall
+                75: ("Small intestine", -9.05),  # Small intestine contents
+                76: ("Colon", -9.05),  # Ascending colon wall
+                77: ("Colon", -9.05),  # Ascending colon contents
+                78: ("Colon", -9.05),  # Transverse colon wall, right
+                79: ("Colon", -9.05),  # Transverse colon contents, right
+                80: ("Colon", -9.05),  # Transverse colon wall, left
+                81: ("Colon", -9.05),  # Transverse colon contents, left
+                82: ("Colon", -9.05),  # Descending colon wall
+                83: ("Colon", -9.05),  # Descending colon contents
+                84: ("Sigmoid colon", -9.05),  # Sigmoid colon wall
+                85: ("Sigmoid colon", -9.05),  # Sigmoid colon contents
+                86: ("Rectum", -9.05),  # Rectum wall
+                87: ("heart", -9.05),  # Heart wall
+                88: ("heart", -9.05),  # Heart contents (blood)
+                89: ("kidney", -9.05),  # Kidney, left, cortex
+                90: ("kidney", -9.05),  # Kidney, left, medulla
+                91: ("kidney", -9.05),  # Kidney, left, pelvis
+                92: ("kidney", -9.05),  # Kidney, right, cortex
+                93: ("kidney", -9.05),  # Kidney, right, medulla
+                94: ("kidney", -9.05),  # Kidney, right, pelvis
+                95: ("liver", -9.05),
+                96: ("lungs", -0.27),  # Lung, left, blood
+                97: ("lungs", -0.27),  # Lung, left, tissue
+                98: ("lungs", -0.27),  # Lung, right, blood
+                99: ("lungs", -0.27),  # Lung, right, tissue
+                100: ("Lymphatic nodes", -9.05),  # Lymphatic nodes, extrathoracic airways
+                101: ("Lymphatic nodes", -9.05),  # Lymphatic nodes, thoracic airways
+                102: ("Lymphatic nodes", -9.05),  # Lymphatic nodes, head
+                103: ("Lymphatic nodes", -9.05),  # Lymphatic nodes, trunk
+                104: ("Lymphatic nodes", -9.05),  # Lymphatic nodes, arms
+                105: ("Lymphatic nodes", -9.05),  # Lymphatic nodes, legs
+                106: ("muscle", -9.03),  # Muscle, head
+                107: ("muscle", -9.03),  # Muscle, trunk
+                108: ("muscle", -9.03),  # Muscle, arms
+                109: ("muscle", -9.03),  # Muscle, legs
+                110: ("esophagus", -9.05),
+                111: ("Ovary", -9.05),  # Ovary, left
+                112: ("Ovary", -9.05),  # Ovary, right
+                113: ("pancreas", -9.05),
+                114: ("Pituitary gland", -9.05),  #
+                115: ("Prostate", -9.05),  #
+                116: ("Residual tissue", -9.05),  # Residual tissue, head
+                117: ("Residual tissue", -9.05),  # Residual tissue, trunk
+                118: ("Residual tissue", -9.05),  # Residual tissue, arms
+                119: ("Residual tissue", -9.05),  # Residual tissue, legs
+                120: ("Salivary glands", -9.05),  # Salivary glands, left
+                121: ("Salivary glands", -9.05),  # Salivary glands, right
+                122: ("Skin", -8.92),  # Skin, head
+                123: ("Skin", -8.92),  # Skin, trunk
+                124: ("Skin", -8.92),  # Skin, arms
+                125: ("Skin", -8.92),  # Skin, legs
+                126: ("spinal_cord", -9.055),
+                127: ("spleen", -9.05),
+                128: ("Teeth", -10),  # Teeth
+                129: ("Testis", -9.05),  # Testis, left
+                130: ("Testis", -9.05),  # Testis, right
+                131: ("Thymus", -9.05),  #
+                132: ("Thyroid", -9.05),  #
+                133: ("Tongue", -9.05),  # Tongue (inner part)
+                134: ("Tonsils", -9.05),  #
+                135: ("Ureter", -9.05),  # Ureter, left
+                136: ("Ureter", -9.05),  # Ureter, right
+                137: ("Urinary bladder", -9.05),  # Urinary bladder wall
+                138: ("water", -9.05),  # Urinary bladder contents
+                139: ("Uterus", -9.05),  #
+                140: ("Air", 0.35),  # Air inside body
+                141: ("braces", 300)  # Stainless stell 316L
+            }
+            return dicc_braces
+
+        if version == 'v2':
+            # Merged labels
+            dicc_braces = {  # for scan with merged labels
+                0: ("air", 0.35),  # Air surrounding the body
+                1: ("bone", -11.1),
+                2: ("Teeth", -10),
+                3: ("Cervical spine", -9.7),
+                4: ("cartilage", -9.055),
+                5: ("watery tissue", -9.05),
+                6: ("extra (blood/muscle)", -9.04),
+                7: ("muscle", -9.03),
+                8: ("fat", -8.92),
+                9: ("lungs", -0.27),
+                10: ("Air", 0.35),
+                11: ("braces", 300),
+            }
+            return dicc_braces
     else:
         print("This tool hasn't been implemented yet.")
