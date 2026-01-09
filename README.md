@@ -1,6 +1,6 @@
 # <div align="center">**Segmentation to MR Properties Converter**</div>
 
-This repository will contain the code necessary for creating different (and selected) volumes whose values represent different MR useful properties: T2, T2 star, Proton Density and Susceptibility.
+This repository contains code for creating nifti volumes whose values represent different MR properties: T2, T2 star, Proton Density and Susceptibility.
 
 # Phantom Creation
 
