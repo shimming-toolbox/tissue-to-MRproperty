@@ -497,7 +497,7 @@ def return_dict_labels(tool, version, new_chi=None):
                 138: ("water", -9.05),  # Urinary bladder contents
                 139: ("Uterus", -9.05),  #
                 140: ("Air", 0.35),  # Air inside body
-                141: ("braces", 300)  # Stainless stell 316L
+                141: ("braces", 900)  # Stainless stell 316L
             }
             return dicc_braces
 
