@@ -4,6 +4,200 @@
 # I encourage to read her repo: https://github.com/evaalonsoortiz/Fourier-based-field-estimation
 
 # Important: When editing this lookup tables don't forget to edit the color map for itk and fsl
+
+def new_return_dict_labels(tool, version, new_chi=None):
+    '''
+    Function to generate a segmentation map that works with the repo's structure
+    We have pre-defined lable IDs and depending on the tool the user utilized for segmentation we can automate the process
+    Args:
+        tool: Specify the segmentation tool used: TotalSeg_CT,
+        version: Edited versions of the segmentation tool to include additional label IDs
+        new_chi (Optional): To replace the chi value of trachea and lungs (need revision)
+
+    Returns:
+        Dictionary with key, value: input_label_id: label_name, new_label_id
+    '''
+
+    if tool == "TotalSeg_CT":
+
+        # Using total segmentator we use follow their list for 117 labels
+        # and group them up based on their effect to the B0 map impact
+        # link: https://github.com/wasserth/TotalSegmentator/blob/master/totalsegmentator/map_to_binary.py
+
+        # Baseline dictionary for Total Segmentator CT
+        # id : name, susceptibility_value
+
+        dicc= {
+
+            0: ("air", 0),
+            1: ("spleen", 6),
+            2: ("kidney", 4), # kidney_right
+            3: ("kidney", 4), # kidney_left
+            4: ("organ", 102), # gallbladder
+            5: ("liver", 2), # liver
+            6: ("organ", 102), # stomach
+            7: ("organ", 102), # pancreas
+            8: ("gland", 19), # adrenal gland left
+            9: ("gland", 19), # adrenal_gland_left
+            # Updated as of August 2025 (compare_fm + chi_opt)
+            10: ("lungs", 12), # lung_upper_lobe_left
+            11: ("lungs", 12), # lung_lower_lobe_left
+            12: ("lungs", 12), # lung_upper_lobe_right
+            13: ("lungs", 12), # lung_middle_lobe_right
+            14: ("lungs", 12), # lung_lower_lobe_right
+            15: ("esophagus", 18),
+            16: ("trachea", 13),
+            #
+            17: ("gland", 19), # thyroid_gland
+            18: ("organ", 102), # small_bowel
+            19: ("organ", 102), # duodenum
+            20: ("organ", 102), # colon
+            21: ("organ", 102), # urinary_bladder
+            22: ("organ", 102), # prostate
+            23: ("kidney", 4), # kidney_cyst_left
+            24: ("kidney", 4), # kidney_cyst_right
+            25: ("v_bone", 11), # sacrum
+            26: ("v_bone", 11), #vertebrae_S1
+            27: ("v_bone", 11), # vertebrae_L5
+            28: ("v_bone", 11), # vertebrae_L4
+            29: ("v_bone", 11), # vertebrae_L3
+            30: ("v_bone", 11), # vertebrae_L2
+            31: ("v_bone", 11), # vertebrae_L1
+            32: ("v_bone", 11), # vertebrae_T12
+            33: ("v_bone", 11), # vertebrae_T11
+            34: ("v_bone", 11), # vertebrae_T10
+            35: ("v_bone", 11), # vertebrae_T9
+            36: ("v_bone", 11), # vertebrae_T8
+            37: ("v_bone", 11), # vertebrae_T7
+            38: ("v_bone", 11), # vertebrae_T6
+            39: ("v_bone", 11), #vertebrae_T5
+            40: ("v_bone", 11), # vertebrae_T4
+            41: ("v_bone", 11), #vertebrae_T3
+            42: ("v_bone", 11), # vertebrae_T2
+            43: ("v_bone", 11), # vertebrae_T1
+            44: ("v_bone", 11), # vertebrae_C7
+            45: ("v_bone", 11), # vertebrae_C6
+            46: ("v_bone", 11), # vertebrae_C5
+            47: ("v_bone", 11), # vertebrae_C4
+            48: ("v_bone", 11), # vertebrae_C3
+            49: ("v_bone", 11), # vertebrae_C2
+            50: ("v_bone", 11), # vertebrae_C1
+            51: ("heart", 1), # heart
+            52: ("extra", 100), # aorta
+            53: ("extra", 100), # pulmonary_vein
+            54: ("extra", 100), # brachiocephalic_trunk
+            55: ("extra", 100), # subclavian_artery_right
+            56: ("extra", 100), # subclavian_artery_left
+            57: ("extra", 100), # common_carotid_artery_right
+            58: ("extra", 100), # common_carotid_artery_left
+            59: ("extra", 100), # brachiocephalic_vein_left
+            60: ("extra", 100), # brachiocephalic_vein_right
+            61: ("extra", 100), # atrial_appendage_left
+            62: ("extra", 100), # superior_vena_cava
+            63: ("extra", 100), # inferior_vena_cava
+            64: ("extra", 100), # portal_vein_and_splenic_vein
+            65: ("extra", 100), # iliac_artery_left
+            66: ("extra", 100), # iliac_artery_right
+            67: ("extra", 100), # iliac_vena_left
+            68: ("extra", 100), # iliac_vena_right
+            69: ("bone", 10), # humerus_left
+            70: ("bone", 10), # humerus_right
+            71: ("bone", 10), # scapula_left
+            72: ("bone", 10), # scapula_right
+            73: ("bone", 10), # clavicula_left
+            74: ("bone", 10), # clavicula_right
+            75: ("bone", 10), # femur_left
+            76: ("bone", 10), # femur_right
+            77: ("bone", 10), # hip_left
+            78: ("bone", 10), # hip_right
+            79: ("spinal_cord",14), # Spinal Canal (from Total Seg)
+            80: ("muscle", 9), # gluteus_maximus_left
+            81: ("muscle", 9), # gluteus_maximus_right
+            82: ("muscle", 9), # gluteus_medius_left
+            83: ("muscle", 9), # gluteus_medius_right
+            84: ("muscle", 9), # gluteus_minimus_left
+            85: ("muscle", 9), # gluteus_minimus_right
+            86: ("muscle", 9), # autochthon_left
+            87: ("muscle", 9), # autochthon_right
+            88: ("muscle", 9), # iliopsoas_left
+            89: ("muscle", 9), # iliopsoas_right
+            90: ("brain", 5), # brain
+            91: ("bone", 10), # skull
+            92: ("bone", 10), # rib_left_1
+            93: ("bone", 10), # rib_left_2
+            94: ("bone", 10), # rib_left_3
+            95: ("bone", 10), # rib_left_4
+            96: ("bone", 10), # rib_left_5
+            97: ("bone", 10), # rib_left_6
+            98: ("bone", 10), # rib_left_7
+            99: ("bone", 10), # rib_left_8
+            100: ("bone", 10), # rib_left_9
+            101: ("bone", 10), # rib_left_10
+            102: ("bone", 10), # rib_left_11
+            103: ("bone", 10), # rib_left_12
+            104: ("bone", 10), # rib_right_1
+            105: ("bone", 10), # rib_right_2
+            106: ("bone", 10), # rib_right_3
+            107: ("bone", 10), # rib_right_4
+            108: ("bone", 10), # rib_right_5
+            109: ("bone", 10), # rib_right_6
+            110: ("bone", 10), # rib_right_7
+            111: ("bone", 10), # rib_right_8
+            112: ("bone", 10), # rib_right_9
+            113: ("bone", 10), # rib_right_10
+            114: ("bone", 10), # rib_right_11
+            115: ("bone", 10), # rib_right_12
+            116: ("bone", 10), # sternum
+            117: ("cartilage", 7) # costal_cartilages
+        }
+
+        if version == "v2":
+            return dicc
+
+        if version == "mod0":
+            # This means it has labels + fat = Whole body
+            dicc[264]=("fat", 264)
+            return dicc
+
+        if version == "mod1":
+            # This means its Whole body + Spinal Cord CSF to differentiate Spinal Canal
+            # from spinal cord
+            dicc[264]=("fat", 264)
+            dicc[256]=("spinal_cord", 14)
+            dicc[289]=("sc_csf", 289)
+            return dicc
+
+        if version=="mod2":
+            # This means it has CSF + Spinal Cord + WM/GM segmentation instead of Spina Canal
+            dicc[264]=("fat", 264)
+            #dicc[256] = ("spinal_cord", -9.055)
+            # If labels are done correctly, spinalcord (as well as spinal canal #79)
+            # should not be really appearing and not needed to state values for them
+            # hence my comment on previous line.
+            dicc[289] = ("sc_csf", 289)
+
+            dicc[196] = ("sc_wm", 196)
+            dicc[324] = ("sc_gm", 324)
+
+            return dicc
+
+        if version == "mod3":
+            # This means it has CSF + Spinal Cord + WM/GM segmentation instead of Spina Canal
+            dicc[264] = ("fat", 264)
+            # dicc[256] = ("spinal_cord", -9.055)
+            # If labels are done correctly, spinalcord (as well as spinal canal #79)
+            # should not be really appearing and not needed to state values for them
+            # hence my comment on previous line.
+            dicc[289] = ("sc_csf", 289)
+
+            dicc[196] = ("sc_wm", 196)
+            dicc[324] = ("sc_gm", 324)
+            # Additional to this we add trachea_cartilage and trachea_lumen
+            dicc[170] = ("tr_cartilage", 7)
+            dicc[171] = ("tr_lumen", 13)  # Calculation done by S.R. following values from CRC Handbook and chi-opt
+            return dicc
+
+
 def return_dict_labels(tool, version, new_chi=None):
 
     if tool == "TotalSeg_CT":

@@ -174,6 +174,120 @@ def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
     with open(json_out_path, 'w', encoding='utf-8') as f:
         json.dump(converter_sidecar, f, ensure_ascii=False, indent=4)
 
+    def seg_sorter(input_file, segtool, version, output_file, chi=None):
+        command = " ".join(sys.argv)
+
+        # We need to check if the input is a  nifti file
+        if is_nifti(input_file):
+            start = time.time()
+            print("start")
+            # logging.info(f"Creating a new volume with {type} values")
+            file = nib.load(input_file)
+            print("file loaded")
+            new_vol = volume(file)
+            print("# Step 1. Group segmentation labels #")
+            # Using the type:
+
+            # This for the FM comparison project:
+            # Needs to be before grouping labels, if not it will put none
+            if segtool == "compare_fm" and version == "dyn":
+                if chi != None:
+                    new_vol.new_chi = chi  # This needs to be improved ... (S.R. comment)
+                    print("Using new susceptibility value for air: ", chi)
+                else:
+                    print("When using new dynamic version you must provide a chi value")
+                    new_vol.new_chi = -2.438
+                    print("Using default: ", new_vol.new_chi)  # Value found while Optimization Abstract work
+                    # Is a value used in single value optimization of measured FM vs simulated FM
+            if ref != 0:
+                if type == 'sus':
+                    new_vol.group_seg_labels(segtool, version, type,
+                                             ref=ref)  # Automatically adding the names to known labels
+                    print(f"Using {ref} as a reference value")
+                else:
+                    print("Type must be susceptibility to use the reference flag")
+                    exit()
+
+            new_vol.group_seg_labels(segtool, version, type, ref=ref)
+            # Printing one label can help see the structure as well as verifying values selected
+            # Specially when working with field map comparison project where chi can be changed
+
+            print("# Step 2. Checking pixel integrity #")
+            ans = new_vol.check_pixels(input_file)
+
+            if ans == 0:
+                print("# Step 3. Converting ... #")
+
+                if gauss == "1":
+
+                    new_vol.gauss_flag = 1
+                    print("Gaussian option enabled ...")
+                    new_vol.calc_regions()
+                    # print("Calc region done")
+                    new_vol.create_gauss_sc_dist(type)
+                    print("Creating a Gaussian distribution phantom from ", type, " values")
+                    if output_file == None:
+                        new_vol.save_gauss_dist(type)
+                        print("Gaussian phantom created")
+                    else:
+                        new_vol.save_gauss_dist(type, output_file)
+                        print("Gaussian phantom created - custom out_fn")
+
+                else:
+
+                    if output_file == None:
+                        print("Piece-wise mode: on")
+                        new_vol.create_type_vol(type)  # This creates and saves a Nifti file
+
+                    else:
+                        print("Piece-wise ON - custom out_fn")
+                        new_vol.create_type_vol(type, output_file)
+
+                print(f"Input segmented by: {segtool}, version: {version}")
+                end = time.time()
+                elapsed = end - start
+                print("Time elapsed: ", elapsed)
+
+            else:
+
+                print("Pixel integrity error")
+
+        else:
+            print("Input must be a Nifti file (.nii or .nii.gz extensions)")
+
+        # After everything is finished, we can create the json side car
+        try:
+            repo = git.Repo(search_parent_directories=True)
+        except git.exc.InvalidGitRepositoryError:
+            # This in case that converter tool is not ran under the folder
+            print("No Git repository found in parent directories.")
+            repo = None
+        print("# Step 3. Creating json sidecar for the convertion #")
+
+        converter_sidecar = {}
+        # This depends on the OS system
+        author_name = os.getenv('USER') or os.getenv('USERNAME') or os.getenv('LOGNAME')
+        converter_sidecar['author'] = author_name if author_name else "Unknown User"
+        converter_sidecar['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        converter_sidecar['script'] = str(Path(os.path.abspath(__file__)).resolve())
+        converter_sidecar['command'] = command
+        if repo:
+            converter_sidecar['script source'] = repo.remotes.origin.url
+            converter_sidecar['script commit hash'] = repo.head.object.hexsha
+        else:
+            converter_sidecar['script source'] = "tissue_to_MR"
+            converter_sidecar['script commit hash'] = "check with git status"
+
+        json_out_name = output_file.replace(".nii.gz", ".json")
+        json_out_path = os.path.join("output", json_out_name)
+        print(json_out_path)
+        if os.path.exists(json_out_path):
+            print("Json sidecar found, overwritting ...")
+            os.remove(json_out_path)
+
+        with open(json_out_path, 'w', encoding='utf-8') as f:
+            json.dump(converter_sidecar, f, ensure_ascii=False, indent=4)
+
 #my_commands.add_command(converter)
 #if __name__ == "__main__":
 #    my_commands()

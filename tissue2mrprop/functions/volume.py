@@ -4,7 +4,7 @@ from tissue2mrprop.functions.label import SegmentationLabel
 import nibabel as nib
 from tissue2mrprop.functions.utils.get_dic_values import to_csv_sus
 import os
-from tissue2mrprop.functions.utils.select_tool import return_dict_labels
+from tissue2mrprop.functions.utils.select_tool import return_dict_labels, new_return_dict_labels
 #from skimage.measure import label, regionprops
 
 # Parent class for the creation of a non-finite biomechanical model of the body
@@ -21,6 +21,7 @@ class volume:
         self.dimensions = np.array(self.volume.shape) # It is initially a tuple, but it needs to be an array
         self.uniq_labels = np.unique(self.volume)
         self.segmentation_labels = {}
+        self.grouped_labels = None
         self.sus_dist = None
         self.t2star_vol = None
         self.pd_dist = None
@@ -73,28 +74,29 @@ class volume:
             # If the version is dynamic
             # The new value will replace None
             # We can check just in case
-            self.look_up = return_dict_labels(tool,version, new_chi = self.new_chi)
+            self.look_up = new_return_dict_labels(tool,version, new_chi = self.new_chi)
         else:
-            self.look_up = return_dict_labels(tool,version)
+            self.look_up = new_return_dict_labels(tool,version)
 
         # Function to get the relaxation values from label
         for i in self.look_up.keys():
             self.segmentation_labels[i] = SegmentationLabel(i)
 
         for key, value in self.look_up.items():
-            # Key is the number of ID and value is (name, sus)
+            # Key is the number of ID and value is (name, new_id)
             name = value[0]
-            sus = value[1]
+            new_id = value[1]
+            self.set_label_name(key, name, type)
+
 
             if ref != 0:
                 new_sus = sus - ref
                 self.set_label_susceptibility(key, new_sus)
 
-            self.set_label_name(key, name, type)
-            self.set_label_susceptibility(key, sus)
+
 
             if type == "sus":
-                print(name, " Chi:", sus)
+                print(name, " Chi:", self.segmentation_labels[key].PD_val)
             if type == "pd":
                 print(name, " PD:", self.segmentation_labels[key].PD_val)
             if type == "t2s":
@@ -252,6 +254,17 @@ class volume:
             else:
                 print("Input has correct pixel integrity!")
                 return 0
+
+    def create_new_grouped_labels(self):
+        self.grouped_labels = np.zeros(self.dimensions)
+
+        for i in range(self.dimensions[0]):
+            for j in range(self.dimensions[1]):
+                for k in range(self.dimensions[2]):
+
+                    pixel = self.volume[i,j,k]
+                    label = self.segmentation_labels[pixel]
+                    new_label_id = self.segmentation_labels
 
     def create_sus_dist(self):
         # Code for create a susceptibility distribution volume
