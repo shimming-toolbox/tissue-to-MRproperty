@@ -1,0 +1,28 @@
+
+
+CANONICAL_ID_TO_NAME = {
+    0:   "air",
+    1:   "heart",
+    2:   "liver",
+    4:   "kidney",
+    5:   "brain",
+    6:   "spleen",
+    7:   "cartilage",
+    9:   "muscle",
+    10:  "bone",
+    11:  "v_bone",
+    12:  "lungs",
+    13:  "trachea",
+    14:  "spinal_cord",
+    18:  "esophagus",
+    19:  "gland",
+    100: "extra",
+    101: "water",
+    102: "organ",
+    107: "tr_cartilage",
+    113: "tr_lumen",
+    196: "sc_wm",
+    264: "fat",
+    289: "sc_csf",
+    324: "sc_gm",
+}

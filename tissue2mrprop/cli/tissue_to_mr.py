@@ -3,6 +3,8 @@ import time
 import click
 import logging
 import nibabel as nib
+from nibabel import Nifti1Image
+
 # With the next line we add to path the project folder to navigate into functions folder
 #sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -13,7 +15,7 @@ from tissue2mrprop.functions.utils.utils import is_nifti
 
 import time
 
-# For the json sidecar
+# For the JSON sidecar
 from pathlib import Path
 import argparse
 import os
@@ -49,97 +51,56 @@ PROPERTIES = {
 @click.command()
 @click.option('-i','--input','input_file', type=click.Path(exists=True), required=True,
               help="Input segmentations distribution, supported extensions: .nii, .nii.gz")
-@click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles','compare_fm','bracesTS']), help="State what segmentator was used")
-@click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2','mod3','dyn','mod_PAM50',"ds005616"]), help="Select the version of your segmentation file")
 @click.option('-t',"--type",required=True, type=click.Choice(PROPERTIES.keys()), help="Please choose MR property to convert to")
 @click.option("-g", "--gauss",required=False, type= click.Choice(["0","1"]), default = "0", help = "Set to 1 to use Gaussian distribution")
-@click.option("-x","--chi", required = False, type = float, default = None, help = "Used to define new chi value for FM comparison approach")
-@click.option("-r", "--ref",required=False,type=float,default=0,help="Use as a reference flag to demodulate the values by a constant. Only use with Susceptibility property")
 @click.option('-o', '--output', 'output_file', type=click.Path(), default= "sus_dist.nii.gz", required= False,
               help = "By default it saves the chimap to the output folder")
 
-def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
+def converter(input_file, type, gauss, output_file):
 
-    # Pulling information of the command for output json file
+    # Pulling information of the command for output JSON file
     command = " ".join(sys.argv)
+    if not is_nifti(input_file):
+        print("Input must be a Nifti file (.nii or .nii.gz extensions)")
+        return
 
-    # We need to check if the input is a  nifti file
-    if is_nifti(input_file):
-        start = time.time()
-        print("start")
-        #logging.info(f"Creating a new volume with {type} values")
-        print(f"Creating a new volume with {type} values")
-        file = nib.load(input_file)
-        print("file loaded")
-        new_vol = volume(file)
-        print("# Step 1. Group segmentation labels #")
-        # Using the type:
+    start = time.time()
+    print("start")
+    #logging.info(f"Creating a new volume with {type} values")
+    print(f"Creating a new volume with {type} values")
+    file = nib.load(input_file)
+    print("File loaded")
+    new_vol = volume(file)
 
-        # This for the FM comparison project:
-        # Needs to be before grouping labels, if not it will put none
-        if segtool == "compare_fm" and version == "dyn":
-            if chi != None:
-                new_vol.new_chi = chi # This needs to be improved ... (S.R. comment)
-                print("Using new susceptibility value for air: ",chi)
-            else:
-                print("When using new dynamic version you must provide a chi value")
-                new_vol.new_chi = -2.438
-                print("Using default: ", new_vol.new_chi) # Value found while Optimization Abstract work
-                # Is a value used in single value optimization of measured FM vs simulated FM
-        if ref != 0:
-            if type == 'sus':
-                new_vol.group_seg_labels(segtool, version,type, ref = ref)  # Automatically adding the names to known labels
-                print(f"Using {ref} as a reference value")
-            else:
-                print("Type must be susceptibility to use the reference flag")
-                exit()
+    print("# Step 1. Initializing ... #")
+    new_vol.init_segmentation_labels_from_canonical()
 
-        new_vol.group_seg_labels(segtool, version, type, ref=ref)
-        # Printing one label can help see the structure as well as verifying values selected
-        # Specially when working with field map comparison project where chi can be changed
-
-        print("# Step 2. Checking pixel integrity #")
-        ans = new_vol.check_pixels(input_file)
-
-        if ans == 0:
-            print("# Step 3. Converting ... #")
-
-            if gauss == "1":
-
-                new_vol.gauss_flag = 1
-                print("Gaussian option enabled ...")
-                new_vol.calc_regions()
-                # print("Calc region done")
-                new_vol.create_gauss_sc_dist(type)
-                print("Creating a Gaussian distribution phantom from ", type, " values")
-                if output_file == None:
-                    new_vol.save_gauss_dist(type)
-                    print("Gaussian phantom created")
-                else:
-                    new_vol.save_gauss_dist(type,output_file)
-                    print("Gaussian phantom created - custom out_fn")
-
-            else:
-
-                if output_file == None:
-                    print("Piece-wise mode: on")
-                    new_vol.create_type_vol(type)  # This creates and saves a Nifti file
-
-                else:
-                    print("Piece-wise ON - custom out_fn")
-                    new_vol.create_type_vol(type, output_file)
-
-            print(f"Input segmented by: {segtool}, version: {version}")
-            end = time.time()
-            elapsed = end-start
-            print("Time elapsed: ",elapsed)
-
+    if gauss == "1":
+        new_vol.gauss_flag = 1
+        print("Gaussian option enabled ...")
+        new_vol.calc_regions()
+        # print("Calc region done")
+        new_vol.create_gauss_sc_dist(type)
+        print("Creating a Gaussian distribution phantom from ", type, " values")
+        if output_file:
+            print("Gaussian phantom created - custom out_fn")
+            new_vol.save_gauss_dist(type,output_file)
         else:
-
-            print("Pixel integrity error")
+            print("Gaussian phantom created")
+            new_vol.save_gauss_dist(type)
 
     else:
-        print("Input must be a Nifti file (.nii or .nii.gz extensions)")
+        if output_file:
+            print("Piece-wise ON - custom out_fn")
+            new_vol.create_type_vol(type, output_file)  # This creates and saves a Nifti file
+        else:
+            print("Piece-wise ON")
+            new_vol.create_type_vol(type)
+
+    end = time.time()
+    elapsed = end-start
+    print(f"Time elapsed: {elapsed:.4f} seconds")
+
 
     # After everything is finished, we can create the json side car
     try:
@@ -174,119 +135,41 @@ def converter(input_file, segtool, version, type, gauss, chi, ref, output_file):
     with open(json_out_path, 'w', encoding='utf-8') as f:
         json.dump(converter_sidecar, f, ensure_ascii=False, indent=4)
 
-    def seg_sorter(input_file, segtool, version, output_file, chi=None):
-        command = " ".join(sys.argv)
+@click.command()
+@click.option('-i','--input','input_file', type=click.Path(exists=True), required=True,
+              help="Input segmentations distribution, supported extensions: .nii, .nii.gz")
+@click.option('-s',"--segtool",required=True,type=click.Choice(['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI', 'charles','compare_fm','bracesTS']), help="State what segmentator was used")
+@click.option('-v',"--version",required=True,type=click.Choice(['v1','v2','mod0','mod1','mod2','mod3','dyn','mod_PAM50',"ds005616"]), help="Select the version of your segmentation file")
+@click.option('-o', '--output', 'output_file', type=click.Path(), default= "sus_dist.nii.gz", required= False,
+              help = "By default it saves the chimap to the output folder")
+def seg_sorter(input_file, segtool, version, output_file):
+    command = " ".join(sys.argv)
 
-        # We need to check if the input is a  nifti file
-        if is_nifti(input_file):
-            start = time.time()
-            print("start")
-            # logging.info(f"Creating a new volume with {type} values")
-            file = nib.load(input_file)
-            print("file loaded")
-            new_vol = volume(file)
-            print("# Step 1. Group segmentation labels #")
-            # Using the type:
+    # We need to check if the input is a  nifti file
+    if not is_nifti(input_file):
+        print("Input must be a Nifti file (.nii or .nii.gz extensions)")
+        return
+    start = time.time()
+    print("Begin")
+    file = nib.load(input_file)
+    print("File loaded")
+    vol = volume(file)
+    print("# Step 1. Group segmentation labels #")
 
-            # This for the FM comparison project:
-            # Needs to be before grouping labels, if not it will put none
-            if segtool == "compare_fm" and version == "dyn":
-                if chi != None:
-                    new_vol.new_chi = chi  # This needs to be improved ... (S.R. comment)
-                    print("Using new susceptibility value for air: ", chi)
-                else:
-                    print("When using new dynamic version you must provide a chi value")
-                    new_vol.new_chi = -2.438
-                    print("Using default: ", new_vol.new_chi)  # Value found while Optimization Abstract work
-                    # Is a value used in single value optimization of measured FM vs simulated FM
-            if ref != 0:
-                if type == 'sus':
-                    new_vol.group_seg_labels(segtool, version, type,
-                                             ref=ref)  # Automatically adding the names to known labels
-                    print(f"Using {ref} as a reference value")
-                else:
-                    print("Type must be susceptibility to use the reference flag")
-                    exit()
+    grouped_passed = vol.group_seg_labels(segtool, version, input_file)
+    # If we group the labels and no ID is missing (automatically checked inside)
+    # Now we can get the new seg file with
+    if grouped_passed:
+        new_seg_file = vol.create_new_grouped_labels()
+    # Now save the new seg_file
+        new_seg_img = Nifti1Image(new_seg_file,header=file.header,affine= file.affine)
+        nib.save(new_seg_img, output_file)
+        end = time.time()
+        elapsed = end - start
+        print(f"Time elapsed: {elapsed:.4f} seconds")
+    else:
+        print("Failed pixel checking please check input file and the created mask file")
 
-            new_vol.group_seg_labels(segtool, version, type, ref=ref)
-            # Printing one label can help see the structure as well as verifying values selected
-            # Specially when working with field map comparison project where chi can be changed
-
-            print("# Step 2. Checking pixel integrity #")
-            ans = new_vol.check_pixels(input_file)
-
-            if ans == 0:
-                print("# Step 3. Converting ... #")
-
-                if gauss == "1":
-
-                    new_vol.gauss_flag = 1
-                    print("Gaussian option enabled ...")
-                    new_vol.calc_regions()
-                    # print("Calc region done")
-                    new_vol.create_gauss_sc_dist(type)
-                    print("Creating a Gaussian distribution phantom from ", type, " values")
-                    if output_file == None:
-                        new_vol.save_gauss_dist(type)
-                        print("Gaussian phantom created")
-                    else:
-                        new_vol.save_gauss_dist(type, output_file)
-                        print("Gaussian phantom created - custom out_fn")
-
-                else:
-
-                    if output_file == None:
-                        print("Piece-wise mode: on")
-                        new_vol.create_type_vol(type)  # This creates and saves a Nifti file
-
-                    else:
-                        print("Piece-wise ON - custom out_fn")
-                        new_vol.create_type_vol(type, output_file)
-
-                print(f"Input segmented by: {segtool}, version: {version}")
-                end = time.time()
-                elapsed = end - start
-                print("Time elapsed: ", elapsed)
-
-            else:
-
-                print("Pixel integrity error")
-
-        else:
-            print("Input must be a Nifti file (.nii or .nii.gz extensions)")
-
-        # After everything is finished, we can create the json side car
-        try:
-            repo = git.Repo(search_parent_directories=True)
-        except git.exc.InvalidGitRepositoryError:
-            # This in case that converter tool is not ran under the folder
-            print("No Git repository found in parent directories.")
-            repo = None
-        print("# Step 3. Creating json sidecar for the convertion #")
-
-        converter_sidecar = {}
-        # This depends on the OS system
-        author_name = os.getenv('USER') or os.getenv('USERNAME') or os.getenv('LOGNAME')
-        converter_sidecar['author'] = author_name if author_name else "Unknown User"
-        converter_sidecar['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        converter_sidecar['script'] = str(Path(os.path.abspath(__file__)).resolve())
-        converter_sidecar['command'] = command
-        if repo:
-            converter_sidecar['script source'] = repo.remotes.origin.url
-            converter_sidecar['script commit hash'] = repo.head.object.hexsha
-        else:
-            converter_sidecar['script source'] = "tissue_to_MR"
-            converter_sidecar['script commit hash'] = "check with git status"
-
-        json_out_name = output_file.replace(".nii.gz", ".json")
-        json_out_path = os.path.join("output", json_out_name)
-        print(json_out_path)
-        if os.path.exists(json_out_path):
-            print("Json sidecar found, overwritting ...")
-            os.remove(json_out_path)
-
-        with open(json_out_path, 'w', encoding='utf-8') as f:
-            json.dump(converter_sidecar, f, ensure_ascii=False, indent=4)
 
 #my_commands.add_command(converter)
 #if __name__ == "__main__":

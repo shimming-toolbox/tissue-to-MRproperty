@@ -4,8 +4,9 @@ from tissue2mrprop.functions.label import SegmentationLabel
 import nibabel as nib
 from tissue2mrprop.functions.utils.get_dic_values import to_csv_sus
 import os
-from tissue2mrprop.functions.utils.select_tool import return_dict_labels, new_return_dict_labels
-#from skimage.measure import label, regionprops
+from tissue2mrprop.functions.utils.select_tool import new_return_dict_labels
+from tissue2mrprop.conventions import CANONICAL_ID_TO_NAME
+
 
 # Parent class for the creation of a non-finite biomechanical model of the body
 class volume:
@@ -17,7 +18,8 @@ class volume:
         # This way we can attribute the information from nifti files to the class
 
         self.nifti = volume # This points to a Nifti file
-        self.volume = self.nifti.get_fdata()
+        # Given the input is ALWAYS a segmentation, we should open them as integers
+        self.volume = self.nifti.get_fdata().astype(np.int32)
         self.dimensions = np.array(self.volume.shape) # It is initially a tuple, but it needs to be an array
         self.uniq_labels = np.unique(self.volume)
         self.segmentation_labels = {}
@@ -38,6 +40,7 @@ class volume:
         # This is the Convention Dictionary for labels_id - names - sus_values
         self.relax_values = {}
         self.static_vals = {}
+        self.static_vals_short = {}
         # This is a dictionary to get the relaxation values used in label.py
 
         # Now to get the dictionary of standard deviations
@@ -67,477 +70,297 @@ class volume:
         # For the fieldmap comparison project:
         self.new_chi = None
 
-    def group_seg_labels(self, tool, version, type, ref):
-        #self.look_up = return_dict_labels(tool,version)
-        # For the fieldmap comparison project
-        if tool == "compare_fm" and version == "dyn":
-            # If the version is dynamic
-            # The new value will replace None
-            # We can check just in case
-            self.look_up = new_return_dict_labels(tool,version, new_chi = self.new_chi)
-        else:
-            self.look_up = new_return_dict_labels(tool,version)
+    def group_seg_labels(self, tool, version, in_fn):
 
-        # Function to get the relaxation values from label
-        for i in self.look_up.keys():
-            self.segmentation_labels[i] = SegmentationLabel(i)
+        self.look_up = new_return_dict_labels(tool,version)
 
         for key, value in self.look_up.items():
             # Key is the number of ID and value is (name, new_id)
             name = value[0]
             new_id = value[1]
-            self.set_label_name(key, name, type)
 
+        # Now, check pixel integrity
+        try:
+            self.check_pixels(in_fn)
+        except ValueError:
+            return False
+        return True
 
-            if ref != 0:
-                new_sus = sus - ref
-                self.set_label_susceptibility(key, new_sus)
-
-
-
-            if type == "sus":
-                print(name, " Chi:", self.segmentation_labels[key].PD_val)
-            if type == "pd":
-                print(name, " PD:", self.segmentation_labels[key].PD_val)
-            if type == "t2s":
-                print(name, " T2s:", self.segmentation_labels[key].T2star_val)
-            if type == "t1":
-                print(name, " T1:", self.segmentation_labels[key].T1_val)
-            if type == "t2":
-                print(name, " T2:", self.segmentation_labels[key].T2_val)
-            if type == "perm3T":
-                print(name, " Permittivity@3T:", self.segmentation_labels[key].perm3T)
-            if type == "cond3T":
-                print(name, " Conductivity @3T:", self.segmentation_labels[key].cond3T)
-            if type == "perm7T":
-                print(name, " Permittivity @7T:", self.segmentation_labels[key].perm7T)
-            if type == "cond7T":
-                print(name, " Permittivity @7T:", self.segmentation_labels[key].cond7T)
-
-        # Getting the relax values dictionary from any label
-        self.relax_values = self.segmentation_labels[0].relax_values
-        self.static_vals = self.segmentation_labels[0].static_values_short
-
-    def check_labels(self):
-        for i in self.uniq_labels:
-            if self.segmentation_labels[i].name == None:
-                print("Label: ",self.segmentation_labels[i]["name"]," doesn't have name assigned")
-
-    def set_label_name(self, label_id, name, type):
-        '''
-        This is the most important set function, as this function enables the calling the tissue properties as attributes
-        if and only if the label is found in the ids
-        '''
-        ids = self.look_up.keys()
-        if label_id in ids:
-            if type == "perm3T" or type == "cond3T" or type == "perm7T" or type == "cond7T":
-                self.segmentation_labels[label_id].set_static_name(name)
-
-            self.segmentation_labels[label_id].set_name(name)
-        else:
-            print(f"Label ID {label_id} not found, check version selected")
-            exit()
-
-    def set_label_susceptibility(self, label_id, susceptibility):
-        ids = self.look_up.keys()
-        if label_id in ids:
-            self.segmentation_labels[label_id].set_susceptibility(susceptibility)
-        else:
-            print(f"Label ID {label_id} not found.")
-            exit()
-    def set_T1(self, label_id, t1):
-        ids = self.look_up.keys()
-        if label_id in ids:
-            self.segmentation_labels[label_id].set_t2star_val(t1)
-        else:
-            print(f"Label ID {label_id} not found.")
-            exit()
-    def set_label_pd(self,label_id,pd):
-        ids = self.look_up.keys()
-        if label_id in ids:
-            self.segmentation_labels[label_id].set_pd_val(pd)
-        else: print(f"Label ID {label_id} not found.")
-
-    def set_T2star(self, label_id, t2star):
-        ids = self.look_up.keys()
-        if label_id in ids:
-            self.segmentation_labels[label_id].set_t2star_val(t2star)
-        else:
-            print(f"Label ID {label_id} not found.")
-
-    def manual_label(self,id,name,sus):
-        if id in self.uniq_labels:
-            label = self.segmentation_labels[id]
-            label.name = name
-            label.sus = sus
-
-    def show_labels(self):
-        for i in self.segmentation_labels:
-            label = self.segmentation_labels[i]
-            print(label) # Calling __str__ from label
-
-    def create_type_vol(self, type, output_name="default"):
-        # This function is for the CLI app
-        # Depending on the type we automatically call the specific function
-        # Piece-wise mode: on :P
-        if type == 'sus':
-            self.create_sus_dist()
-            self.save_sus_dist_nii(output_name)
-        if type == 't2s':
-            self.create_t2_star_vol()
-            self.save_t2star_dist(output_name)
-        if type == 'pd':
-            self.create_pd_vol()
-            self.save_pd_dist(output_name)
-        if type == 't1':
-            self.create_t1_vol()
-            self.save_t1_dist(output_name)
-        if type == 't2':
-            print("T2 volume comming soon!")
-
-        if type == 'perm3T' or type == 'cond3T' or type == 'perm7T' or type == 'cond7T':
-            self.create_static_vol(type)
-            self.save_static_vol(type, output_name)
-
-
-
-    def check_pixels(self,input_name):
+    def check_pixels(self, input_name):
         # Important to before going to conversion
         # If there is a pixel that is outside of range conversion won't work
         # because it won't be treated as a label but as a float
         flag = 0  # Flag to save in case there were changes
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
+        volume_labels = self.uniq_labels
+        valid_labels = np.array(list(self.look_up.keys()))
+        # Now with lists instead of 3D arrays we can find any invalid labels
+        invalid_labels = np.setdiff1d(volume_labels, valid_labels)
 
-                    pixel = self.volume[i, j, k]
+        if invalid_labels.size == 0:
+            print("✅ All segmentation labels match the lookup table.")
+            return True
 
-                    if pixel not in self.look_up.keys():
+        print("⚠️ Found labels not defined in selected tool:")
+        print(invalid_labels)
 
-                        flag = 1
-                        print(f"Pixel with wrong value: {pixel} located at {i,j,k}")
-                        print("(indexed from [0,0,0])")
-                        rem = str(input("Do you want to delete the pixel? [Y] [n]: "))
-                        print("[Y] continues checking pixels, [n] lets you edit it")
+        # Create mask of invalid voxels
+        invalid_mask = np.isin(self.volume, invalid_labels)
 
-                        if rem == "n":
-                            print("Maybe you want to change the value?")
-                            rem2 = int(input("Choose the value: "))
+        # Create output volume (only invalid labels kept)
+        invalid_volume = np.zeros_like(self.volume)
+        invalid_volume[invalid_mask] = self.volume[invalid_mask]
 
-                            if rem2 in self.segmentation_labels:
-                                print("Changed value to: ", rem2)
-                                self.volume[i, j, k] = rem2
+        # Save NIfTI
+        tmp_img = nib.Nifti1Image(invalid_volume,header=self.nifti.header, affine=self.nifti.affine)
 
-                            else:
-                                print("Number not in look up table")
-                                return 1
-
-                        if rem == "Y" or rem == "y":
-                            self.volume[i, j, k] = 0
-
+        if input_name.endswith(".nii.gz"):
+            base_name = input_name[:-7]
+            out_name = base_name + "_invalid_labels.nii.gz"
+        elif input_name.endswith(".nii"):
+            base_name = input_name[:-4]
+            out_name = base_name + "_invalid_labels.nii.gz"
         else:
+            out_name = "invalid_labels.nii.gz"
+            print("Input filename not nifti or compressed nifit")
 
-            if flag == 1:
+        out_path = os.path.join("output", out_name)
+        nib.save(tmp_img, out_path)
 
-                print("Saving corrected volume for later usage!")
-                tmp_img = nib.Nifti1Image(self.volume, affine = self.nifti.affine)
-                if input_name.endswith(".nii.gz"):  # Maybe code for .nii later (not urgent)
-                    base_name = input_name[:-7]  # Remove the `.nii.gz`
-                    extension = ".nii.gz"
-                out_name = base_name + "corrected_pixels.nii.gz"
-                path = os.path.join('output', out_name)
-                nib.save(tmp_img,path)
-                del tmp_img
-                del path
-                return 0
+        print(f"🚨 Invalid label map saved to: {out_path}")
+        print("Please correct segmentation or select the appropriate tool.")
 
-            else:
-                print("Input has correct pixel integrity!")
-                return 0
+        raise ValueError("Segmentation contains labels incompatible with selected tool.")
 
     def create_new_grouped_labels(self):
-        self.grouped_labels = np.zeros(self.dimensions)
+        # Redefine volume to int so that we can use indexing
+        # If we don't do this, we can't index with floats
+        print("Checking type of volume:", type(self.volume))
+        max_label = int(np.max(self.volume))
+        lut = np.zeros(max_label+1, dtype=int)
+        for key, (name, new_id) in self.look_up.items():
+            if key <= max_label:
+                print(f"Remapping label {name} to {new_id}")
+                lut[key] = new_id # The second value of the tuple is the new id
 
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
+        self.grouped_labels = lut[self.volume]
+        return self.grouped_labels
 
-                    pixel = self.volume[i,j,k]
-                    label = self.segmentation_labels[pixel]
-                    new_label_id = self.segmentation_labels
+# Initializing tissue2MR using Canonical list of label id-name
 
-    def create_sus_dist(self):
-        # Code for create a susceptibility distribution volume
-        # Using the label class
-        self.sus_dist = np.zeros(self.dimensions)
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
+    def init_segmentation_labels_from_canonical(self):
+        self.segmentation_labels = {}
+        for lab_id in self.uniq_labels:
+            lab_id = int(lab_id)
+            lbl = SegmentationLabel(lab_id)
 
-                    pixel = self.volume[i,j,k]
+            if lab_id not in CANONICAL_ID_TO_NAME:
+                raise ValueError(f"Label ID {lab_id} not found, check tool and version selected")
+            name = CANONICAL_ID_TO_NAME[lab_id]
+            lbl.set_name(name) # This enables us to call all tissue properties as attributes per label
+            self.segmentation_labels[lab_id] = lbl
 
-                    label = self.segmentation_labels[pixel]
-                    suscep = label.susceptibility
+        # Additionally, getting relax and static values from any segmentation label
+        self.relax_values = next(
+            iter(self.segmentation_labels.values())).relax_values if self.segmentation_labels else {}
+        self.static_vals_short = next(
+            iter(self.segmentation_labels.values())).static_values_short if self.segmentation_labels else {}
+        self.static_vals = next(
+            iter(self.segmentation_labels.values())).static_values if self.segmentation_labels else {}
 
-                    if suscep == None:
-                        # THis means the label is not defined
-                        # The only not defined labels are organs
-                        # We can consider the suscp of water
-                        self.sus_dist[i,j,k] = -9.05
-                    else:
-                        self.sus_dist[i,j,k] = suscep
+# Core function for creating new volumes without having to use 3 for loops
+    def _lut_from_label_attr(self, attr_name:str, default_value:float, dtype=np.float32):
+        """
+        Builds a LUT mapping label_id -> attribute value then returns the mapped volume
+        attr_name examples: susceptibility, T1_val, T2star_val, PD_val, T2_val
+        """
+        max_label = int(self.volume.max())
+        lut = np.full(max_label+1, default_value, dtype=dtype)
 
-        return self.sus_dist
+        # Now iterate only over unique labels present (faster)
+        for lab_id in self.uniq_labels:
+            lab_id = int(lab_id)
+            lbl = self.segmentation_labels.get(lab_id, None)
+            if lbl is None:
+                continue
+            val = getattr(lbl, attr_name, None)
+            # None in case we get missing attributes or if typo on attr_name
+            if val is None:
+                continue
+            lut[lab_id] = float(val)
 
-    def save_sus_dist_nii(self, fn):
-        # Method to save the susceptibility distribution created to nifti
-        if self.gauss_flag:
-            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
-            g_str = "gauss"
+        return lut[self.volume]
+
+# Create new volume house function
+    def create_type_vol(self, mrprop, output_name="default"):
+        # This function is for the CLI app
+        # Depending on the type we automatically call the specific function
+        # Piece-wise mode: on :P
+        if mrprop == 'sus':
+            self.sus_dist = self._lut_from_label_attr(
+                attr_name="susceptibility",
+                default_value=-9.05,  # In case None is found on a label's chi value
+                dtype=np.float32
+            )
+            self.save_sus_dist(output_name)
+        elif mrprop == 't2s':
+            self.t2star_vol = self._lut_from_label_attr(
+                attr_name="T2star_val",
+                default_value=0,  # In case None is found on a label's T2star value
+                dtype=np.float32
+            )
+            self.save_t2star_dist(output_name)
+        elif mrprop == 'pd':
+            self.pd_dist= self._lut_from_label_attr(
+                attr_name="PD_val",
+                default_value=0,  # In case None is found on a label's PD value
+                dtype=np.float32
+            )
+            self.save_pd_dist(output_name)
+        elif mrprop == 't1':
+            self.t1_vol = self._lut_from_label_attr(
+                attr_name="T1_val",
+                default_value=0,  # In case None is found on a label's T1 value
+                dtype=np.float32
+            )
+            self.save_t1_dist(output_name)
+        elif mrprop == 't2':
+            self.t2_vol = self._lut_from_label_attr(
+                attr_name="T2_val",
+                default_value=0,  # In case None is found on a label's T2 value
+                dtype=np.float32
+            )
+            self.save_t2_dist(output_name)
+
+        elif mrprop in ('perm3T', 'cond3T', 'perm7T', 'cond7T'):
+            self.create_static_vol(mrprop)
+            self.save_static_vol(mrprop, output_name)
         else:
-            temp_img = nib.Nifti1Image(self.sus_dist, affine=self.nifti.affine)
+            raise ValueError(f"Unknown property: {mrprop}")
+
+    def save_sus_dist(self, fn):
+        if self.gauss_flag:
+            data = self.gaussian_phantom
+        else:
+            data = self.sus_dist
+        tmp_img = nib.Nifti1Image(data, affine=self.nifti.affine)
 
         if fn == "default":
             fn = 'sus_dist.nii.gz'
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            # Conditioning if gauss flag is active, if not. We use the susceptibility np array
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img,path)
-        else:
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img,path)
-
-        del temp_img
-        del path
-
-    def create_static_vol(self, type):
-
-        self.static_vol = np.zeros(self.dimensions)
-        # Recall the type will tell us what index to take from the perm&cond dictionary
-
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
-
-                    pixel = self.volume[i,j,k]
-
-                    label = self.segmentation_labels[pixel]
-
-                    if type == "perm3T":
-                        stat = label.perm3T
-                        self.static_vol[i, j, k] = stat
-
-                    if type == "cond3T":
-                        stat = label.cond3T
-                        self.static_vol[i, j, k] = stat
-
-                    if type == "perm7T":
-                        stat = label.perm7T
-                        self.static_vol[i, j, k] = stat
-
-                    if type == "cond7T":
-                        stat = label.cond7T
-                        self.static_vol[i, j, k] = stat
-
-                    #else:
-                        #print(f"Label {label} doesn't have a Perm or Cond value associated, check dictionary")
-                        #exit()
-
-        return self.static_vol
-
-    def save_static_vol(self, type, fn="default"):
-        # Method to save the Perm or Cond vol created to nifti
         if self.gauss_flag:
-            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
-            g_str = "gauss"
-        else:
-            temp_img = nib.Nifti1Image(self.static_vol, affine=self.nifti.affine)
+            fn = "gauss_" + fn
+        path = os.path.join('output', fn)
+        nib.save(tmp_img,path)
 
-        if fn == "default":
-            fn = type+'.nii.gz'
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            # Conditioning if gauss flag is active, if not. We use the static_vol np array
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img, path)
-        else:
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img, path)
-
-        del temp_img
-        del path
-
-    def create_t1_vol(self):
-        self.t1_vol = np.zeros(self.dimensions)
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
-                    pixel = self.volume[i,j,k]
-                    label = self.segmentation_labels[pixel]
-                    val_t1 = label.T1_val
-                    if val_t1 == None:
-                        print("Label: ",label.name," does not have T1 value")
-                        self.t1_vol[i,j,k] = 0
-                    else:
-                        self.t1_vol[i, j, k] = val_t1
-        return self.t1_vol
+        del tmp_img
+        return path
 
     def save_t1_dist(self, fn = "default"):
-        # Method to save T1 volume created to nifti
         if self.gauss_flag:
-            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+            data = self.gaussian_phantom
         else:
-            temp_img = nib.Nifti1Image(self.t1_vol, affine=self.nifti.affine)
+            data = self.t1_vol
+        tmp_img = nib.Nifti1Image(data, affine=self.nifti.affine)
 
         if fn == "default":
             fn = 't1_dist.nii.gz'
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            nib.save(temp_img,path)
-        else:
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            nib.save(temp_img,path)
-        del temp_img
-        del path
-
-    def create_pd_vol(self):
-        # This method will use the lookup table of PD values to create a new volume
-        # This new volume will use the labels to quickly create a volume with ProtonDensity values
-        self.pd_dist = np.zeros(self.dimensions)
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
-
-                    pixel = self.volume[i,j,k]
-                    label = self.segmentation_labels[pixel]
-                    pd = label.PD_val
-                    if pd == None:
-                        # THis means the label does not have PD defined
-                        self.pd_dist[i,j,k] = 0
-                    else:
-                        # If the label has PD value it will put this value on the volume
-                        self.pd_dist[i,j,k] = pd
-
-        return self.pd_dist
-    def save_pd_dist(self, fn = 'default'):
-        # Method to save the proton density distribution created to nifti
         if self.gauss_flag:
-            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+            fn = "gauss_" + fn
+        path = os.path.join('output', fn)
+        nib.save(tmp_img,path)
+
+        del tmp_img
+        return path
+
+    def save_pd_dist(self, fn = 'default'):
+        if self.gauss_flag:
+            data = self.gaussian_phantom
         else:
-            temp_img = nib.Nifti1Image(self.pd_dist, affine=self.nifti.affine)
+            data = self.pd_dist
+        tmp_img = nib.Nifti1Image(data, affine=self.nifti.affine)
 
         if fn == "default":
             fn = 'pd_dist.nii.gz'
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img,path)
-        else:
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img,path)
-        del temp_img
-        del path
-
-    def create_t2_star_vol(self):
-        # This method will use the lookup table of T2 star values to create a new volume
-        # This new volume will use the labels to quickly create a volume with relaxation time
-        self.t2star_vol = np.zeros(self.dimensions)
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
-
-                    pixel = self.volume[i,j,k]
-                    label = self.segmentation_labels[pixel]
-                    t2star = label.T2star_val
-                    if t2star == None:
-                        # THis means the label does not have T2 star value defined
-                        self.t2star_vol[i,j,k] = 0.001
-                    else:
-                        # If the label has value it will put this value on the volume
-                        self.t2star_vol[i,j,k] = t2star
-
-        return self.t2star_vol
-    def save_t2star_dist(self, fn = "default"):
-        # Method to save the volume with T2 star values  created to nifti
         if self.gauss_flag:
-            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+            fn = "gauss_" + fn
+        path = os.path.join('output', fn)
+        nib.save(tmp_img,path)
+
+        del tmp_img
+        return path
+
+    def save_t2star_dist(self, fn = "default"):
+        if self.gauss_flag:
+            data = self.gaussian_phantom
         else:
-            temp_img = nib.Nifti1Image(self.t2star_vol, affine=self.nifti.affine)
+            data = self.t2star_vol
+        tmp_img = nib.Nifti1Image(data, affine=self.nifti.affine)
 
         if fn == "default":
             fn = 't2_star.nii.gz'
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img,path)
-        else:
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img,path)
-        del temp_img
-        del path
+        if self.gauss_flag:
+            fn = "gauss_" + fn
+        path = os.path.join('output', fn)
+        nib.save(tmp_img,path)
 
-    def create_t2_vol(self):
-        # This method will use the lookup table of T2 star values to create a new volume
-        # This new volume will use the labels to quickly create a volume with relaxation time
-        self.t2_vol = np.zeros(self.dimensions)
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
-
-                    pixel = self.volume[i, j, k]
-                    label = self.segmentation_labels[pixel]
-                    t2val = label.T2_val
-                    if t2val == None:
-                        # THis means the label does not have T2 defined
-                        self.t2_vol[i, j, k] = 0.001
-                    else:
-                        # If the label has value it will put this value on the volume
-                        self.t2_vol[i, j, k] = t2val
-
-        return self.t2_vol
+        del tmp_img
+        return path
 
     def save_t2_dist(self, fn = "default"):
-        # Method to save the volume with T2 star values  created to nifti
         if self.gauss_flag:
-            temp_img = nib.Nifti1Image(self.gaussian_phantom, affine=self.nifti.affine)
+            data = self.gaussian_phantom
         else:
-            temp_img = nib.Nifti1Image(self.t2_vol, affine=self.nifti.affine)
+            data = self.t2_vol
+        tmp_img = nib.Nifti1Image(data, affine=self.nifti.affine)
 
         if fn == "default":
-            fn = 't2_map.nii.gz'
-            if self.gauss_flag:
+            fn = 't2_dist.nii.gz'
+        if self.gauss_flag:
                 fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img,path)
+        path = os.path.join('output', fn)
+        nib.save(tmp_img,path)
+
+        del tmp_img
+        return path
+
+    def create_static_vol(self, mrprop):
+        attr_map = {
+            "perm3T": "perm3T",
+            "cond3T": "cond3T",
+            "perm7T": "perm7T",
+            "cond7T": "cond7T",
+        }
+
+        if mrprop not in attr_map:
+            raise ValueError(f"Unknown static type: {mrprop}")
+
+        attr_name = attr_map[mrprop]
+
+        # Undefined values default to 0
+        self.static_vol = self._lut_from_label_attr(
+            attr_name=attr_name,
+            default_value=0.0,
+            dtype=np.float32
+        )
+        return self.static_vol
+
+    def save_static_vol(self, mrprop, fn="default"):
+        if self.gauss_flag:
+            data = self.gaussian_phantom
         else:
-            if self.gauss_flag:
-                fn = "gauss_" + fn
-            path = os.path.join('output', fn)
-            # Save the new NIfTI image to a file
-            nib.save(temp_img,path)
-        del temp_img
-        del path
+            data = self.static_vol
+        tmp_img = nib.Nifti1Image(data, affine=self.nifti.affine)
+
+        if fn == "default":
+            fn = f"{mrprop}.nii.gz"
+        if self.gauss_flag:
+            fn = "gauss_" + fn
+        path = os.path.join('output', fn)
+        nib.save(tmp_img, path)
+
+        del tmp_img
+        return path
+
+# CSV related functions (on development)
     def save_sus_csv(self):
         data = []
         for i in self.segmentation_labels.keys():
@@ -558,37 +381,32 @@ class volume:
         # It might be usefull to get this inputs from different researchers and testing
         pass
 
+# Gaussian related functions
     def calc_regions(self):
         # For  creating a gaussian distribution we need to group and count every label
         # Must be run after defining a tool in group_seg_labels
-        self.gaussian_phantom = np.zeros(self.dimensions)
+        self.gaussian_phantom = np.zeros(self.dimensions, dtype=np.float32)
+
         unique_labels, counts = np.unique(self.volume, return_counts=True)
         self.unique_counts = dict(zip(unique_labels,counts))
 
         std_regions_of_interest = ["sc_wm", "sc_gm"]
 
-        if self.look_up is {}:
+        if not self.look_up:
             print("Please define a tool for a lookup table")
+            return
 
-        else:
-            for l, count in self.unique_counts.items():
-                #label_id = l
-                label_name = self.look_up[l][0]
-                #label_suscep = self.look_up[l][1]
-                # Filter only for SC wm and gm
-                if label_name == std_regions_of_interest[0] or std_regions_of_interest[1]:
-                    if label_name in self.label_counts.keys():
-                        self.label_counts[label_name] += count
-                    else:
-                        self.label_counts[label_name] = count
+        self.label_counts = {}
 
-        # Now depending on the tool used we grouped them up
-        # And for visualizing, sorting might be good
-        sorted_label_counts = sorted(self.label_counts.items(), key=lambda item: item[1], reverse=True)
+        for lab_id, count in self.unique_counts.items():
+            lab_id = int(lab_id)
+            if lab_id not in self.look_up:
+                continue
+            label_name = self.look_up[lab_id][0]
+            if label_name in std_regions_of_interest:
+                self.label_counts[label_name] = self.label_counts.get(label_name, 0) + int(count)
 
-        # Now should only show SC gm and wm
-        for name, count in sorted_label_counts:
-            # Display the pixel count per label
+        for name, count in sorted(self.label_counts.items(), key=lambda x: x[1], reverse=True):
             print(f"Label name: {name}: {count} pixels")
 
     def create_gauss_sc_dist(self, prop):
@@ -600,7 +418,12 @@ class volume:
             "t2": {"sc_wm": 8.725, "sc_gm": 14.935}, # Using sub-MKP611 from https://openneuro.org/datasets/ds004611/versions/1.0.2
             "t1": {"sc_wm": 106.15, "sc_gm": 114.895}, # Using sub-MKP611 from https://openneuro.org/datasets/ds004611/versions/1.0.2
             "pd": {"sc_wm": 5.54, "sc_gm": 6.95}, # Same as M0 for now
-            "M0": {"sc_wm": 13.41, "sc_gm": 16.83} # => Avg taken from regions 1 through 7 of QSM RC2 paper (Deep gray matter) for GM and WM
+            "M0": {"sc_wm": 13.41, "sc_gm": 16.83}, # => Avg taken from regions 1 through 7 of QSM RC2 paper (Deep gray matter) for GM and WM
+            # STD values for the following properties still need to be added
+            "perm3T": {"sc_wm": 0.01, "sc_gm": 0.01},
+            "cond3T": {"sc_wm": 0.01, "sc_gm": 0.01},
+            "perm7T": {"sc_wm": 0.01, "sc_gm": 0.01},
+            "cond7T": {"sc_wm": 0.01, "sc_gm": 0.01}
         }
         # WM values come from corpus callosum
         # GM values come from Deep Gray Matter regions in the brain
@@ -611,232 +434,136 @@ class volume:
         # Which results in 100/242 = 0.413
         # PD_std = M0_std*0.413
 
+        # ---------- Step 1: piecewise base ----------
         print("Step1 for Texture. Populate phantom with piecewise values")
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
-                    pixel = self.volume[i, j, k]
-                    label = self.segmentation_labels[pixel]
-                    l_name = label.name
+        # Build property LUT over label IDs present
+        max_label = int(self.volume.max())
+        base = np.zeros(max_label + 1, dtype=np.float32)
 
-                    # Determine the property value based on the input prop
-                    if prop == "sus":
-                        property_value = label.susceptibility
-                    else:
-                        property_value = self.relax_values[l_name][{
-                            "t2s": 3, "t2": 2, "t1": 1, "pd": 4, "M0": 1
-                        }[prop]]
+        # index mapping for relax_values
+        idx_map = {"sus":0, "t1": 1, "t2": 2, "t2s": 3, "pd": 4}
+        idx_static_map = {"perm3T":0, "cond3T":1, "perm7T":2, "cond7T":3}
 
-                    # Assign the piecewise value directly
-                    self.gaussian_phantom[i, j, k] = property_value
-
-        # Step 2: Apply gaussian distribution only to sc_wm and gm
-
-        print("Step2 for Texture. Calculate gaussian distribution for sc_wm and sc_gm")
-        for l, count in self.unique_counts.items():
-            #label_id = l
-            label_name = self.look_up[l][0]
-            label_sus = self.look_up[l][1]
-            # Determine the property value based on the input prop
-
-            if label_name in ["sc_wm", "sc_gm"]:
-                if prop == "sus":
-                    property_value = label_sus
-                else:
-                    property_value = self.relax_values[label_name][{
-                        "t2s": 3, "t2": 2, "t1": 1, "pd": 4, "M0": 1
-                    }[prop]]
-                std_dev = std_values.get(prop, {}).get(label_name, 0)
-                print(f"Applying Gaussian noise to {label_name} with STD: {std_dev}")
-
-                print(f"Label: {label_name} | Property: {prop} | Mean Value: {property_value} | STD: {std_dev}")
-
-                self.label_gaussians[l] = self.calc_gauss(
-                num_pixels=count,
-                value = property_value,
-                mr_prop=prop,
-                std_dev=std_dev
-                )
-        # Step 3 for Texture. Replacing with gaussian values only in SC WM and SC GM
-        print("Creating gaussian phantom -> longer for big files")
-
-        # Optimized Gaussian Phantom Creation Loop
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
-                    pixel = self.volume[i, j, k]
-                    lab_id = self.segmentation_labels[pixel].label_id
-                    # Only apply Gaussian if it is sc_wm or sc_gm
-                    if lab_id in self.label_gaussians:
-                        gaussian_values = self.label_gaussians[lab_id]
-                        value = np.random.choice(gaussian_values)
-                        self.gaussian_phantom[i, j, k] = value
-
-    def create_gauss_dist(self,prop):
-        '''
-        This is an old function S.R. implemented to add gaussian distribution to all labels
-        It could be deleted, but I'm leaving here in case eventually we want to use it again
-        Args:
-            prop:
-
-        Returns:
-
-        '''
-        # For input restrictions of type, see Segmentation Label
-
-        for l, count in self.unique_counts.items():
-            # get the MR property desired
-            # l is the name (as a str) of the label
-            l_name = self.look_up[l][0]
-
-            if l_name not in ["sc_wm", "sc_gm"]:
-                continue  # Skip labels other than sc_wm and sc_gm
+        for lab_id in self.uniq_labels:
+            lab_id = int(lab_id)
+            lbl = self.segmentation_labels.get(lab_id, None)
+            if lbl is None:
+                continue
+            name = lbl.name
 
             if prop == "sus":
-                property_value = self.look_up[l][1]
-                #l_name = self.look_up[l][0]
-                #property = self.look_up[l][1]
-                #SD = self.std_devs[l_name]
-                sc_wm_std = 0.0145 # [ppm] => Similar to corpus callosum
-                sc_gm_std = 0.031 # [ppm]
+                val = lbl.susceptibility
+                if val is None:
+                    val = -9.05  # keep your fallback
+            else:
+                # assumes relax_values available and name exists there
+                if prop in ("perm3T", "cond3T", "perm7T", "cond7T"):
+                    # Eventually when mapped completely, replace with
+                    # self.static_vals
+                    val = self.static_vals_short[name][idx_static_map[prop]]
+                else:
+                    val = self.relax_values[name][idx_map[prop]]
 
-                if l_name == "sc_wm":
-                    print(f"STD of Chi of {l_name}: {sc_wm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_wm_std)
-                if l_name == "sc_gm":
-                    print(f"STD of Chi of {l_name}: {sc_gm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_gm_std)
+            base[lab_id] = float(val)
 
-            if prop == "t2s":
-                l_name = self.look_up[l][0]
-                property = self.relax_values[l_name][3]
-                #SD = self.std_devs[l_name]
-                sc_wm_std = 5.4 # [ms]
-                sc_gm_std = 5.6 # [ms]
+        self.gaussian_phantom = base[self.volume].astype(np.float32)
 
-                if l_name == "sc_wm":
-                    print(f"STD of T2* of {l_name}: {sc_wm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_wm_std)
-                if l_name == "sc_gm":
-                    print(f"STD of T2* of {l_name}: {sc_gm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_gm_std)
+        # ---------- Step 2&3: gaussian on sc_wm + sc_gm ----------
+        print("Step2 for Texture. Calculate gaussian distribution for sc_wm and sc_gm")
+        # Make masks by canonical IDs (fast)
+        # Here: derive IDs from label objects (robust).
+        sc_ids = {}
+        for lab_id in self.uniq_labels:
+            lab_id = int(lab_id)
+            lbl = self.segmentation_labels.get(lab_id, None)
+            if lbl and lbl.name in ("sc_wm", "sc_gm"):
+                sc_ids[lbl.name] = lab_id
 
-            if prop == "t2":
-                l_name = self.look_up[l][0]
-                property = self.relax_values[l_name][2]
-                #SD = self.std_devs[l_name]
-                sc_wm_std = 5.4  # [ms]
-                sc_gm_std = 5.6  # [ms]
+        rng = np.random.default_rng()  # optionally pass a seed for reproducibility
 
-                if l_name == "sc_wm":
-                    print(f"STD of T2 (same as T2*) of {l_name}: {sc_wm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_wm_std)
-                if l_name == "sc_gm":
-                    print(f"STD of T2 (same as T2*) of {l_name}: {sc_gm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_gm_std)
+        for name in ("sc_wm", "sc_gm"):
+            if name not in sc_ids:
+                continue
+            lab_id = sc_ids[name]
+            mask = (self.volume == lab_id)
+            n = int(mask.sum())
+            if n == 0:
+                continue
 
-            if prop == "t1":
-                l_name = self.look_up[l][0]
-                property = self.relax_values[l_name][1]
-                #SD = self.std_devs[l_name]
-                sc_wm_std = 42  # [ms]
-                sc_gm_std = 44  # [ms]
-                if l_name == "sc_wm":
-                    print(f"STD of T1 of {l_name}: {sc_wm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_wm_std)
-                if l_name == "sc_gm":
-                    print(f"STD of T1 of {l_name}: {sc_gm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_gm_std)
+            mean_val = float(base[lab_id])
+            std = float(std_values.get(prop, {}).get(name, 0.0))
 
-            if prop == "pd":
-                l_name = self.look_up[l][0]
-                property = self.relax_values[l_name][4]
-                #SD = self.std_devs[l_name]
-                sc_wm_std = 22.31  # [ms]
-                sc_gm_std = 16.83  # [ms]
-                if l_name == "sc_wm":
-                    print(f"STD of PD of {l_name}: {sc_wm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_wm_std)
-                if l_name == "sc_gm":
-                    print(f"STD of PD of {l_name}: {sc_gm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_gm_std)
+            print(f"Applying Gaussian noise to {name} | prop={prop} | mean={mean_val} | std={std} | n={n}")
 
-            if prop == "M0":
-                l_name = self.look_up[l][0]
-                property = self.relax_values[l_name][1]
-                #SD = self.std_devs[l_name]
-                sc_wm_std = 22.31  # [ms] => Similar to corpus callosum
-                sc_gm_std = 16.83  # [ms] => Avg taken from regions 1 through 7 of QSM RC2 paper (Deep gray matter)
+            if std > 0:
+                self.gaussian_phantom[mask] = rng.normal(loc=mean_val, scale=std, size=n).astype(np.float32)
+            else:
+                self.gaussian_phantom[mask] = mean_val
 
-                if l_name == "sc_wm":
-                    print(f"STD of T1 of {l_name}: {sc_wm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_wm_std)
-                if l_name == "sc_gm":
-                    print(f"STD of T1 of {l_name}: {sc_gm_std}")
-                    self.label_gaussians[l] = self.calc_gauss(num_pixels=count, value=property, mr_prop=prop,
-                                                              std_dev=sc_gm_std)
+        return self.gaussian_phantom
 
-
-
-            # This way for every label we have a gaussian distribution
-
-        print("Creating gaussian phantom -> longer for big files")
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                for k in range(self.dimensions[2]):
-
-                    pixel = self.volume[i,j,k]
-                    # Now we need the ID of the label from pixel so
-                    lab_id = self.segmentation_labels[pixel].label_id
-                    # Instead of getting the name of the label we get the label id
-                    # Because label gaussian is created per label
-                    # Now randomly select a value from the gaussian distribution
-                    gaussian_values = self.label_gaussians[lab_id]
-                    value = np.random.choice(gaussian_values)
-                    self.gaussian_phantom[i,j,k] = value
-
-        print("Finished creating gaussian distributed, based on: ", prop)
-        # Lastly add the gaussian phantom to a Nifti
-        # And save it to output folder
-    def calc_gauss(self, value, num_pixels, mr_prop, std_dev):
-        val = np.random.normal(value, std_dev, num_pixels)
-        # In areas close to 0, the gaussian distribution must always return positive values
-        # It is not possible to have negative T1, T2, T2s or PD. But susceptibility can be negative
-        if mr_prop == "sus":
-            return val
-        else:
-            abs_val = np.abs(val)
-            return abs_val
-
-    def save_gauss_dist(self, type, out_fn = "default"):
+    def save_gauss_dist(self, mrprop, out_fn = "default"):
         #Saving the gaussian distribution with type defined
         # This must be run ONLY after creating the create_property.
         # If not it will automatically save the empty array
         self.gauss_flag = 1
-        if type == 'sus':
-            self.save_sus_dist_nii(out_fn)
+        if mrprop == 'sus':
+            self.save_sus_dist(out_fn)
 
-        if type == 't2s':
+        elif mrprop == 't2s':
             self.save_t2star_dist(out_fn)
 
-        if type == 'pd':
+        elif mrprop == 'pd':
             self.save_pd_dist(out_fn)
 
-        if type == 't1':
+        elif mrprop == 't1':
             self.save_t1_dist(out_fn)
 
-        if type == 't2':
+        elif mrprop == 't2':
             self.save_t2_dist(out_fn)
+
+        elif mrprop in ("perm3T", "cond3T", "perm7T", "cond7T"):
+            self.save_static_vol(out_fn)
+
+    def check_labels(self):
+        for i in self.uniq_labels:
+            if self.segmentation_labels[i].name == None:
+                print("Label: ",self.segmentation_labels[i]["name"]," doesn't have name assigned")
+    def set_label_susceptibility(self, label_id, susceptibility):
+        ids = self.look_up.keys()
+        if label_id in ids:
+            self.segmentation_labels[label_id].set_susceptibility(susceptibility)
+        else:
+            print(f"Label ID {label_id} not found.")
+            exit()
+    def set_T1(self, label_id, t1):
+        ids = self.look_up.keys()
+        if label_id in ids:
+            self.segmentation_labels[label_id].set_t2star_val(t1)
+        else:
+            print(f"Label ID {label_id} not found.")
+            exit()
+    def set_label_pd(self,label_id,pd):
+        ids = self.look_up.keys()
+        if label_id in ids:
+            self.segmentation_labels[label_id].set_pd_val(pd)
+        else: print(f"Label ID {label_id} not found.")
+    def set_T2star(self, label_id, t2star):
+        ids = self.look_up.keys()
+        if label_id in ids:
+            self.segmentation_labels[label_id].set_t2star_val(t2star)
+        else:
+            print(f"Label ID {label_id} not found.")
+    def manual_label(self,id,name,sus):
+        if id in self.uniq_labels:
+            label = self.segmentation_labels[id]
+            label.name = name
+            label.sus = sus
+    def show_labels(self):
+        for i in self.segmentation_labels:
+            label = self.segmentation_labels[i]
+            print(label) # Calling __str__ from label
+
+
     def __repr__(self):
         return f"SegmentationLabelManager == Volume"

@@ -126,15 +126,18 @@ class SegmentationLabel:
             "brain": [79.80, 0.829, 59.8, 0.972],  # Considered cerebellum
             "muscle": [63.5, 0.719, 58.2, 0.77],
             "bone": [14.7, 0.0673, 13.4, 0.0825],  # Cortical
+            "v_bone": [14.7, 0.0673, 13.4, 0.0825],  # Same as Cortical bone for now
             "lungs": [29.5, 0.316, 24.8, 0.356],  # Using value of Inflated Lungs
             "trachea": [50.6, 0.559, 45.3, 0.61],
             "air": [1, 0, 1, 0],
             "spinal_cord": [44.1, 0.354, 36.9, 0.418],
+            "sc_wm": [44.1, 0.354, 36.9, 0.418], # Same as spinal cord for now
+            "sc_gm": [44.1, 0.354, 36.9, 0.418], # Same as spinal cord for now
             "sc_csf": [84.1, 2.14, 72.8, 2.22],
             "organ": [89.7, 0.852, 70.6, 1.02],  # Using Kidney as reference
             "sinus": [5.435, 0.0426, 4.48, 0.051],  # Considering healthy sinus is 95% air and 5% soft tissue
             "inter_vert_discs": [52.9, 0.488, 46.8, 0.552],  # Considered cartilage
-
+            "cartilage": [89.7, 0.852, 70.6, 1.02], # Using same as ORGAN label for now
             # For ds005616 we have the eyes label
             "skull": [14.7, 0.0673, 13.4, 0.0825], # Considered cortical bone
             "eyes": [84.1, 2.14, 72.8, 2.22],  # Which according to IT'IS foundation, can be considered as CSF
@@ -190,7 +193,7 @@ class SegmentationLabel:
 
         if name in self.relax_values.keys():
             self.name = name
-            self.sus = self.relax_values[name][0]
+            self.susceptibility = self.relax_values[name][0]
             self.T1_val = self.relax_values[name][1]
             self.T2_val = self.relax_values[name][2]
             self.T2star_val = self.relax_values[name][3]
@@ -204,7 +207,7 @@ class SegmentationLabel:
             self.cond7T = self.static_values_short[name][3]
 
         else:
-
+            print(f"Label ID {name} not found, check tool and version selected")
             self.name = name
             self.M0_val = 0
             self.T1_val = 0

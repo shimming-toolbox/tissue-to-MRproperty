@@ -1,7 +1,6 @@
 import numpy as np
 import nibabel as nib
 import argparse
-import scipy
 
 def is_nifti(filepath):
     """

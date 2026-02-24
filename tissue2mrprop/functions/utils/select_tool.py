@@ -193,8 +193,8 @@ def new_return_dict_labels(tool, version, new_chi=None):
             dicc[196] = ("sc_wm", 196)
             dicc[324] = ("sc_gm", 324)
             # Additional to this we add trachea_cartilage and trachea_lumen
-            dicc[170] = ("tr_cartilage", 7)
-            dicc[171] = ("tr_lumen", 13)  # Calculation done by S.R. following values from CRC Handbook and chi-opt
+            dicc[170] = ("tr_cartilage", 107)
+            dicc[171] = ("tr_lumen", 111)
             return dicc
 
 
