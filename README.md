@@ -122,7 +122,7 @@ pip install .
 All inputs and outputs are NIfTI volumes (`.nii` or `.nii.gz`).  
 Unless otherwise specified, outputs are written as compressed NIfTI files (`.nii.gz`) inside the `output/` directory.
 
-## `seg_sorter`
+## `seg_converter`
 
 Remaps a segmentation volume to the canonical label convention.
 
