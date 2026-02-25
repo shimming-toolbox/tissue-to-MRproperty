@@ -1,15 +1,101 @@
 # <div align="center">**Segmentation to MR Properties Converter**</div>
 
-This repository will contain the code necessary for creating different (and selected) volumes whose values represent different MR useful properties: T2, T2 star, Proton Density and Susceptibility.
+This repository contains the code required to generate quantitative magnetic resonance (MR) property volumes, including:
+
+- **T1 relaxation maps (3T)**
+- **T2 relaxation maps (3T)**
+- **T2\* relaxation maps (3T)**
+- **Relative permittivity maps (3T and 7T)**
+- **Electrical conductivity maps (3T and 7T)**
+- **Proton density maps**
+- **Absolute magnetic susceptibility maps**
 
 # Phantom Creation
 
-This tool requires that the segmentation nifti file provided has already been added to the repositories dictionary of vlaues. We initially used the output from Total Segmentator [1] to group into broader tissue types. </br>
-We implement an object-oriented python code that relies on the labels look up table. We implement 2 classes: Volume and Label. They have a parent-daughter relationship. The volume is the nifti file from which we can access information from the header such as dimensions or voxel size and assign them as attributes to the Volume. Then we instance a label class for every unique label from the input, where MR properties are assigned to them as attributes such as: Proton Density, Net Magnetization, T1, T2, T2 star and susceptibility; as well as an identifying ID number and a name. 
+All input segmentation files must follow the canonical label convention defined below.  
+Each voxel in a segmentation file must contain one of the following integer IDs.
 
-A parcellation color map for the TotalCT version "mod 2" for ITK-snap is provided [here](parcellation_itk.txt). This file encodes labels 1 to 48 with a name according to the label it will have; labels 49 to 67, 72, 72, 77 to 86 are named "extra" as they do not have a fixed name in the label class. An example of the final output color scheme is shown below.
+| Canonical ID | Tissue Name      |
+|--------------|------------------|
+| 0            | air              |
+| 1            | heart            |
+| 2            | liver            |
+| 4            | kidney           |
+| 5            | brain            |
+| 6            | spleen           |
+| 7            | cartilage        |
+| 9            | muscle           |
+| 10           | bone             |
+| 11           | v_bone(vertebrae)|
+| 12           | lungs            |
+| 13           | trachea          |
+| 14           | spinal_cord      |
+| 18           | esophagus        |
+| 19           | gland            |
+| 100          | extra            |
+| 101          | water            |
+| 102          | organ            |
+| 107          | tr_cartilage     |
+| 113          | tr_lumen         |
+| 196          | sc_wm            |
+| 264          | fat              |
+| 289          | sc_csf           |
+| 324          | sc_gm            |
 
-![image](https://github.com/sriosq/brainhack_project/assets/154398382/36e16ab6-0683-4455-bec4-4337bb7bb975)
+A parcellation color map for the canonical ID's can be used with ITK[1] available [here](parcellation_itk.txt)
+
+
+---
+
+## Tool 1: `seg_converter`
+
+Different segmentation tools use different labeling conventions.  
+To ensure consistency across datasets, this repository provides the `seg_converter` command line tool (CLI).
+
+### Supported Segmentation Sources
+
+Currently implemented:
+
+- Total Segmentator CT [2]
+- Total Segmentator MRI
+
+### How It Works
+
+1. The user provides:
+   - The segmentation volume
+   - The segmentation tool used to generate it
+
+2. The tool:
+   - Verifies that all voxel label IDs match the expected IDs for the selected segmentation tool.
+   - Remaps the segmentation labels to the canonical label IDs.
+
+3. If any voxel contains an unidentified label ID:
+   - A binary mask is generated containing only those invalid voxels.
+   - This mask allows the user to manually inspect and correct unexpected labels before proceeding.
+
+This validation step ensures that all downstream MR property generation is physically consistent and reproducible.
+
+---
+
+## Tool 2: `tissue_to_MR`
+
+Once a segmentation has been successfully remapped to the canonical label convention, it can be converted into quantitative MR property volumes using `tissue_to_MR` CLI.
+
+### Purpose
+
+`tissue_to_MR` transforms a canonical segmentation into a voxel-wise MR property map.
+
+### Supported Properties
+
+The user specifies which physical property to generate, including:
+
+- T1 (3T)
+- T2 (3T)
+- T2*
+- Relative permittivity (3T or 7T)
+- Electrical conductivity (3T or 7T)
+- Proton density
+- Absolute magnetic susceptibility
 
 # Installation
 
@@ -33,37 +119,59 @@ pip install .
 
 # Usage
 
-Once in the package is installed, you can process your images directly from the terminal. A description follows. </br>
+All inputs and outputs are NIfTI volumes (`.nii` or `.nii.gz`).  
+Unless otherwise specified, outputs are written as compressed NIfTI files (`.nii.gz`) inside the `output/` directory.
 
-**Arguments** 
-- -i, input filename (expected to be compressed nifti, must end in .nii.gz)
-- -s, segmentation_tool : ['TotalSeg_CT','TotalSeg_MRI','ProCord_MRI','compare_fm']
-- -v, version : ['v1','v2','mod0','mod1','mod2','dyn']
-- -t, type : ["t2s", "sus", "pd", "t1", "t2"]
-- -g, gauss : ["0", "1"]
-- -x, Susceptibility value (only used if tool is compare_fm tool and version is dynamic, changes the value susceptibility of Trachea and Lung labels)
-- -r, Use as reference value to demodulate the susceptibility property to create different referenced Chi-maps
-- -o, output filename (expected to be compressed nifti, must end in .nii.gz)
+## `seg_sorter`
+
+Remaps a segmentation volume to the canonical label convention.
+
+### Arguments
+
+| Flag | Description | Options |
+|------|------------|----------|
+| `-i` | Input segmentation file | `.nii` or `.nii.gz` |
+| `-s` | Segmentation tool used | `TotalSeg_CT`, `TotalSeg_MRI` |
+| `-v` | Version of the segmentation labeling scheme | `v1`, `v2`, `mod0`, `mod1`, `mod2`|
+| `-o` | Output remapped file | `.nii.gz` |
+
 
 Example:
-```
-tissue_to_mr -i data/correct_pixels.nii.gz -i iMag_dub07.nii.gz -s TotalSeg_CT -v mod2 -t sus -g 1 -o dub07_gauss_sus_phantom.nii.gz
-```
 
 ```
-tissue_to_MR -i iMag_dub07.nii.gz -s compare_fm -v dyn -t sus -x -4.36 -o custom_dub07_sus_phantom.nii.gz
+seg_converter -i data/input_file.nii.gz -s TotalSeg_CT -v v2 -o remapped_input_file.nii.gz
 ```
 
-**Output** The new volume will be saved as Nifti inside the *output* folder. </br>
 
-The tool performs a **pixel_check** function that will run before running the conversion. If the function finds a pixel with label intensity value outside the known labels in the dictionary provided by *-s*, segmentation label, the tool will ask to change the value of the pixel or delete this pixel (set value to 0). If the code changes any value, it will automatically save a new Nifti image in the output folder with name: **corrected_pixels.nii.gz**.
+## `tissue_to_MR`
 
-The tool has an option of creating the phantom with a Gaussian (normal) distribution based on: the total count of pixels per label and using the fixed value on the look-up table as the mean. Currently only supported for **t2s**, **pd** and **sus** volume creation.
+Converts a canonical segmentation volume into a quantitative MR property map by replacing each tissue label with its corresponding physical value.
 
-Depending on the tool used for segmentation the code will use different lookup tables for label id-name relationship. </br>
+### Arguments
 
-# Look-up table
-Here we document the respective look-up tables used for assigning MR property values to labels. This are acquired from literature publications, reference to the literature used for creating the look-up table are inside the code for the [label](functions/label.py) class.
+| Flag | Description | Options |
+|------|------------|---------|
+| `-i` | Input canonical segmentation file | `.nii.gz` |
+| `-t` | Property type to generate | `t2s`, `sus`, `pd`, `t1`, `t2`, `perm3T`, `cond3T`, `perm7T`, `cond7T` |
+| `-g` | Apply Gaussian distribution in spinal cord WM and GM | `0` (disabled), `1` (enabled) |
+| `-o` | Output filename | `.nii.gz` |
+
+### Output
+
+The generated MR property volume is saved in the `output/` directory.
+
+If `-g 1` is enabled, voxel values within **spinal cord white matter (`sc_wm`)** and **spinal cord gray matter (`sc_gm`)** are sampled from a Gaussian (normal) distribution centered on the nominal property values. All other tissues are assigned fixed (deterministic) values.
+
+
+
+# Look-Up Tables (LUT)
+
+MR property values assigned to each tissue are derived from peer-reviewed literature.
+
+Each physical property (T1, T2, T2*, susceptibility, permittivity, conductivity, etc.) has its own look-up table defined in the corresponding class within the codebase.
+
+Below we document the literature sources used for parameter selection.
+
 
 ## Relaxation Values & Susceptibility
 
@@ -84,8 +192,9 @@ Here we document the respective look-up tables used for assigning MR property va
 | muscle              | 1237.825| 36.1    | 24.1     | 45     | -9.03 |
 | bone                | 223     | 0.39    | 1.16     | 18     | -11.1 |
 | v_bone (Vertebrae)  | 618.5   | 80.685  | 40.3     | 40     | -9.7  |
-| lungs               | 1400    | 35.5    | 1.62     | 15     | -0.27* |
-| trachea             | 1100    | 40      | 12       | 5      | -4.36* |
+| lungs               | 1400    | 35.5    | 1.62     | 15     | -2.36 |
+| trachea cartilage   | 1201    | 43.225      | 26.04       | 70      | -9.05 |
+| trachea lumen       | 0.01    | 0.01      | 0.01       | 0.01      | 0.196 |
 | air                 | 0.01    | 0.01    | 0.01     | 0.01   | 0.35  |
 | extra (blood/muscle)| 800     | 50      | 35       | 50     | -9.04 |
 | spinal_cord         | 936.5   | 76.75   | 40.07    | 60     | -9.055|
@@ -93,7 +202,6 @@ Here we document the respective look-up tables used for assigning MR property va
 | CSF                 | 1953    | 275     | 137.5    | 100    | -9.05 |
 | white_matter        | 887.7   | 65.4    | 35       | 70     | –     |
 | gray_matter         | 1446.1  | 94.3    | 48       | 82     | –     |
-| SpinalCanal         | 993     | 78      | 39       | 90     | -9.055|
 | esophagus           | 1000    | 32      | 17       | 45     | -9.05 |
 | organ (liver-like)  | 800     | 40      | 20       | 65     | -9.05 |
 | gland (salivary)    | 1600    | 72      | 36       | 80     | -9.05 |
@@ -101,16 +209,8 @@ Here we document the respective look-up tables used for assigning MR property va
 | inter_vert_discs    | 1201    | 42      | 26       | 50     | -9.055|
 
 
-* Susceptibility for Air cavities: lungs & trachea are guesses from a WIP project.
-
-Citation to come with publication soon!. </br>
-
-# Adding Labels - Modified Nifti
-
-One of the current limitations of the output from Total Segmentator is the label definition for the Spinal Cord. This encouraged us to add new labels to the phantom. </br>
-In the following [repository](https://github.com/sriosq/Image-processing-strategies) you will find usefull strategies and code to create new labels as well as adding them to a segmented image.
-If you would like help adding labels or would like to create a new segmentation tool to easily convert please create a new issue or contact us!
+ 
 
 # References 
-
-[1] Wasserthal, J., Breit, H.-C., Meyer, M.T., Pradella, M., Hinck, D., Sauter, A.W., Heye, T., Boll, D., Cyriac, J., Yang, S., Bach, M., Segeroth, M., 2023. TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images. Radiology: Artificial Intelligence. https://doi.org/10.1148/ryai.230024 </br>
+[1] Paul A. Yushkevich, Joseph Piven, Heather Cody Hazlett, Rachel Gimpel Smith, Sean Ho, James C. Gee, and Guido Gerig. User-guided 3D active contour segmentation of anatomical structures: Significantly improved efficiency and reliability. Neuroimage 2006 Jul 1;31(3):1116-28.
+[2] Wasserthal, J., Breit, H.-C., Meyer, M.T., Pradella, M., Hinck, D., Sauter, A.W., Heye, T., Boll, D., Cyriac, J., Yang, S., Bach, M., Segeroth, M., 2023. TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images. Radiology: Artificial Intelligence. https://doi.org/10.1148/ryai.230024 </br>
