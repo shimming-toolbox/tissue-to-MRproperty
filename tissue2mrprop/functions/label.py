@@ -72,7 +72,8 @@ class SegmentationLabel:
             "sinus": [-2, None, None, None, None],  # Not used in CT tool // missing values
             # Used in totalSeg_mr & compare fm
             "inter_vert_discs": [-9.055, 1201, 42, 26, 50],  # Same as cartilage
-
+            "braces": [1e5, None, None, None, None, None], # Stainless steel. Work from S.R2 A.V M.N.
+            "teeth": [-12, None, None, None, None, None], # Teeth
         }
 
         # Here we have Permittivity@3T, Conductivity@3T, Permittivity@7T, Conductivity@7T
@@ -117,11 +118,11 @@ class SegmentationLabel:
 
             "sinus": [],
             "inter_vert_discs": [],
+            "braces": [],
 
         }
 
         self.static_values_short = {
-
             "fat": [48.17, 0.52, 44.25, 0.562],  # We use avg_infiltrated(30%) + muscle (70%)
             "brain": [79.80, 0.829, 59.8, 0.972],  # Considered cerebellum
             "muscle": [63.5, 0.719, 58.2, 0.77],
@@ -186,7 +187,8 @@ class SegmentationLabel:
 
             "extra": 7.45,  # 14.91
 
-            "sinus": 4.26  # 9.53
+            "sinus": 4.26,  # 9.53
+            "braces": None
         }
 
     def set_name(self, name):

@@ -21,6 +21,8 @@ CANONICAL_ID_TO_NAME = {
     102: "organ",
     107: "tr_cartilage",
     113: "tr_lumen",
+    128: "teeth",
+    141: "braces", # Braces made out of: Stainless Steel
     196: "sc_wm",
     264: "fat",
     289: "sc_csf",
