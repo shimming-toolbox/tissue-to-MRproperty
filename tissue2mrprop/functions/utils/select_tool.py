@@ -286,7 +286,7 @@ def new_return_dict_labels(tool, version, new_chi=None):
                 82: ("extra", 100),  # Descending colon wall
                 83: ("extra", 100),  # Descending colon contents
                 84: ("extra", 100),  # Sigmoid colon wall
-                85: ("extra", -100),  # Sigmoid colon contents
+                85: ("extra", 100),  # Sigmoid colon contents
                 86: ("extra", 100),  # Rectum wall
                 87: ("heart", 1),  # Heart wall
                 88: ("heart", 1),  # Heart contents (blood)
