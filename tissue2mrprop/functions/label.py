@@ -70,6 +70,7 @@ class SegmentationLabel:
             # There are some organs that don't have enough documentation on the literature to complete
             # the required values so an estimation is used for these:
             "sinus": [-2, None, None, None, None],  # Not used in CT tool // missing values
+            "ear_canal": [-2, None, None, None, None],
             # Used in totalSeg_mr & compare fm
             "inter_vert_discs": [-9.055, 1201, 42, 26, 50],  # Same as cartilage
             "braces": [1e5, None, None, None, None, None], # Stainless steel. Work from S.R2 A.V M.N.
@@ -137,6 +138,7 @@ class SegmentationLabel:
             "sc_csf": [84.1, 2.14, 72.8, 2.22],
             "organ": [89.7, 0.852, 70.6, 1.02],  # Using Kidney as reference
             "sinus": [5.435, 0.0426, 4.48, 0.051],  # Considering healthy sinus is 95% air and 5% soft tissue
+            "ear_canal": [5.435, 0.0426, 4.48, 0.051], # Same as sinus
             "inter_vert_discs": [52.9, 0.488, 46.8, 0.552],  # Considered cartilage
             "cartilage": [89.7, 0.852, 70.6, 1.02], # Using same as ORGAN label for now
             # For ds005616 we have the eyes label

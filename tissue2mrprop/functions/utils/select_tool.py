@@ -194,7 +194,7 @@ def new_return_dict_labels(tool, version, new_chi=None):
             dicc[324] = ("sc_gm", 324)
             # Additional to this we add trachea_cartilage and trachea_lumen
             dicc[170] = ("tr_cartilage", 107)
-            dicc[171] = ("tr_lumen", 111)
+            dicc[171] = ("tr_lumen", 113)
             return dicc
 
     elif tool  == "bracesTS":
@@ -364,192 +364,112 @@ def new_return_dict_labels(tool, version, new_chi=None):
             }
             return dicc_braces
 
-
-
-
-
-
-
-
-
-
-
-
-def return_dict_labels(tool, version, new_chi=None):
-
-
-
-
-
-
-
-
-
-    if tool == 'TotalSeg_MRI':
+    elif tool == 'TotalSeg_MRI':
 
         dicc = {
-            0: ("air", 0.35),
-            1: ("spleen", -9.05),
-            2: ("kidney", -9.05),  # kidney_right
-            3: ("kidney", -9.05),  # kidney_left
-            4: ("organ", -9.05),  # gallbladder
-            5: ("liver", -9.05),  # liver
-            6: ("organ", -9.05),  # stomach
-            7: ("organ", -9.05),  # pancreas
-            8: ("gland", -9.05),  # adrenal_gland_right
-            9: ("gland", -9.05),  # adrenal_gland_left
-            10: ("lungs", 0.2),  # lung_left
-            11: ("lungs", 0.2),  # lung_right
-            12: ("esophagus", -9.05),  # esophagus
-            13: ("organ", -9.05),  # small_bowel
-            14: ("organ", -9.05),  # duodenum
-            15: ("organ", -9.05),  # colon
-            16: ("organ", -9.05),  # urinary_bladder
-            17: ("organ", -9.05),  # prostate
-            18: ("bone", -9),  # sacrum
-            19: ("bone", -9),  # vertebrae
-            20: ("bone", -9),  # intervertebral_discs
-            21: ("spinal_cord", -9.055),  # spinal_cord
-            22: ("heart", -9.04),  # heart
-            23: ("extra", -9.04),  # aorta
-            24: ("extra", -9.04),  # inferior_vena_cava
-            25: ("extra", -9.04),  # portal_vein_and_splenic_vein
-            26: ("extra", -9.04),  # iliac_artery_left
-            27: ("extra", -9.04),  # iliac_artery_right
-            28: ("extra", -9.04),  # iliac_vena_left
-            29: ("extra", -9.04),  # iliac_vena_right
-            30: ("bone", -9),  # humerus_left
-            31: ("bone", -9),  # humerus_right
-            32: ("bone", -9),  # fibula
-            33: ("bone", -9),  # tibia
-            34: ("bone", -9),  # femur_left
-            35: ("bone", -9),  # femur_right
-            36: ("bone", -9),  # hip_left
-            37: ("bone", -9),  # hip_right
-            38: ("extra", -9.04),  # gluteus_maximus_left
-            39: ("extra", -9.04),  # gluteus_maximus_right
-            40: ("extra", -9.04),  # gluteus_medius_left
-            41: ("extra", -9.04),  # gluteus_medius_right
-            42: ("extra", -9.04),  # gluteus_minimus_left
-            43: ("extra", -9.04),  # gluteus_minimus_right
-            44: ("extra", -9.04),  # autochthon_left
-            45: ("extra", -9.04),  # autochthon_right
-            46: ("extra", -9.04),  # iliopsoas_left
-            47: ("extra", -9.04),  # iliopsoas_right
-            48: ("extra", -9.04),  # quadriceps_femoris_left
-            49: ("extra", -9.04),  # quadriceps_femoris_right
-            50: ("extra", -9.04),  # thigh_medial_compartment_left
-            51: ("extra", -9.04),  # thigh_medial_compartment_right
-            52: ("extra", -9.04),  # thigh_posterior_compartment_left
-            53: ("extra", -9.04),  # thigh_posterior_compartment_right
-            54: ("extra", -9.04),  # sartorius_left
-            55: ("extra", -9.04),  # sartorius_right
-            56: ("brain", -9.04)  # brain
+            0: ("air", 0),
+            1: ("spleen", 6),
+            2: ("kidney", 4),  # kidney_right
+            3: ("kidney", 4),  # kidney_left
+            4: ("organ", 100),  # gallbladder
+            5: ("liver", 2),  # liver
+            6: ("organ", 100),  # stomach
+            7: ("organ", 100),  # pancreas
+            8: ("gland", 19),  # adrenal_gland_right
+            9: ("gland", 19),  # adrenal_gland_left
+            10: ("lungs", 12),  # lung_left
+            11: ("lungs", 12),  # lung_right
+            12: ("esophagus", 18),  # esophagus
+            13: ("organ", 100),  # small_bowel
+            14: ("organ", 100),  # duodenum
+            15: ("organ", 100),  # colon
+            16: ("organ", 100),  # urinary_bladder
+            17: ("organ", 100),  # prostate
+            18: ("bone", 10),  # sacrum
+            19: ("bone", 10),  # vertebrae
+            20: ("bone", 10),  # intervertebral_discs
+            21: ("spinal_cord", 14),  # spinal_cord
+            22: ("heart", 1),  # heart
+            23: ("extra", 100),  # aorta
+            24: ("extra", 100),  # inferior_vena_cava
+            25: ("extra", 100),  # portal_vein_and_splenic_vein
+            26: ("extra", 100),  # iliac_artery_left
+            27: ("extra", 100),  # iliac_artery_right
+            28: ("extra", 100),  # iliac_vena_left
+            29: ("extra", 100),  # iliac_vena_right
+            30: ("bone", 10),  # humerus_left
+            31: ("bone", 10),  # humerus_right
+            32: ("bone", 10),  # fibula
+            33: ("bone", 10),  # tibia
+            34: ("bone", 10),  # femur_left
+            35: ("bone", 10),  # femur_right
+            36: ("bone", 10),  # hip_left
+            37: ("bone", 10),  # hip_right
+            38: ("extra", 100),  # gluteus_maximus_left
+            39: ("extra", 100),  # gluteus_maximus_right
+            40: ("extra", 100),  # gluteus_medius_left
+            41: ("extra", 100),  # gluteus_medius_right
+            42: ("extra", 100),  # gluteus_minimus_left
+            43: ("extra", 100),  # gluteus_minimus_right
+            44: ("extra", 100),  # autochthon_left
+            45: ("extra", 100),  # autochthon_right
+            46: ("extra", 100),  # iliopsoas_left
+            47: ("extra", 100),  # iliopsoas_right
+            48: ("extra", 100),  # quadriceps_femoris_left
+            49: ("extra", 100),  # quadriceps_femoris_right
+            50: ("extra", 100),  # thigh_medial_compartment_left
+            51: ("extra", 100),  # thigh_medial_compartment_right
+            52: ("extra", 100),  # thigh_posterior_compartment_left
+            53: ("extra", 100),  # thigh_posterior_compartment_right
+            54: ("extra", 100),  # sartorius_left
+            55: ("extra", 100),  # sartorius_right
+            56: ("brain", 5)  # brain
         }
 
         if version == 'v1':
             return dicc
 
-        if version == 'mod0':
-            # Adding similar to CT case
-            # Adds labels with "head"
-            dicc[145] = ("head", -8.97)
-            dicc[169] = ("torso",-8.97)
-            dicc[101] = ('bone', -9)
-            return dicc
-
-    if tool == 'ProCord_MRI':
-        pass
-
-    if tool == "charles":
+    elif tool == "charles":
 
         dicc = {
 
-            0: ("air", 0.35),  # background
-            1: ("water", -9.05),  # body
-            2: ("air", 0.35),  # sinus
-            3: ("air", 0.35),  # ear_canal
-            4: ("trachea", 0.2),  # trachea
-            5: ("lung", 0.2),  # lung_left
-            6: ("lung", 0.2),  # lung_right
-            7: ("bone", -11.5),  # skull
-            8: ("water", -9.05),  # eyes
-            9: ("bone", -11.5),  # vertebrates
-            10: ("cartilage", -9.055),  # discs
+            0: ("air", 0),  # background
+            1: ("water", 100),  # body
+            2: ("sinus", 117),  # sinus
+            3: ("ear_canal", 119),  # ear_canal
+            4: ("tr_lumen", 113),  # trachea
+            5: ("lung", 12),  # lung_left
+            6: ("lung", 12),  # lung_right
+            7: ("bone", 10),  # skull
+            8: ("water", 100),  # eyes
+            9: ("v_bone", 11),  # vertebrates
+            10: ("cartilage", 7),  # discs
         }
         if version == 'v1':
             return dicc
 
-    if tool == "compare_fm":
+    elif tool == "compare_fm":
         # This project aims to simulate only 3 different tissue types
-        # Bones, soft tisssue and air
+        # Bones, soft tissue and air
         #
         # Some values were changed for ISMRM abstract. More precise values may be implemented later
         dicc = {
-            0: ("air", 0.35), # Outside of the body
-            2: ("fat", -9.05), # Water and muscle surrounding the labels ## Before -9.032
-            3: ("bone", -11), # Spine
-            5: ("inter_vert_discs", -9.05),
-            7: ("lungs", -4.2), # magical air inside lungs and esophagus
-            8: ("trachea", -4.2), # Air in the trachea
-            10: ("organ", -9.05), # Susceptibility of water
-            12: ("muscle", -9.05), # Muscle has slightly different value than water
-            15: ("sinus", -2),
-            23: ("brain", -9.04),  # Brain from Samseg
-            25: ("skull", -11),  # Skull from Samseg with manual correction in Slicer
-            256: ("spinal_cord",-9.055), # Soft tissue for this project
-            289:("sc_csf,",-9.055) # Same as 256 for this project, might change later
+            0: ("air", 0),  # Outside the body
+            2: ("fat", 264),  # Water and muscle surrounding the labels ## Before -9.032
+            3: ("bone", 11),  # Spine
+            5: ("cartilage", 7),  # Intervertebral discs
+            7: ("lungs", 12),  # magical air inside lungs and esophagus
+            8: ("tr_lumen", 113),  # Air in the trachea
+            10: ("organ", 100),  # Susceptibility of water
+            12: ("muscle", 9),  # Muscle has slightly different value than water
+            15: ("sinus", 117),
+            23: ("brain", 5),   # Brain from Samseg
+            25: ("skull", 10),   # Skull from Samseg with manual correction in Slicer
+            256: ("spinal_cord", 14),  # Soft tissue for this project
+            289:("sc_csf,",289)  # Same as 256 for this project, might change later
         }
         if version == 'mod0':
             return dicc
-
-        if version == "dyn":
-            # This is for dynamically changing the susceptiblity values
-            # Only changing the value of air in lungs and trachea
-
-            lst1 = list(dicc[7])
-            lst2 = list(dicc[8])
-            lst1[1] = new_chi
-            lst2[1] = new_chi
-            dicc[7] = tuple(lst1)
-            dicc[8] = tuple(lst2)
-            print("Changing susceptibility of air to: ", new_chi)
-            return dicc
-
-        if version == 'mod_PAM50':
-            dicc2 = {
-            0 : ("air", 0.35), # Air surrounding the body
-            2 : ("fat", -9.05), # Water and muscle surrounding the labels
-            3 : ("bone", -11), #
-            5 : ("inter_vert_discs", -9.055),
-            7 : ("lungs", -4.2), # magical air inside lungs and esophagus
-            8 : ("trachea", -4.2), # Air in the trachea
-            10 : ("organ", -9.05), # Susceptibility of water
-            12: ("muscle", -9.05), # Muscle has slightly different value than water
-            15 : ("sinus", -2), # Air in the sinuses and ear canal
-            256: ("spinal cord",-9.05) # Soft tissue for this project
-            }
-            return dicc2
-
-        if version == 'ds005616':
-            dicc3 = {
-                0: ("air", 0.35),  # Air surrounding the body
-                1: ("fat", -9.05),
-                2: ("sinus", -2),
-                3: ("sinus",-2),
-                4: ("trachea",-2.3),
-                5: ("lungs",-2.3),
-                6: ("lungs",-2.3),
-                56: ("brain",-9.04),
-                60: ("eyes",-9.05),
-                91: ("skull",-11),
-                92: ("bone",-11),
-                93: ("inter_vert_discs",-9.055),
-                100:("spinal_cord",-9.05)
-
-            }
-            return dicc3
-
 
     else:
         print("This tool hasn't been implemented yet.")
