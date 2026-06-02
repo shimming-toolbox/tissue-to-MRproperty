@@ -37,6 +37,8 @@ Each voxel in a segmentation file must contain one of the following integer IDs.
 | 102          | organ            |
 | 107          | tr_cartilage     |
 | 113          | tr_lumen         |
+| 117          | sinus            |
+| 119          | ear_canal        |
 | 196          | sc_wm            |
 | 264          | fat              |
 | 289          | sc_csf           |
