@@ -210,6 +210,30 @@ Below we document the literature sources used for parameter selection.
 | sinus               | –       | –       | –        | –      | -     |
 | inter_vert_discs    | 1201    | 42      | 26       | 50     | -9.055|
 
+## Permittivity and conductivity
+
+| Tissue/Label | Relative Permittivity @3T(εr) | Conductivity @3T (S/m) | Relative Permittivity @7T(εr) | Conductivity @7T (S/m) |
+|--------------|----------------------------|-------------------|---------|------------------------|
+| Fat | 48.17 | 0.52 | 44.25 | 0.562 |
+| Brain | 79.80 | 0.829 | 59.8 | 0.972 |
+| Muscle | 63.5 | 0.719 | 58.2 | 0.770 |
+| Bone (Cortical) | 14.7 | 0.0673 | 13.4 | 0.0825 |
+| Vertebral Bone | 14.7 | 0.0673 | 13.4 | 0.0825 |
+| Lungs (Inflated) | 29.5 | 0.316 | 24.8 | 0.356 |
+| Trachea | 50.6 | 0.559 | 45.3 | 0.610 |
+| Air | 1.0 | 0 | 1.0 | 0 |
+| Spinal Cord | 44.1 | 0.354 | 36.9 | 0.418 |
+| Spinal Cord WM | 44.1 | 0.354 | 36.9 | 0.418 |
+| Spinal Cord GM | 44.1 | 0.354 | 36.9 | 0.418 |
+| CSF | 84.1 | 2.14 | 72.8 | 2.22 |
+| Organ (Kidney as reference) | 89.7 | 0.852 | 70.6 | 1.02 |
+| Sinus | 5.435 | 0.0426 | 4.48 | 0.051 |
+| Ear Canal | 5.435 | 0.0426 | 4.48 | 0.051 |
+| Intervertebral Disc (cartilage) | 52.9 | 0.488 | 46.8 | 0.552 |
+| Cartilage | 89.7 | 0.852 | 70.6 | 1.02 |
+| Skull | 14.7 | 0.0673 | 13.4 | 0.0825 |
+| Eyes | 84.1 | 2.14 | 72.8 | 2.22 |
+
 
  
 
