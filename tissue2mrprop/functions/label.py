@@ -84,42 +84,6 @@ class SegmentationLabel:
         # Units of conductivity S/m
         self.static_values = {
             # Will eventually need to be completed, for now use short version until required
-            "fat": [],
-            "heart": [],
-            "liver": [],
-            "pancreas": [],
-            "kidney": [],
-            "brain": [],
-            "spleen": [],
-            "cartilage": [],
-            "bone_marrow": [],
-
-            "sc_wm": [],
-            "sc_gm": [],
-            "sc_csf": [],
-
-            "muscle": [],
-            "bone": [],
-            "v_bone": [],
-            "lungs": [],
-            "trachea": [],
-            "air": [],
-
-            "extra": [],
-
-            "spinal_cord": [],
-            "water": [],
-            "CSF": [],
-            "white_matter": [],
-            "gray_matter": [],
-            "SpinalCanal": [],
-            "esophagus": [],
-            "organ": [],
-            "gland": [],
-
-            "sinus": [],
-            "inter_vert_discs": [],
-            "braces": [],
 
         }
 
@@ -130,8 +94,9 @@ class SegmentationLabel:
             "bone": [14.7, 0.0673, 13.4, 0.0825],  # Cortical
             "v_bone": [14.7, 0.0673, 13.4, 0.0825],  # Same as Cortical bone for now
             "lungs": [29.5, 0.316, 24.8, 0.356],  # Using value of Inflated Lungs
-            "trachea": [50.6, 0.559, 45.3, 0.61],
+            "tr_lumen": [50.6, 0.559, 45.3, 0.61],
             "air": [1, 0, 1, 0],
+            "gland": [89.7, 0.852, 70.6, 1.02],  # Using same as organ for now
             "spinal_cord": [44.1, 0.354, 36.9, 0.418],
             "sc_wm": [44.1, 0.354, 36.9, 0.418], # Same as spinal cord for now
             "sc_gm": [44.1, 0.354, 36.9, 0.418], # Same as spinal cord for now
@@ -139,8 +104,7 @@ class SegmentationLabel:
             "organ": [89.7, 0.852, 70.6, 1.02],  # Using Kidney as reference
             "sinus": [5.435, 0.0426, 4.48, 0.051],  # Considering healthy sinus is 95% air and 5% soft tissue
             "ear_canal": [5.435, 0.0426, 4.48, 0.051], # Same as sinus
-            "inter_vert_discs": [52.9, 0.488, 46.8, 0.552],  # Considered cartilage
-            "cartilage": [89.7, 0.852, 70.6, 1.02], # Using same as ORGAN label for now
+            "cartilage": [52.9, 0.488, 46.8, 0.552],  # Considered cartilage and invertebral discs
             # For ds005616 we have the eyes label
             "skull": [14.7, 0.0673, 13.4, 0.0825], # Considered cortical bone
             "eyes": [84.1, 2.14, 72.8, 2.22],  # Which according to IT'IS foundation, can be considered as CSF
@@ -194,47 +158,24 @@ class SegmentationLabel:
         }
 
     def set_name(self, name):
+        self.name = name
 
         if name in self.relax_values.keys():
-            self.name = name
             self.susceptibility = self.relax_values[name][0]
             self.T1_val = self.relax_values[name][1]
             self.T2_val = self.relax_values[name][2]
             self.T2star_val = self.relax_values[name][3]
             self.PD_val = self.relax_values[name][4]
 
-        elif name in self.static_values_short.keys():
-            self.name = name
-            self.perm3T = self.static_values_short[name][0]
-            self.cond3T = self.static_values_short[name][1]
-            self.perm7T = self.static_values_short[name][2]
-            self.cond7T = self.static_values_short[name][3]
-
-        else:
-            print(f"Label ID {name} not found, check tool and version selected")
-            self.name = name
-            self.M0_val = 0
-            self.T1_val = 0
-            self.T2_val = 0
-            self.T2star_val = 0
-            self.PD_val = 0
-            self.susceptibility = 0
-
-    def set_static_name(self, name):
-
         if name in self.static_values_short.keys():
-            self.name = name
             self.perm3T = self.static_values_short[name][0]
             self.cond3T = self.static_values_short[name][1]
             self.perm7T = self.static_values_short[name][2]
             self.cond7T = self.static_values_short[name][3]
 
-        else:
-            self.name = name
-            self.perm3T = 0
-            self.cond3T = 0
-            self.perm7T = 0
-            self.cond7T = 0
+
+        if name not in self.relax_values and name not in self.static_values_short:
+            print(f"Label name {name} not found in relax or static dictionaries")
 
     def set_susceptibility(self, susceptibility):
         self.susceptibility = susceptibility

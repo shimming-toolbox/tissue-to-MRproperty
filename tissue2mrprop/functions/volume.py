@@ -159,6 +159,8 @@ class volume:
             lbl.set_name(name) # This enables us to call all tissue properties as attributes per label
             self.segmentation_labels[lab_id] = lbl
 
+        # At the end of the loop segmentation_labels has a Label object indexed by the canonical IDs!
+
         # Additionally, getting relax and static values from any segmentation label
         self.relax_values = next(
             iter(self.segmentation_labels.values())).relax_values if self.segmentation_labels else {}
