@@ -29,6 +29,7 @@ dependencies = [
 
 [project.scripts]
 tissue_to_MR = "tissue2mrprop.cli.tissue_to_mr:converter"
+seg_converter = "tissue2mrprop.cli.tissue_to_mr:seg_sorter"
 mr_prop_viewer = "tissue2mrprop.cli.display:display"
 
 [tool.setuptools.packages.find]

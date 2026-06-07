@@ -130,6 +130,8 @@
   115   255  255  255        1  1  1    "Bone"
   116   255  255  255        1  1  1    "Bone"
   117   132  204  199        1  1  1    "Costal Cartilage"
+  170   229  229   53        1  1  1    "Trachea Cartilage"
+  171    53  226  229        1  1  1    "Trachea Lumen"
   196   216   41  172        1  1  1    "Spinal Cord WM"
   256     8   97   78        1  1  1    "Spinal Cord"
   264    97   78   56        1  1  1    "Fat & Muscle"

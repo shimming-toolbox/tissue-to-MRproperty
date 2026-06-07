@@ -20,7 +20,7 @@ class SegmentationLabel:
         self.cond7T = None
 
         # Key is the name and value is ordered:
-        # M0, T1, T2, T2*, PD
+        # Chi, T1, T2, T2*, PD
         # M0 = C * PD, where C is a scaling factor
         # C represents smoothly-varying spatial modulation of the PD map
         # by the profile of the r. coil gain (B-)
@@ -32,46 +32,49 @@ class SegmentationLabel:
 
         self.relax_values = {
             # Official labels for the Whole Body phantom by S.R.
-            "fat": [None, 401.2, 129.3, 64.65, 20],
-            "heart": [None, 1215.67, 49.35, 25.195, 77],
-            "liver": [None, 798.75, 33, 18.82, 70],
-            "pancreas": [None, 797.55, 43.5, 21.1, 70],
-            "kidney": [None, 1338, 86.835, 57.55, 82],
-            "brain": [None, 1232.9, 82.9, 42.8, 74.5],
-            "spleen": [None, 1328, 60.9, 16.3, 75],
-            "cartilage": [None, 1201, 43.225, 26.04, 70],
-            "bone_marrow": [None, 586, 49, 24.5, 27],
+            "fat": [-8.92, 401.2, 129.3, 64.65, 20],
+            "heart": [-9.05, 1215.67, 49.35, 25.195, 77],
+            "liver": [-9.05, 798.75, 33, 18.82, 70],
+            "pancreas": [-9.05, 797.55, 43.5, 21.1, 70],
+            "kidney": [-9.05, 1338, 86.835, 57.55, 82],
+            "brain": [-9.05, 1232.9, 82.9, 42.8, 74.5],
+            "spleen": [-9.05, 1328, 60.9, 16.3, 75],
+            "cartilage": [-9.055, 1201, 43.225, 26.04, 70],
+            "bone_marrow": [-9.05, 586, 49, 24.5, 27],
 
-            "sc_wm": [None, 857, 73, 38.65, 70],
-            "sc_gm": [None, 983.5, 76, 44.4, 80],
-            "sc_csf": [None, 5128, 1419.84, 709.92, 100],
+            "sc_wm": [-9.083, 857, 73, 38.65, 70],
+            "sc_gm": [-9.03, 983.5, 76, 44.4, 80],
+            "sc_csf": [-9.05, 5128, 1419.84, 709.92, 100],
 
-            "muscle": [None, 1237.825, 36.1, 24.1, 45],
-            "bone": [None, 223, 0.39, 1.16, 18],
-            "v_bone": [None, 618.5, 80.685, 40.3, 40],
-            "lungs": [None, 1400, 35.5, 1.62, 15],
-            "trachea": [None, 1100, 40, 12, 5],
-            "air": [None, 0.01, 0.01, 0.01, 0.01],
+            "muscle": [-9.05, 1237.825, 36.1, 24.1, 45],
+            "bone": [-11, 223, 0.39, 1.16, 18],
+            "v_bone": [-9.7, 618.5, 80.685, 40.3, 40],
+            "lungs": [-2.36, 1400, 35.5, 1.62, 15],
+            "trachea": [0.196, 1100, 40, 12, 5],
+            "tr_cartilage":[-9.05, 1201, 43.225, 26.04, 70],
+            "tr_lumen": [0.196, 0.01, 0.01, 0.01, 0.01],
+            "air": [0.35, 0.01, 0.01, 0.01, 0.01],
 
-            "extra": [None, 800, 50, 35, 50],  # Mostly blood carriers or muscle (high water content)
+            "extra": [-9.05, 800, 50, 35, 50],  # Mostly blood carriers or muscle (high water content)
 
             # Other labels for other segmentation tools available :)
             # Literature review pending
-            "spinal_cord": [None, 936.5, 76.75, 40.07, 60],
-            "water": [None, 2500, 275, 275/2, 100],  # High M0 value
-            "CSF": [None, 1953, 275, 275/2, 100],  # High M0 t1 from ITIS
+            "spinal_cord": [-9.055, 936.5, 76.75, 40.07, 60],
+            "water": [-9.05, 2500, 275, 275/2, 100],  # High M0 value
+            "CSF": [-9.05, 1953, 275, 275/2, 100],  # High M0 t1 from ITIS
             "white_matter": [None, 887.7, 65.4, 35, 70],  # This is the brain WM
             "gray_matter": [None, 1446.1, 94.3, 48, 82],  # This is the brain GM
-            "SpinalCanal": [None, 993, 78, 78/2, 90],  #
-            "esophagus": [None, 1000, 32, 17, 45],  # Assuming trachea is almost 100% muscle
-            "organ": [None, 800, 40, 20, 65],  # Values similar to those from liver
-            "gland": [None, 1600, 72, 72/2, 80],  # Values from ITIS foundation for Salivary gland
+            "esophagus": [-9.05, 1000, 32, 17, 45],  # Assuming trachea is almost 100% muscle
+            "organ": [-9.05, 800, 40, 20, 65],  # Values similar to those from liver
+            "gland": [-9.05, 1600, 72, 72/2, 80],  # Values from ITIS foundation for Salivary gland
             # There are some organs that don't have enough documentation on the literature to complete
             # the required values so an estimation is used for these:
-            "sinus": [None, None, None, None, None],  # Not used in CT tool // missing values
+            "sinus": [-2, None, None, None, None],  # Not used in CT tool // missing values
+            "ear_canal": [-2, None, None, None, None],
             # Used in totalSeg_mr & compare fm
-            "inter_vert_discs": [None, 1201, 42, 26, 50],  # Same as cartilage
-
+            "inter_vert_discs": [-9.055, 1201, 42, 26, 50],  # Same as cartilage
+            "braces": [1e5, None, None, None, None, None], # Stainless steel. Work from S.R2 A.V M.N.
+            "teeth": [-12, None, None, None, None, None], # Teeth
         }
 
         # Here we have Permittivity@3T, Conductivity@3T, Permittivity@7T, Conductivity@7T
@@ -81,59 +84,27 @@ class SegmentationLabel:
         # Units of conductivity S/m
         self.static_values = {
             # Will eventually need to be completed, for now use short version until required
-            "fat": [],
-            "heart": [],
-            "liver": [],
-            "pancreas": [],
-            "kidney": [],
-            "brain": [],
-            "spleen": [],
-            "cartilage": [],
-            "bone_marrow": [],
-
-            "sc_wm": [],
-            "sc_gm": [],
-            "sc_csf": [],
-
-            "muscle": [],
-            "bone": [],
-            "v_bone": [],
-            "lungs": [],
-            "trachea": [],
-            "air": [],
-
-            "extra": [],
-
-            "spinal_cord": [],
-            "water": [],
-            "CSF": [],
-            "white_matter": [],
-            "gray_matter": [],
-            "SpinalCanal": [],
-            "esophagus": [],
-            "organ": [],
-            "gland": [],
-
-            "sinus": [],
-            "inter_vert_discs": [],
 
         }
 
         self.static_values_short = {
-
             "fat": [48.17, 0.52, 44.25, 0.562],  # We use avg_infiltrated(30%) + muscle (70%)
             "brain": [79.80, 0.829, 59.8, 0.972],  # Considered cerebellum
             "muscle": [63.5, 0.719, 58.2, 0.77],
             "bone": [14.7, 0.0673, 13.4, 0.0825],  # Cortical
+            "v_bone": [14.7, 0.0673, 13.4, 0.0825],  # Same as Cortical bone for now
             "lungs": [29.5, 0.316, 24.8, 0.356],  # Using value of Inflated Lungs
-            "trachea": [50.6, 0.559, 45.3, 0.61],
+            "tr_lumen": [50.6, 0.559, 45.3, 0.61],
             "air": [1, 0, 1, 0],
+            "gland": [89.7, 0.852, 70.6, 1.02],  # Using same as organ for now
             "spinal_cord": [44.1, 0.354, 36.9, 0.418],
+            "sc_wm": [44.1, 0.354, 36.9, 0.418], # Same as spinal cord for now
+            "sc_gm": [44.1, 0.354, 36.9, 0.418], # Same as spinal cord for now
             "sc_csf": [84.1, 2.14, 72.8, 2.22],
             "organ": [89.7, 0.852, 70.6, 1.02],  # Using Kidney as reference
             "sinus": [5.435, 0.0426, 4.48, 0.051],  # Considering healthy sinus is 95% air and 5% soft tissue
-            "inter_vert_discs": [52.9, 0.488, 46.8, 0.552],  # Considered cartilage
-
+            "ear_canal": [5.435, 0.0426, 4.48, 0.051], # Same as sinus
+            "cartilage": [52.9, 0.488, 46.8, 0.552],  # Considered cartilage and invertebral discs
             # For ds005616 we have the eyes label
             "skull": [14.7, 0.0673, 13.4, 0.0825], # Considered cortical bone
             "eyes": [84.1, 2.14, 72.8, 2.22],  # Which according to IT'IS foundation, can be considered as CSF
@@ -182,53 +153,31 @@ class SegmentationLabel:
 
             "extra": 7.45,  # 14.91
 
-            "sinus": 4.26  # 9.53
+            "sinus": 4.26,  # 9.53
+            "braces": None
         }
 
     def set_name(self, name):
+        self.name = name
 
         if name in self.relax_values.keys():
-            self.name = name
-            self.M0_val = self.relax_values[name][0]
+            self.susceptibility = self.relax_values[name][0]
             self.T1_val = self.relax_values[name][1]
             self.T2_val = self.relax_values[name][2]
             self.T2star_val = self.relax_values[name][3]
             self.PD_val = self.relax_values[name][4]
 
-        elif name in self.static_values_short.keys():
-            self.name = name
-            self.perm3T = self.static_values_short[name][0]
-            self.cond3T = self.static_values_short[name][1]
-            self.perm7T = self.static_values_short[name][2]
-            self.cond7T = self.static_values_short[name][3]
-
-        else:
-
-            self.name = name
-            self.M0_val = 0
-            self.T1_val = 0
-            self.T2_val = 0
-            self.T2star_val = 0
-            self.PD_val = 0
-
-    def set_static_name(self, name):
-
         if name in self.static_values_short.keys():
-            self.name = name
             self.perm3T = self.static_values_short[name][0]
             self.cond3T = self.static_values_short[name][1]
             self.perm7T = self.static_values_short[name][2]
             self.cond7T = self.static_values_short[name][3]
 
-        else:
-            self.name = name
-            self.perm3T = 0
-            self.cond3T = 0
-            self.perm7T = 0
-            self.cond7T = 0
+
+        if name not in self.relax_values and name not in self.static_values_short:
+            print(f"Label name {name} not found in relax or static dictionaries")
 
     def set_susceptibility(self, susceptibility):
-
         self.susceptibility = susceptibility
 
     def set_M0_val(self, M0):
